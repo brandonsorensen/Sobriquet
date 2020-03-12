@@ -12,6 +12,8 @@
 		CAB4AA74241A48E100075238 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA73241A48E100075238 /* Assets.xcassets */; };
 		CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA76241A48E100075238 /* Preview Assets.xcassets */; };
 		CAB4AA7A241A48E100075238 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA78241A48E100075238 /* Main.storyboard */; };
+		CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */; };
+		CAB4AA85241A7C2C00075238 /* sort-files.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA84241A7C2C00075238 /* sort-files.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +25,8 @@
 		CAB4AA79241A48E100075238 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CAB4AA7B241A48E100075238 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sobriquet.entitlements; sourceTree = "<group>"; };
+		CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentButtonsUIView.swift; sourceTree = "<group>"; };
+		CAB4AA84241A7C2C00075238 /* sort-files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "sort-files.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,11 +61,13 @@
 			children = (
 				CAB4AA6F241A48DE00075238 /* AppDelegate.swift */,
 				CAB4AA71241A48DE00075238 /* ContentView.swift */,
+				CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */,
 				CAB4AA73241A48E100075238 /* Assets.xcassets */,
 				CAB4AA78241A48E100075238 /* Main.storyboard */,
 				CAB4AA7B241A48E100075238 /* Info.plist */,
 				CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */,
 				CAB4AA75241A48E100075238 /* Preview Content */,
+				CAB4AA84241A7C2C00075238 /* sort-files.swift */,
 			);
 			path = Sobriquet;
 			sourceTree = "<group>";
@@ -145,8 +151,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */,
 				CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */,
 				CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */,
+				CAB4AA85241A7C2C00075238 /* sort-files.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

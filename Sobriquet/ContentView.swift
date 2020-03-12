@@ -9,9 +9,28 @@
 import SwiftUI
 
 struct ContentView: View {
+    struct PathTextFieldStyle : TextFieldStyle {
+        func _body(configuration: TextField<Self._Label>) -> some View {
+            configuration
+                .padding(10)
+                .font(.title)
+                .cornerRadius(0.25)
+        }
+    }
+    
     var body: some View {
-        Text("Hello, World!")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        
+        VStack {
+            TextField("Enter path to files.", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(20)
+            
+            ComponentButtonsUIView().frame(width: 800)
+            
+            TextField("Enter file pattern here.", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(20)
+        }
     }
 }
 
