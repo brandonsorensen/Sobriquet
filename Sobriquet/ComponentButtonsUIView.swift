@@ -23,15 +23,23 @@ extension String: Identifiable {
 struct ComponentButtonsUIView: View {
     
     struct ComponentButtonStyle: ViewModifier {
+        @State private var hovered = false
+        let unselectColor = Color(red: 76 / 255, green: 83 / 255, blue: 94 / 255)
+        let selectedColor = Color(red: 119 / 255, green: 123 / 255, blue: 128 / 255)
+        
         func body(content: Content) -> some View {
             content
+            .frame(maxWidth: .infinity)
             .foregroundColor(.white)
             .background(
                 RoundedRectangle(cornerRadius: 4)
                     .frame(idealWidth: 120, idealHeight: 40)
                     .fixedSize()
+                    .foregroundColor(self.hovered ? selectedColor : unselectColor)
             )
-            .padding()
+                .onHover { _ in self.hovered.toggle() }
+            .padding(.top, 50)
+            .padding(.bottom, 50)
         }
     }
     
@@ -43,10 +51,8 @@ struct ComponentButtonsUIView: View {
     var body: some View {
          
         HStack {
-            Spacer()
             ForEach(0 ..< labels.count) { index in
                 Text(self.labels[index]).textStyle(ComponentButtonStyle())
-                Spacer()
             }
         }
     }

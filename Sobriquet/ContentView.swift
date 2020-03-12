@@ -7,14 +7,22 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
-    struct PathTextFieldStyle : TextFieldStyle {
-        func _body(configuration: TextField<Self._Label>) -> some View {
-            configuration
-                .padding(10)
-                .font(.title)
-                .cornerRadius(0.25)
+    @State private var showPicker = false
+    
+    
+    struct StartButtonStyle: ButtonStyle {
+        @State private var isPressed = false
+        
+        func makeBody(configuration: Self.Configuration) -> some View {
+            configuration.label
+                .foregroundColor(configuration.isPressed ? Color.blue : Color.white)
+                .background(configuration.isPressed ? Color.white : Color.blue)
+                .scaleEffect(isPressed ? 1.4 : 1.0)
+                .cornerRadius(6.0)
+                .padding()
         }
     }
     
@@ -22,14 +30,20 @@ struct ContentView: View {
         
         VStack {
             TextField("Enter path to files.", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(20)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.top, 30)
+                .frame(width: 800)
             
             ComponentButtonsUIView().frame(width: 800)
             
-            TextField("Enter file pattern here.", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(20)
+            OutputFileView()
+                .frame(width: 800)
+                .padding(.leading, 30)
+                .padding(.trailing, 30)
+            
+            Button(action: {}) {
+                Text("Start").frame(maxWidth: 100, maxHeight: 200)
+            }.buttonStyle(StartButtonStyle())
         }
     }
 }
