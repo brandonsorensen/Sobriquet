@@ -8,9 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		CA1DEAF5241A8DC400092739 /* OutputFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAF4241A8DC400092739 /* OutputFileView.swift */; };
+		CA1DEAF9241AD45800092739 /* InputFileUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAF8241AD45800092739 /* InputFileUIView.swift */; };
+		CA1DEAFD241AD72300092739 /* openFileDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAFC241AD72300092739 /* openFileDialog.swift */; };
+		CA1DEB01241ADED000092739 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA1DEB00241ADED000092739 /* Assets.xcassets */; };
 		CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA6F241A48DE00075238 /* AppDelegate.swift */; };
 		CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA71241A48DE00075238 /* ContentView.swift */; };
-		CAB4AA74241A48E100075238 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA73241A48E100075238 /* Assets.xcassets */; };
 		CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA76241A48E100075238 /* Preview Assets.xcassets */; };
 		CAB4AA7A241A48E100075238 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA78241A48E100075238 /* Main.storyboard */; };
 		CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */; };
@@ -19,10 +21,13 @@
 
 /* Begin PBXFileReference section */
 		CA1DEAF4241A8DC400092739 /* OutputFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputFileView.swift; sourceTree = "<group>"; };
+		CA1DEAF8241AD45800092739 /* InputFileUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFileUIView.swift; sourceTree = "<group>"; };
+		CA1DEAFC241AD72300092739 /* openFileDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = openFileDialog.swift; sourceTree = "<group>"; };
+		CA1DEB00241ADED000092739 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sobriquet-logo.png"; path = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/Sobriquet/sobriquet-logo.png"; sourceTree = "<absolute>"; };
 		CAB4AA6C241A48DE00075238 /* Sobriquet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobriquet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAB4AA6F241A48DE00075238 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CAB4AA71241A48DE00075238 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		CAB4AA73241A48E100075238 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CAB4AA76241A48E100075238 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CAB4AA79241A48E100075238 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CAB4AA7B241A48E100075238 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -61,16 +66,19 @@
 		CAB4AA6E241A48DE00075238 /* Sobriquet */ = {
 			isa = PBXGroup;
 			children = (
+				CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */,
 				CAB4AA6F241A48DE00075238 /* AppDelegate.swift */,
 				CAB4AA71241A48DE00075238 /* ContentView.swift */,
+				CA1DEAF8241AD45800092739 /* InputFileUIView.swift */,
 				CA1DEAF4241A8DC400092739 /* OutputFileView.swift */,
 				CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */,
-				CAB4AA73241A48E100075238 /* Assets.xcassets */,
 				CAB4AA78241A48E100075238 /* Main.storyboard */,
 				CAB4AA7B241A48E100075238 /* Info.plist */,
 				CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */,
+				CA1DEB00241ADED000092739 /* Assets.xcassets */,
 				CAB4AA75241A48E100075238 /* Preview Content */,
 				CAB4AA84241A7C2C00075238 /* sort-files.swift */,
+				CA1DEAFC241AD72300092739 /* openFileDialog.swift */,
 			);
 			path = Sobriquet;
 			sourceTree = "<group>";
@@ -142,8 +150,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAB4AA7A241A48E100075238 /* Main.storyboard in Resources */,
+				CA1DEB01241ADED000092739 /* Assets.xcassets in Resources */,
 				CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */,
-				CAB4AA74241A48E100075238 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,10 +163,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */,
+				CA1DEAF9241AD45800092739 /* InputFileUIView.swift in Sources */,
 				CA1DEAF5241A8DC400092739 /* OutputFileView.swift in Sources */,
 				CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */,
 				CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */,
 				CAB4AA85241A7C2C00075238 /* sort-files.swift in Sources */,
+				CA1DEAFD241AD72300092739 /* openFileDialog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -59,17 +59,3 @@ struct OutputFileView_Previews: PreviewProvider {
         OutputFileView()
     }
 }
-
-private func createFileDialog() -> NSOpenPanel {
-    let fileDialog = NSOpenPanel()
-
-    fileDialog.prompt = "Select path"
-    fileDialog.worksWhenModal = true
-    fileDialog.canChooseDirectories = true
-    fileDialog.canChooseFiles = false
-    fileDialog.canCreateDirectories = true
-    fileDialog.allowsMultipleSelection = false
-    
-    return fileDialog
-}
-

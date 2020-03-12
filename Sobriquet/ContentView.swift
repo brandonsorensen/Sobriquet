@@ -29,8 +29,7 @@ struct ContentView: View {
     var body: some View {
         
         VStack {
-            TextField("Enter path to files.", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+            InputFileUIView()
                 .padding(.top, 30)
                 .frame(width: 800)
             

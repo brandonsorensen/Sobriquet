@@ -24,6 +24,7 @@ struct ComponentButtonsUIView: View {
     
     struct ComponentButtonStyle: ViewModifier {
         @State private var hovered = false
+        
         let unselectColor = Color(red: 76 / 255, green: 83 / 255, blue: 94 / 255)
         let selectedColor = Color(red: 119 / 255, green: 123 / 255, blue: 128 / 255)
         
@@ -52,7 +53,7 @@ struct ComponentButtonsUIView: View {
          
         HStack {
             ForEach(0 ..< labels.count) { index in
-                Text(self.labels[index]).textStyle(ComponentButtonStyle())
+            Text(self.labels[index]).textStyle(ComponentButtonStyle())
             }
         }
     }
