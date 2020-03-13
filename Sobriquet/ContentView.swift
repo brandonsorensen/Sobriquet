@@ -8,10 +8,12 @@
 
 import SwiftUI
 import AppKit
+import CoreData
 
 struct ContentView: View {
+    @Environment(\.managedObjectContext) var managedObjectContext
+    @FetchRequest(fetchRequest: Student.getAllStudents()) var Students:FetchedResults<Student>
     @State private var showPicker = false
-    
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
@@ -40,13 +42,16 @@ struct ContentView: View {
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
             
-            Button(action: {readCSV(csvURL: "default-enrollment-03-2020", encoding: .utf8) }) {
+            Button(action: {
+//                addStudent(eduid: 100, lastName: "Sorensen", firstName: "Brandon", middleName: "Loyal");
+                print(self.Students)
+                
+            }) {
                 Text("Start").frame(maxWidth: 100, maxHeight: 200)
             }.buttonStyle(StartButtonStyle())
         }
     }
 }
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

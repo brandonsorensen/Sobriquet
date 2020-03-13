@@ -13,12 +13,13 @@ import SwiftUI
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     var window: NSWindow!
-    let DEFAULT_ENROLLMENT = "default-enrollment-03-2020"
-
-
+    let DEFAULT_ENROLLMENT = "default-enrollment"
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Create the SwiftUI view that provides the window contents.
-        let contentView = ContentView()
+//        let contentView = ContentView()
+        let managedObjectContext = (NSApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let contentView = ContentView().environment(\.managedObjectContext, managedObjectContext)
 
         // Create the window and set the content view. 
         window = NSWindow(
@@ -38,39 +39,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "StudentModel")
-        container.loadPersistentStores { description, error in
-            if let error = error {
-                fatalError("Unable to load persistent stores: \(error)")
+        let container = NSPersistentContainer(name: "EnrollmentModel")
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-        }
+        })
         return container
     }()
 
-}
-
-func parseCSV (contentsOfURL: NSURL, encoding: String.Encoding, error: NSErrorPointer, delimiter: String = ",") ->
-    [(eduid: String, lastName:String, firstName: String, middleName: String)]? {
-    // Load the CSV file and parse it
-    var items: [(eduid: String, lastName:String, firstName: String, middleName: String)]?
-
-    //if let content = String(contentsOfURL: contentsOfURL, encoding: encoding, error: error) {
-    if let content = try? String(contentsOf: contentsOfURL as URL, encoding: encoding) {
-        items = []
-        let lines:[String] = content.components(separatedBy: NSCharacterSet.newlines) as [String]
-
-        for line in lines {
-            var values:[String] = []
-            if !line.isEmpty {
-                values = line.components(separatedBy: delimiter)
-
-                // Put the values into the tuple and add it to the items array
-                let item = (eduid: values[0], lastName: values[1], firstName: values[2], middleName: values[3])
-                items?.append(item)
+    // MARK: - Core Data Saving support
+    func saveContext () {
+        let context = persistentContainer.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate.
+            //  You should not use this function in a shipping application, although it may be useful during development.
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }
-
-    return items
 }
-

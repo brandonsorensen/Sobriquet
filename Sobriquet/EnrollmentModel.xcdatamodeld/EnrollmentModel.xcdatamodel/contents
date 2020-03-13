@@ -7,6 +7,6 @@
         <attribute name="middleName" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Student" positionX="-63" positionY="-18" width="128" height="28"/>
+        <element name="Student" positionX="-63" positionY="-18" width="128" height="103"/>
     </elements>
 </model>

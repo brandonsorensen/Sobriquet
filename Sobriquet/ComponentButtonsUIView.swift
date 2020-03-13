@@ -53,7 +53,7 @@ struct ComponentButtonsUIView: View {
          
         HStack {
             ForEach(0 ..< labels.count) { index in
-            Text(self.labels[index]).textStyle(ComponentButtonStyle())
+                Text(self.labels[index]).textStyle(ComponentButtonStyle())
             }
         }
     }

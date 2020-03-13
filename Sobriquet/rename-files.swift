@@ -6,7 +6,9 @@
 //  Copyright © 2020 Brandon Sorensen. All rights reserved.
 //
 
+import Cocoa
 import Foundation
+import CoreData
 
 enum PATH_STATUS {
     case SUCCESS
@@ -14,11 +16,10 @@ enum PATH_STATUS {
     case NOTEXIST
 }
 
-
-
-func readCSV(csvURL: String, encoding: String.Encoding, delimiter: String = ",", inBundle: Bool = true) -> [Student]? {
+func readCSV(csvURL: String, encoding: String.Encoding, delimiter: String = ",", inBundle: Bool = true) -> [CSVFields]? {
+    
     // Load the CSV file and parse it
-    var items = [Student]()
+    var entries = [CSVFields]()
     var lines: [String]
     var fields: [String]
 
@@ -31,10 +32,14 @@ func readCSV(csvURL: String, encoding: String.Encoding, delimiter: String = ",",
                     fields = line.components(separatedBy: delimiter)
                     if fields[0] == "EDUID" { continue }  // Skip header
                     
-                    let student = Student(eduid: Int(fields[0])!, lastName: fields[1],
-                                          firstName: fields[2],
-                                          middleName: fields[3].isEmpty ? nil : fields[3])
-                    items.append(student)
+                    entries.append(
+                        CSVFields(
+                            eduid: Int(fields[0])!, lastName: fields[1],
+                            firstName: fields[2],
+                            middleName: fields[3].isEmpty ? nil : fields[3]
+                        )
+                    )
+//                    items.append(student)
                 }
             }
             
@@ -42,14 +47,59 @@ func readCSV(csvURL: String, encoding: String.Encoding, delimiter: String = ",",
             print(error)
         }
     }
-    return items
+    return entries
 }
 
-struct Student {
-    var eduid: Int
-    var lastName: String
-    var firstName: String
-    var middleName: String?
+public struct CSVFields {
+    var eduid: Int,
+    lastName: String,
+    firstName: String,
+    middleName: String?
+}
+
+public func addStudent(eduid: Int, lastName: String, firstName: String, middleName: String?) {
+    let appDelegate = NSApplication.shared.delegate as! AppDelegate
+    let managedObjectContext = appDelegate.persistentContainer.viewContext
+    
+    let student = Student(context: managedObjectContext)
+    student.eduid = eduid
+    student.lastName = lastName
+    student.firstName = firstName
+    student.middleName  = middleName
+    
+    do {
+        try managedObjectContext.save()
+    } catch {
+        fatalError("Failure to save context: \(error)")
+    }
+}
+
+public func addStudent(entry: CSVFields) {
+    return addStudent(eduid: entry.eduid, lastName: entry.lastName,
+                      firstName: entry.firstName, middleName: entry.middleName)
+}
+
+public class Student: NSManagedObject, Identifiable {
+    
+//    @nonobjc public class func fetchRequest() -> NSFetchRequest<Student> {
+//        return NSFetchRequest<Student>(entityName: "Student")
+//    }
+
+    @NSManaged public var eduid: Int
+    @NSManaged public var lastName: String
+    @NSManaged public var firstName: String
+    @NSManaged public var middleName: String?
+    
+    static func getAllStudents() -> NSFetchRequest<Student> {
+        let request: NSFetchRequest<Student> = NSFetchRequest(entityName: "Student")
+        
+        let primarySortDescriptor = NSSortDescriptor(key: "lastName", ascending: true)
+        let secondarySortDescriptor = NSSortDescriptor(key: "firstName", ascending: true)
+        
+        request.sortDescriptors = [primarySortDescriptor, secondarySortDescriptor]
+        
+        return request
+    }
 }
 
 func renameFile(inputPath: String, outputPath: String) {
