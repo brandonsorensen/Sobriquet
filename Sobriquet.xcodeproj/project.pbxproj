@@ -11,12 +11,14 @@
 		CA1DEAF9241AD45800092739 /* InputFileUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAF8241AD45800092739 /* InputFileUIView.swift */; };
 		CA1DEAFD241AD72300092739 /* openFileDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAFC241AD72300092739 /* openFileDialog.swift */; };
 		CA1DEB01241ADED000092739 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA1DEB00241ADED000092739 /* Assets.xcassets */; };
+		CA1DEB04241B905300092739 /* default-enrollment-03-2020.csv in Resources */ = {isa = PBXBuildFile; fileRef = CA1DEB03241B905300092739 /* default-enrollment-03-2020.csv */; };
+		CA3B9F34241BB42B000E497B /* EnrollmentModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA3B9F32241BB42B000E497B /* EnrollmentModel.xcdatamodeld */; };
 		CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA6F241A48DE00075238 /* AppDelegate.swift */; };
 		CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA71241A48DE00075238 /* ContentView.swift */; };
 		CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA76241A48E100075238 /* Preview Assets.xcassets */; };
 		CAB4AA7A241A48E100075238 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA78241A48E100075238 /* Main.storyboard */; };
 		CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */; };
-		CAB4AA85241A7C2C00075238 /* sort-files.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA84241A7C2C00075238 /* sort-files.swift */; };
+		CAB4AA85241A7C2C00075238 /* rename-files.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA84241A7C2C00075238 /* rename-files.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		CA1DEAFC241AD72300092739 /* openFileDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = openFileDialog.swift; sourceTree = "<group>"; };
 		CA1DEB00241ADED000092739 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sobriquet-logo.png"; path = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/Sobriquet/sobriquet-logo.png"; sourceTree = "<absolute>"; };
+		CA1DEB03241B905300092739 /* default-enrollment-03-2020.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-enrollment-03-2020.csv"; sourceTree = "<group>"; };
+		CA3B9F33241BB42B000E497B /* EnrollmentModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EnrollmentModel.xcdatamodel; sourceTree = "<group>"; };
 		CAB4AA6C241A48DE00075238 /* Sobriquet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobriquet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAB4AA6F241A48DE00075238 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CAB4AA71241A48DE00075238 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -33,7 +37,7 @@
 		CAB4AA7B241A48E100075238 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sobriquet.entitlements; sourceTree = "<group>"; };
 		CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentButtonsUIView.swift; sourceTree = "<group>"; };
-		CAB4AA84241A7C2C00075238 /* sort-files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "sort-files.swift"; sourceTree = "<group>"; };
+		CAB4AA84241A7C2C00075238 /* rename-files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "rename-files.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,18 +70,20 @@
 		CAB4AA6E241A48DE00075238 /* Sobriquet */ = {
 			isa = PBXGroup;
 			children = (
+				CA1DEB03241B905300092739 /* default-enrollment-03-2020.csv */,
 				CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */,
 				CAB4AA6F241A48DE00075238 /* AppDelegate.swift */,
 				CAB4AA71241A48DE00075238 /* ContentView.swift */,
 				CA1DEAF8241AD45800092739 /* InputFileUIView.swift */,
-				CA1DEAF4241A8DC400092739 /* OutputFileView.swift */,
 				CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */,
+				CA1DEAF4241A8DC400092739 /* OutputFileView.swift */,
 				CAB4AA78241A48E100075238 /* Main.storyboard */,
 				CAB4AA7B241A48E100075238 /* Info.plist */,
 				CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */,
+				CA3B9F32241BB42B000E497B /* EnrollmentModel.xcdatamodeld */,
 				CA1DEB00241ADED000092739 /* Assets.xcassets */,
 				CAB4AA75241A48E100075238 /* Preview Content */,
-				CAB4AA84241A7C2C00075238 /* sort-files.swift */,
+				CAB4AA84241A7C2C00075238 /* rename-files.swift */,
 				CA1DEAFC241AD72300092739 /* openFileDialog.swift */,
 			);
 			path = Sobriquet;
@@ -152,6 +158,7 @@
 				CAB4AA7A241A48E100075238 /* Main.storyboard in Resources */,
 				CA1DEB01241ADED000092739 /* Assets.xcassets in Resources */,
 				CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */,
+				CA1DEB04241B905300092739 /* default-enrollment-03-2020.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,7 +174,8 @@
 				CA1DEAF5241A8DC400092739 /* OutputFileView.swift in Sources */,
 				CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */,
 				CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */,
-				CAB4AA85241A7C2C00075238 /* sort-files.swift in Sources */,
+				CA3B9F34241BB42B000E497B /* EnrollmentModel.xcdatamodeld in Sources */,
+				CAB4AA85241A7C2C00075238 /* rename-files.swift in Sources */,
 				CA1DEAFD241AD72300092739 /* openFileDialog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -367,6 +375,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		CA3B9F32241BB42B000E497B /* EnrollmentModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				CA3B9F33241BB42B000E497B /* EnrollmentModel.xcdatamodel */,
+			);
+			currentVersion = CA3B9F33241BB42B000E497B /* EnrollmentModel.xcdatamodel */;
+			path = EnrollmentModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = CAB4AA64241A48DE00075238 /* Project object */;
 }

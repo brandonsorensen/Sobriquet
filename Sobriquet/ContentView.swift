@@ -40,7 +40,7 @@ struct ContentView: View {
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
             
-            Button(action: {}) {
+            Button(action: {readCSV(csvURL: "default-enrollment-03-2020", encoding: .utf8) }) {
                 Text("Start").frame(maxWidth: 100, maxHeight: 200)
             }.buttonStyle(StartButtonStyle())
         }

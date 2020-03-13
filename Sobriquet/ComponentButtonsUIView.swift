@@ -46,7 +46,7 @@ struct ComponentButtonsUIView: View {
     
     let labels = [
         "Last Name", "First Name", "Middle Name",
-        "Middle Initial", "EDUID", "Wildcard (*)"
+        "Middle Initial", "EDUID"
     ]
     
     var body: some View {
