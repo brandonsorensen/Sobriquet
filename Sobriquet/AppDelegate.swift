@@ -29,6 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.contentView = NSHostingView(rootView: contentView)
         window.makeKeyAndOrderFront(nil)
         window.title = "Sobriquet"
+        window.styleMask.remove([ .resizable ])
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
