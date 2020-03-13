@@ -18,7 +18,6 @@ struct OutputFileView: View {
         VStack {
             HStack {
                     Text("Output Format:").font(.subheadline)
-                        .padding(.leading, 10)
                         .padding(.bottom, padSize)
                 TextField("Enter output format.", text: $outputFormat)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -27,7 +26,6 @@ struct OutputFileView: View {
         
             HStack {
                 Text("Output Path:").font(.subheadline)
-                    .padding(.leading, 10)
                     .padding(.trailing, 18)
                     .padding(.bottom, padSize)
 
