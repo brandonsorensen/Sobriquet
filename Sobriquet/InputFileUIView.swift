@@ -15,16 +15,15 @@ struct InputFileUIView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Picker(selection: $selectedLocation, label: Text("") ) {
-            Text("-- EDUID Location --").tag(0)
+            Picker(selection: $selectedLocation, label: Text("EDUID Location:")
+                .padding(.trailing, 3)) {
+            Text("-- Select Location --").tag(0)
             Text("File Name").tag(1)
             Text("File Contents").tag(2)
-                }.labelsHidden()
-                .frame(maxWidth: 166)
+                }.frame(maxWidth: 300)
             
             HStack {
                 Text("Input Path:").font(.subheadline)
-                .padding(.leading, 10)
                 .padding(.trailing, 27)
 
                 TextField("Enter path to files.", text: $inputPath).textFieldStyle(RoundedBorderTextFieldStyle())
