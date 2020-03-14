@@ -63,4 +63,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
+   
+}
+
+extension NSManagedObjectContext {
+    var coreDataIsEmpty: Bool {
+        let appDelegate = (NSApplication.shared.delegate) as! AppDelegate
+        let managedObjectContext = appDelegate.persistentContainer.viewContext
+        
+        do {
+           let request: NSFetchRequest<Student> = NSFetchRequest(entityName: "Student")
+           let count  = try managedObjectContext.count(for: request)
+           return count == 0
+        } catch {
+           return true
+        }
+    }
 }

@@ -80,10 +80,6 @@ public func addStudent(entry: CSVFields) {
 }
 
 public class Student: NSManagedObject, Identifiable {
-    
-//    @nonobjc public class func fetchRequest() -> NSFetchRequest<Student> {
-//        return NSFetchRequest<Student>(entityName: "Student")
-//    }
 
     @NSManaged public var eduid: Int
     @NSManaged public var lastName: String

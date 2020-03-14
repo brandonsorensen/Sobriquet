@@ -44,8 +44,8 @@ struct ContentView: View {
             
             Button(action: {
 //                addStudent(eduid: 100, lastName: "Sorensen", firstName: "Brandon", middleName: "Loyal");
-                print(self.Students)
-                
+//                print(self.Students)
+                print(self.managedObjectContext.coreDataIsEmpty)
             }) {
                 Text("Start").frame(maxWidth: 100, maxHeight: 200)
             }.buttonStyle(StartButtonStyle())
