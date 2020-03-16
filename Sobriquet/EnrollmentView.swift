@@ -115,7 +115,7 @@ struct Filter: View {
             Spacer()
             TextField("Filter students.", text: $searchText)
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            Button("Go", action: {})
+            Button("Filter", action: {})
        }
     }
 }

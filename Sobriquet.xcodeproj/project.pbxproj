@@ -82,15 +82,15 @@
 				CA550932241CE38E00476B08 /* CSVParser.swift */,
 				CA550935241D0A6C00476B08 /* EnrollmentView.swift */,
 				CA1DEAF8241AD45800092739 /* InputFileUIView.swift */,
+				CA1DEAFC241AD72300092739 /* openFileDialog.swift */,
 				CA1DEAF4241A8DC400092739 /* OutputFileView.swift */,
+				CAB4AA84241A7C2C00075238 /* rename-files.swift */,
 				CAB4AA78241A48E100075238 /* Main.storyboard */,
 				CAB4AA7B241A48E100075238 /* Info.plist */,
 				CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */,
 				CA3B9F32241BB42B000E497B /* EnrollmentModel.xcdatamodeld */,
 				CA1DEB00241ADED000092739 /* Assets.xcassets */,
 				CAB4AA75241A48E100075238 /* Preview Content */,
-				CAB4AA84241A7C2C00075238 /* rename-files.swift */,
-				CA1DEAFC241AD72300092739 /* openFileDialog.swift */,
 			);
 			path = Sobriquet;
 			sourceTree = "<group>";

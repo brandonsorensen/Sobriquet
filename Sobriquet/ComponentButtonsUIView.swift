@@ -21,11 +21,11 @@ extension String: Identifiable {
 }
 
 enum ComponentButtonType: String, CaseIterable {
-    case LAST_NAME = "Last Name";
-    case FIRST_NAME = "First Name";
-    case EDUID = "EDUID";
-    case MIDDLE_NAME = "Middle Name";
-    case MIDDLE_INITIAL = "Middle Initial";
+    case LAST_NAME = "%Last Name%";
+    case FIRST_NAME = "%First Name%";
+    case EDUID = "%EDUID%";
+    case MIDDLE_NAME = "%Middle Name%";
+    case MIDDLE_INITIAL = "%Middle Initial%";
 }
 
 struct ComponentButtonsUIView: View {
@@ -41,10 +41,11 @@ struct ComponentButtonsUIView: View {
 }
 
 struct ComponentButton: View {
+    @State private var hovered = false
     var type: ComponentButtonType
     
     struct ComponentButtonStyle: ViewModifier {
-        @State private var hovered = false
+        @Binding var hovered: Bool
         
         let unselectColor = Color(red: 76 / 255, green: 83 / 255, blue: 94 / 255)
         let selectedColor = Color(red: 119 / 255, green: 123 / 255, blue: 128 / 255)
@@ -59,16 +60,22 @@ struct ComponentButton: View {
                     .fixedSize()
                     .foregroundColor(self.hovered ? selectedColor : unselectColor)
             )
-                .onHover { _ in self.hovered.toggle() }
             .padding(.top, 50)
             .padding(.bottom, 50)
         }
     }
     
     var body: some View {
-        Text(self.type.rawValue)
-            .textStyle(ComponentButtonStyle())
+        var buttonString = self.type.rawValue
+        buttonString.removeLast()
+        buttonString.removeFirst()
+        
+        return Button(action: {}) {
+            Text(buttonString)
+            .textStyle(ComponentButtonStyle(hovered: $hovered))
             .onDrag { return NSItemProvider(object: self.type.rawValue as NSString) }
+        }.buttonStyle(PlainButtonStyle())
+         .onHover { _ in self.hovered.toggle() }
     }
 }
 

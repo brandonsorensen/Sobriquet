@@ -24,7 +24,7 @@ struct OutputFileView: View {
                 TextField("Enter output format.", text: $outputFormat)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.bottom, padSize)
-                .onDrop(of: ["String"], delegate: dropDelegate)
+                        .onDrop(of: ["String"], delegate: dropDelegate)
                 }
         
             HStack {
