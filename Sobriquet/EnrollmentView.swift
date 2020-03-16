@@ -29,6 +29,7 @@ struct EnrollmentCell: View {
 struct EnrollmentView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject private var student: Student
+    @Binding var searchText: String
     @State var loadRange: Range<Int> = 0..<100
     
 
@@ -36,7 +37,7 @@ struct EnrollmentView: View {
     var body: some View {
         VStack {
             Text("Enrollment").font(.subheadline)
-            Filter()
+            Filter(searchText: $searchText)
                 .padding(EdgeInsets(top: 0, leading: 0,
                                     bottom: 3, trailing: 0))
             
@@ -107,7 +108,7 @@ struct StudentScrollView: View {
 
 struct Filter: View {
     @EnvironmentObject private var student: Student
-    @State private var searchText: String = ""
+    @Binding var searchText: String
 
     var body: some View {
         HStack {

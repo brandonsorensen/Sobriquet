@@ -13,17 +13,17 @@ import CoreData
 
 struct ContentView: View {
     @State var showEnrollment: Bool = false
-//    let mainView = MainView(enrollmentViewState: $showEnrollment)
+    @State var searchFilter: String = ""
     
     var body: some View {
         HStack {
             HStack {
-                MainView(enrollmentViewState: $showEnrollment)
+                MainView(enrollmentViewState: $showEnrollment, text: searchFilter)
                 Divider().padding(EdgeInsets(top: 20, leading: 0,
                                              bottom: 20, trailing: 0
                 ))
                 if showEnrollment {
-                    EnrollmentView().frame(width: 333)
+                    EnrollmentView(searchText: $searchFilter).frame(width: 333)
                     .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                     .transition(.slide)
                 }
@@ -39,6 +39,17 @@ struct MainView: View {
     @State var showSheetView = false
     @State var outputFormat: String = ""
     @Binding var enrollmentViewState: Bool
+   
+    var searchText: String
+    var studentsRequest : FetchRequest<Student>
+    var students : FetchedResults<Student>{ studentsRequest.wrappedValue }
+
+    init(enrollmentViewState: Binding<Bool>, text: String) {
+        self._enrollmentViewState = enrollmentViewState
+        self.searchText = text
+        self.studentsRequest = FetchRequest(entity: Student.entity(), sortDescriptors: [], predicate:
+            NSPredicate(format: "lastName == %@", text))
+    }
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
