@@ -20,7 +20,28 @@ extension String: Identifiable {
     }
 }
 
+enum ComponentButtonType: String, CaseIterable {
+    case LAST_NAME = "Last Name";
+    case FIRST_NAME = "First Name";
+    case EDUID = "EDUID";
+    case MIDDLE_NAME = "Middle Name";
+    case MIDDLE_INITIAL = "Middle Initial";
+}
+
 struct ComponentButtonsUIView: View {
+    
+    var body: some View {
+         
+        HStack {
+            ForEach(ComponentButtonType.allCases, id: \.self) { button in
+                ComponentButton(type: button)
+            }
+        }
+    }
+}
+
+struct ComponentButton: View {
+    var type: ComponentButtonType
     
     struct ComponentButtonStyle: ViewModifier {
         @State private var hovered = false
@@ -44,18 +65,28 @@ struct ComponentButtonsUIView: View {
         }
     }
     
-    let labels = [
-        "Last Name", "First Name", "Middle Name",
-        "Middle Initial", "EDUID"
-    ]
-    
     var body: some View {
-         
-        HStack {
-            ForEach(0 ..< labels.count) { index in
-                Text(self.labels[index]).textStyle(ComponentButtonStyle())
+        Text(self.type.rawValue)
+            .textStyle(ComponentButtonStyle())
+            .onDrag { return NSItemProvider(object: self.type.rawValue as NSString) }
+    }
+}
+
+struct ComponentButtonDropDelegate: DropDelegate {
+    @Binding var outputFormat: String
+    
+    func performDrop(info: DropInfo) -> Bool {
+        if let item = info.itemProviders(for: ["NSString"]).first {
+            item.loadItem(forTypeIdentifier: "NSString", options: nil) { (componentString, error) in
+                self.outputFormat.append(componentString as! String)
             }
+            return true
         }
+        return false
+    }
+    
+    func validateDrop(info: DropInfo) -> Bool {
+        return info.hasItemsConforming(to: ["NSString"])
     }
 }
 

@@ -10,10 +10,34 @@ import SwiftUI
 import AppKit
 import CoreData
 
+
 struct ContentView: View {
+    @State var showEnrollment: Bool = false
+//    let mainView = MainView(enrollmentViewState: $showEnrollment)
+    
+    var body: some View {
+        HStack {
+            HStack {
+                MainView(enrollmentViewState: $showEnrollment)
+                Divider().padding(EdgeInsets(top: 20, leading: 0,
+                                             bottom: 20, trailing: 0
+                ))
+                if showEnrollment {
+                    EnrollmentView().frame(width: 333)
+                    .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                    .transition(.slide)
+                }
+            }
+        }
+    }
+}
+
+struct MainView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @FetchRequest(fetchRequest: Student.getAllStudents()) var Students:FetchedResults<Student>
     @State private var showPicker = false
+    @State var showSheetView = false
+    @Binding var enrollmentViewState: Bool
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
@@ -29,26 +53,24 @@ struct ContentView: View {
     }
     
     var body: some View {
-        
+
         VStack {
-            InputFileUIView()
+//            Image("AppIcon.appiconset.png")
+            InputFileUIView(enrollmentViewState: $enrollmentViewState)
                 .padding(.top, 30)
                 .frame(width: 800)
-            
+
             ComponentButtonsUIView().frame(width: 800)
-            
+
             OutputFileView()
                 .frame(width: 800)
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
-            
-            Button(action: {
-//                addStudent(eduid: 100, lastName: "Sorensen", firstName: "Brandon", middleName: "Loyal");
-//                print(self.Students)
-                print(self.managedObjectContext.coreDataIsEmpty)
-            }) {
-                Text("Start").frame(maxWidth: 100, maxHeight: 200)
+
+            Button(action: {}) {
+                Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
+
         }
     }
 }

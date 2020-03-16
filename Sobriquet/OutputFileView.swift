@@ -15,13 +15,16 @@ struct OutputFileView: View {
     @State var outputFormat: String = ""
     
     var body: some View {
-        VStack {
+        let dropDelegate = ComponentButtonDropDelegate(outputFormat: $outputFormat)
+        
+        return VStack {
             HStack {
                     Text("Output Format:").font(.subheadline)
                         .padding(.bottom, padSize)
                 TextField("Enter output format.", text: $outputFormat)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.bottom, padSize)
+                .onDrop(of: ["String"], delegate: dropDelegate)
                 }
         
             HStack {

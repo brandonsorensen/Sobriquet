@@ -32,6 +32,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.makeKeyAndOrderFront(nil)
         window.title = "Sobriquet"
         window.styleMask.remove([ .resizable ])
+        
+        if managedObjectContext.coreDataIsEmpty {
+            // TODO
+            do {
+                try loadDefaultEnrollment()
+            } catch CSVParser.ParserError.MalformedCSV {
+                print("Malformed CSV")
+            } catch CSVParser.ParserError.FileNotFound {
+                print("File Not Found")
+            } catch {
+                print("Unrecognized error \(error).")
+            }
+        }
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -63,7 +76,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
-   
+    
+    func loadDefaultEnrollment() throws {
+        guard let students = CSVParser.readCSV(csvURL: self.DEFAULT_ENROLLMENT, encoding: .utf8) else {
+            throw CSVParser.ParserError.MalformedCSV
+        }
+        
+        for student: CSVFields in students {
+            addStudent(entry: student)
+        }
+    }
 }
 
 extension NSManagedObjectContext {
@@ -78,5 +100,16 @@ extension NSManagedObjectContext {
         } catch {
            return true
         }
+    }
+    
+    /// Executes the given `NSBatchDeleteRequest` and directly merges the changes to bring the given managed object context up to date.
+    ///
+    /// - Parameter batchDeleteRequest: The `NSBatchDeleteRequest` to execute.
+    /// - Throws: An error if anything went wrong executing the batch deletion.
+    public func executeAndMergeChanges(using batchDeleteRequest: NSBatchDeleteRequest) throws {
+        batchDeleteRequest.resultType = .resultTypeObjectIDs
+        let result = try execute(batchDeleteRequest) as? NSBatchDeleteResult
+        let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: result?.result as? [NSManagedObjectID] ?? []]
+        NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self])
     }
 }

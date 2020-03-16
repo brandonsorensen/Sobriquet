@@ -13,6 +13,8 @@
 		CA1DEB01241ADED000092739 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA1DEB00241ADED000092739 /* Assets.xcassets */; };
 		CA1DEB04241B905300092739 /* default-enrollment.csv in Resources */ = {isa = PBXBuildFile; fileRef = CA1DEB03241B905300092739 /* default-enrollment.csv */; };
 		CA3B9F34241BB42B000E497B /* EnrollmentModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA3B9F32241BB42B000E497B /* EnrollmentModel.xcdatamodeld */; };
+		CA550934241CE5A700476B08 /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA550932241CE38E00476B08 /* CSVParser.swift */; };
+		CA550936241D0A6C00476B08 /* EnrollmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA550935241D0A6C00476B08 /* EnrollmentView.swift */; };
 		CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA6F241A48DE00075238 /* AppDelegate.swift */; };
 		CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA71241A48DE00075238 /* ContentView.swift */; };
 		CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA76241A48E100075238 /* Preview Assets.xcassets */; };
@@ -29,6 +31,8 @@
 		CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sobriquet-logo.png"; path = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/Sobriquet/sobriquet-logo.png"; sourceTree = "<absolute>"; };
 		CA1DEB03241B905300092739 /* default-enrollment.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-enrollment.csv"; sourceTree = "<group>"; };
 		CA3B9F33241BB42B000E497B /* EnrollmentModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EnrollmentModel.xcdatamodel; sourceTree = "<group>"; };
+		CA550932241CE38E00476B08 /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
+		CA550935241D0A6C00476B08 /* EnrollmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollmentView.swift; sourceTree = "<group>"; };
 		CAB4AA6C241A48DE00075238 /* Sobriquet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobriquet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAB4AA6F241A48DE00075238 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CAB4AA71241A48DE00075238 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -73,9 +77,11 @@
 				CA1DEB03241B905300092739 /* default-enrollment.csv */,
 				CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */,
 				CAB4AA6F241A48DE00075238 /* AppDelegate.swift */,
-				CAB4AA71241A48DE00075238 /* ContentView.swift */,
-				CA1DEAF8241AD45800092739 /* InputFileUIView.swift */,
 				CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */,
+				CAB4AA71241A48DE00075238 /* ContentView.swift */,
+				CA550932241CE38E00476B08 /* CSVParser.swift */,
+				CA550935241D0A6C00476B08 /* EnrollmentView.swift */,
+				CA1DEAF8241AD45800092739 /* InputFileUIView.swift */,
 				CA1DEAF4241A8DC400092739 /* OutputFileView.swift */,
 				CAB4AA78241A48E100075238 /* Main.storyboard */,
 				CAB4AA7B241A48E100075238 /* Info.plist */,
@@ -171,7 +177,9 @@
 			files = (
 				CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */,
 				CA1DEAF9241AD45800092739 /* InputFileUIView.swift in Sources */,
+				CA550934241CE5A700476B08 /* CSVParser.swift in Sources */,
 				CA1DEAF5241A8DC400092739 /* OutputFileView.swift in Sources */,
+				CA550936241D0A6C00476B08 /* EnrollmentView.swift in Sources */,
 				CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */,
 				CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */,
 				CA3B9F34241BB42B000E497B /* EnrollmentModel.xcdatamodeld in Sources */,
