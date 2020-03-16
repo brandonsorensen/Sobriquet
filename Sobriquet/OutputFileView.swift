@@ -12,7 +12,8 @@ import SwiftUI
 struct OutputFileView: View {
     let padSize = CGFloat(15)
     @State var outputPath: String = ""
-    @State var outputFormat: String = ""
+    @Binding var outputFormat: String
+//    @State var outputFormat: String = ""
     
     var body: some View {
         let dropDelegate = ComponentButtonDropDelegate(outputFormat: $outputFormat)
@@ -57,6 +58,6 @@ struct OutputFileView: View {
 
 struct OutputFileView_Previews: PreviewProvider {
     static var previews: some View {
-        OutputFileView()
+        OutputFileView(outputFormat: .constant("%Last Name%_%First Name%"))
     }
 }

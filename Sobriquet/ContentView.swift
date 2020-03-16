@@ -37,6 +37,7 @@ struct MainView: View {
     @FetchRequest(fetchRequest: Student.getAllStudents()) var Students:FetchedResults<Student>
     @State private var showPicker = false
     @State var showSheetView = false
+    @State var outputFormat: String = ""
     @Binding var enrollmentViewState: Bool
     
     struct StartButtonStyle: ButtonStyle {
@@ -60,9 +61,10 @@ struct MainView: View {
                 .padding(.top, 30)
                 .frame(width: 800)
 
-            ComponentButtonsUIView().frame(width: 800)
+            ComponentButtonsUIView(outputFormat: $outputFormat)
+                .frame(width: 800)
 
-            OutputFileView()
+            OutputFileView(outputFormat: $outputFormat)
                 .frame(width: 800)
                 .padding(.leading, 30)
                 .padding(.trailing, 30)

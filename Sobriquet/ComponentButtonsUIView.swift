@@ -29,12 +29,13 @@ enum ComponentButtonType: String, CaseIterable {
 }
 
 struct ComponentButtonsUIView: View {
+    @Binding var outputFormat: String
     
     var body: some View {
          
         HStack {
             ForEach(ComponentButtonType.allCases, id: \.self) { button in
-                ComponentButton(type: button)
+                ComponentButton(outputFormat: self.$outputFormat, type: button)
             }
         }
     }
@@ -42,6 +43,8 @@ struct ComponentButtonsUIView: View {
 
 struct ComponentButton: View {
     @State private var hovered = false
+    @Binding var outputFormat: String
+    
     var type: ComponentButtonType
     
     struct ComponentButtonStyle: ViewModifier {
@@ -70,7 +73,7 @@ struct ComponentButton: View {
         buttonString.removeLast()
         buttonString.removeFirst()
         
-        return Button(action: {}) {
+        return Button(action: { self.outputFormat.append(self.type.rawValue) }) {
             Text(buttonString)
             .textStyle(ComponentButtonStyle(hovered: $hovered))
             .onDrag { return NSItemProvider(object: self.type.rawValue as NSString) }
@@ -99,6 +102,6 @@ struct ComponentButtonDropDelegate: DropDelegate {
 
 struct ComponentButtonsUIView_Previews: PreviewProvider {
     static var previews: some View {
-        ComponentButtonsUIView()
+        ComponentButtonsUIView(outputFormat: .constant("%Last Name%_%First Name%"))
     }
 }
