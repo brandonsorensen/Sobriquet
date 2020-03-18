@@ -13,17 +13,18 @@ import CoreData
 
 struct ContentView: View {
     @State var showEnrollment: Bool = false
-    @State var searchFilter: String = ""
+    @FetchRequest(fetchRequest: Student.getAllStudents()) var allStudents: FetchedResults<Student>
     
     var body: some View {
         HStack {
             HStack {
                 MainView(enrollmentViewState: $showEnrollment)
+                    .frame(minWidth: 600)
                 Divider().padding(EdgeInsets(top: 20, leading: 0,
                                              bottom: 20, trailing: 0
                 ))
                 if showEnrollment {
-                    EnrollmentView(text: searchFilter).frame(width: 333)
+                    EnrollmentView(allStudents: allStudents).frame(width: 333)
                     .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                     .transition(.slide)
                 }
@@ -34,7 +35,6 @@ struct ContentView: View {
 
 struct MainView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
-    @FetchRequest(fetchRequest: Student.getAllStudents()) var Students:FetchedResults<Student>
     @State private var showPicker = false
     @State var showSheetView = false
     @State var outputFormat: String = ""
@@ -58,14 +58,11 @@ struct MainView: View {
         VStack {
 //            Image("AppIcon.appiconset.png")
             InputFileUIView(enrollmentViewState: $enrollmentViewState)
-                .padding(.top, 30)
-                .frame(width: 800)
+                .padding(EdgeInsets(top: 30, leading: 30, bottom: 0, trailing: 30))
 
             ComponentButtonsUIView(outputFormat: $outputFormat)
-                .frame(width: 800)
 
             OutputFileView(outputFormat: $outputFormat)
-                .frame(width: 800)
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
 

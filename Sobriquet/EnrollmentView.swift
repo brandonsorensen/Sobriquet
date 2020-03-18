@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+let DEFAULT_MAX_PER_ENROLLMENT_VIEW = 100
+
 struct EnrollmentCell: View {
     var student: Student
     var columnSpacing = CGFloat(10)
@@ -29,23 +31,30 @@ struct EnrollmentCell: View {
 struct EnrollmentView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject private var student: Student
-//    @Binding var searchText: String
-    @State var loadRange: Range<Int> = 0..<100
-    @State var searchText: String = ""
     
-    var studentsRequest : FetchRequest<Student>
-    var students : FetchedResults<Student>{ studentsRequest.wrappedValue }
-
-    init(text: String) {
-        self._searchText = State(wrappedValue: text)
-        self.studentsRequest = FetchRequest(entity: Student.entity(), sortDescriptors: [], predicate:
-            NSPredicate(format: "lastName == %@", text))
+    @State var loadRange: Range<Int> //= 0..<DEFAULT_MAX_PER_ENROLLMENT_VIEW
+    @State var searchText: String = ""
+    @State var allStudents: [Student]
+    @State var viewableStudents: [Int]
+    
+    init(allStudents: FetchedResults<Student>) {
+        var asArray = [Student]()
+        
+        for student in allStudents {
+            asArray.append(student)
+        }
+        
+        self._allStudents = State(wrappedValue: asArray)
+        
+        self._viewableStudents = State(wrappedValue: Array(0..<asArray.count))
+        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, asArray.count))
     }
 
     var body: some View {
         VStack {
             Text("Enrollment").font(.subheadline)
-            Filter(searchText: $searchText)
+            Filter(allStudents: $allStudents, viewableStudents: $viewableStudents,
+                   searchText: $searchText, loadRange: $loadRange)
                 .padding(EdgeInsets(top: 0, leading: 0,
                                     bottom: 3, trailing: 0))
             
@@ -60,20 +69,20 @@ struct EnrollmentView: View {
             
             Divider()
             
-            StudentScrollView(loadRange: $loadRange)
+            StudentScrollView(allStudents: $allStudents, loadRange: $loadRange,
+                              viewableStudents: $viewableStudents)
             
             EnrollmentFooter(loadRange: $loadRange)
         }
         
     }
-    
 }
 
 struct StudentScrollView: View {
-    
+    @Binding var allStudents: [Student]
     @Binding var loadRange: Range<Int>
+    @Binding var viewableStudents: [Int]
     @Environment(\.colorScheme) var colorScheme
-    @FetchRequest(fetchRequest: Student.getAllStudents()) var Students:FetchedResults<Student>
     
     private let chunkSize = 100
     private let darkModeBackground = Color(red: 64 / 255,
@@ -84,21 +93,32 @@ struct StudentScrollView: View {
     var body: some View {
         ScrollView {
            VStack {
-               
-               ForEach(loadRange, id: \.self) { index in
-                   EnrollmentCell(student: self.Students[index])
+            // There were fewer than 100 elements returned by the search
+            if viewableStudents.count < DEFAULT_MAX_PER_ENROLLMENT_VIEW {
+               ForEach(viewableStudents, id: \.self) { index in
+                    EnrollmentCell(student: self.allStudents[index])
                 .padding(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3))
                }
-               
-               Spacer()
-               Button(action: loadMoreStudents) {
-                   Text("Load More")
-               }
-               .onAppear {
-                   DispatchQueue.global(qos: .background).asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 300)) {
-                       self.loadMoreStudents()
-                   }
-               }
+                
+           // There were more than 100 elements returned by the search
+            } else {
+                ForEach(loadRange, id: \.self) { index in
+                    EnrollmentCell(student: self.allStudents[self.viewableStudents[index]])
+                 .padding(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3))
+                }
+            }
+            
+            Spacer()
+            if self.viewableStudents.count > self.loadRange.upperBound {
+                Button(action: loadMoreStudents) {
+                    Text("Load More")
+                }
+                .onAppear {
+                    DispatchQueue.global(qos: .background).asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 300)) {
+                        self.loadMoreStudents()
+                    }
+                }
+            }
            }
         }
         .background(colorScheme == .dark ? darkModeBackground : Color.white)
@@ -110,13 +130,16 @@ struct StudentScrollView: View {
     }
     
     private func loadMoreStudents() {
-        self.loadRange = 0..<self.loadRange.upperBound + self.chunkSize
+        self.loadRange = 0..<min(self.loadRange.upperBound + self.chunkSize,
+                                 self.viewableStudents.count)
     }
 }
 
 struct Filter: View {
-//    @EnvironmentObject private var student: Student
+    @Binding var allStudents: [Student]
+    @Binding var viewableStudents: [Int]
     @Binding var searchText: String
+    @Binding var loadRange: Range<Int>
 
     var body: some View {
         HStack {
@@ -124,19 +147,61 @@ struct Filter: View {
             Spacer()
             TextField("Filter students.", text: $searchText)
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            Button("Filter", action: {})
+            Button("Filter", action: updateViewableIndex)
        }
+    }
+    
+    private func updateViewableIndex() {
+        var filteredIndices = [Int]()
+        var names: [String]
+        var student: Student
+        var keepStudent: Bool
+        
+        for index in 0..<allStudents.count {
+            student = allStudents[index]
+            keepStudent = false
+            names = searchText.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .whitespaces)
+        
+            for name in names {
+                if containsString(student: student, text: name) {
+                    keepStudent = true
+                }
+            }
+            
+            if keepStudent {
+                filteredIndices.append(index)
+            }
+        }
+        
+        loadRange = 0..<DEFAULT_MAX_PER_ENROLLMENT_VIEW
+        viewableStudents = filteredIndices
+    }
+    
+    private func containsString(student: Student, text: String) -> Bool {
+        let lower = text.lowercased()
+        var contains = false
+        
+        contains = (
+            student.lastName.lowercased().contains(lower) ||
+                student.firstName.lowercased().contains(lower) ||
+                String(student.eduid).lowercased().contains(lower)
+        )
+        
+        if let middle = student.middleName {
+            contains = contains || middle.lowercased().contains(text)
+        }
+        
+        return contains
     }
 }
 
 struct EnrollmentFooter: View {
-    @FetchRequest(fetchRequest: Student.getAllStudents()) var Students:FetchedResults<Student>
     @Binding var loadRange: Range<Int>
     
     var body: some View {
         HStack {
             // Load All Button
-            Button(action: { self.loadRange = 0..<self.Students.count }) {
+            Button(action: { }) {
                 Text("Load All")
                 Image("refresh-icon")
                 .resizable()
@@ -177,9 +242,9 @@ struct EnrollmentFooter: View {
     }
 }
 
-struct EnrollmentView_Previews: PreviewProvider {
-    static var previews: some View {
-        EnrollmentFooter(loadRange: .constant(0..<100))
-//        Filter()
-    }
-}
+//struct EnrollmentView_Previews: PreviewProvider {
+//    @FetchRequest
+//    static var previews: some View {
+//        EnrollmentView(allStudents: )
+//    }
+//}
