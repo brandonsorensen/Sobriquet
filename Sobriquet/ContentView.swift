@@ -14,22 +14,40 @@ import CoreData
 struct ContentView: View {
     @State var showEnrollment: Bool = false
     @FetchRequest(fetchRequest: Student.getAllStudents()) var allStudents: FetchedResults<Student>
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack {
+        VStack {
+            Spacer()
+            
+            Image("sobriquet-text")
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .rotationEffect(.degrees(-10))
+            .padding(EdgeInsets(top: 45, leading: 0, bottom: 0, trailing: 0))
+            .frame(maxHeight: 200)
+            .foregroundColor(colorScheme == .dark ? .orange : .black)
+            .shadow(radius: 10)
+            
             HStack {
-                MainView(enrollmentViewState: $showEnrollment)
-                    .frame(minWidth: 600)
-                Divider().padding(EdgeInsets(top: 20, leading: 0,
-                                             bottom: 20, trailing: 0
-                ))
-                if showEnrollment {
-                    EnrollmentView(allStudents: allStudents).frame(width: 333)
-                    .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                    .transition(.slide)
+                HStack {
+                    MainView(enrollmentViewState: $showEnrollment)
+                        .frame(minWidth: 700)
+                    Divider().padding(EdgeInsets(top: 20, leading: 0,
+                                                 bottom: 20, trailing: 0
+                    ))
+                    if showEnrollment {
+                        EnrollmentView(allStudents: allStudents).frame(width: 333)
+                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                        .transition(.slide)
+                    }
                 }
             }
-        }
+            
+            Spacer()
+            
+        }.frame(minHeight: 600)
     }
 }
 
@@ -38,6 +56,7 @@ struct MainView: View {
     @State private var showPicker = false
     @State var showSheetView = false
     @State var outputFormat: String = ""
+    @State var eduidLocation: Int = 0
     @Binding var enrollmentViewState: Bool
     
     struct StartButtonStyle: ButtonStyle {
@@ -50,6 +69,7 @@ struct MainView: View {
                 .scaleEffect(isPressed ? 1.4 : 1.0)
                 .cornerRadius(6.0)
                 .padding()
+                .disableAutocorrection(true)
         }
     }
     
@@ -57,7 +77,7 @@ struct MainView: View {
 
         VStack {
 //            Image("AppIcon.appiconset.png")
-            InputFileUIView(enrollmentViewState: $enrollmentViewState)
+            InputFileUIView(enrollmentViewState: $enrollmentViewState, eduidLocation: $eduidLocation)
                 .padding(EdgeInsets(top: 30, leading: 30, bottom: 0, trailing: 30))
 
             ComponentButtonsUIView(outputFormat: $outputFormat)
@@ -69,6 +89,7 @@ struct MainView: View {
             Button(action: {}) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
+            .disabled(eduidLocation == 0)
 
         }
     }

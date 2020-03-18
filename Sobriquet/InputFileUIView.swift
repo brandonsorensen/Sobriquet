@@ -12,10 +12,11 @@ struct InputFileUIView: View {
     
     @State private var selectedLocation = 0
     @Binding var enrollmentViewState: Bool
+    @Binding var eduidLocation: Int
     
     var body: some View {
         VStack {
-            TopLineView(enrollmentViewState: $enrollmentViewState)
+            TopLineView(selectedLocation: $eduidLocation, enrollmentViewState: $enrollmentViewState)
             InputPathBar()
         }
     }
@@ -50,7 +51,7 @@ struct InputPathBar: View {
 }
 
 struct TopLineView: View {
-    @State private var selectedLocation = 0
+    @Binding var selectedLocation: Int
     @Binding var enrollmentViewState: Bool
     
     var body: some View {
@@ -90,6 +91,6 @@ struct TopLineView: View {
 
 struct InputFileUIView_Previews: PreviewProvider {
     static var previews: some View {
-        InputFileUIView(enrollmentViewState: .constant(false))
+        InputFileUIView(enrollmentViewState: .constant(false), eduidLocation: .constant(0))
     }
 }
