@@ -13,26 +13,29 @@ import CoreData
 
 struct ContentView: View {
     @State var showEnrollment: Bool = false
+    @State private var showLogo: Bool = true
     @FetchRequest(fetchRequest: Student.getAllStudents()) var allStudents: FetchedResults<Student>
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack {
             Spacer()
-            
-            Image("sobriquet-text")
-            .renderingMode(.template)
-            .resizable()
-            .scaledToFit()
-            .rotationEffect(.degrees(-10))
-            .padding(EdgeInsets(top: 45, leading: 0, bottom: 0, trailing: 0))
-            .frame(maxHeight: 200)
-            .foregroundColor(colorScheme == .dark ? .orange : .black)
-            .shadow(radius: 10)
-            
+            if showLogo {
+                Image("sobriquet-text")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .rotationEffect(.degrees(-7))
+                .padding(EdgeInsets(top: 45, leading: 0, bottom: 0, trailing: 0))
+                .frame(maxHeight: 200)
+                .foregroundColor(colorScheme == .dark ? .orange : .black)
+                .shadow(radius: 10)
+
+            }
+                        
             HStack {
                 HStack {
-                    MainView(enrollmentViewState: $showEnrollment)
+                    MainView(enrollmentViewState: $showEnrollment, showLogo: $showLogo)
                         .frame(minWidth: 700)
                     Divider().padding(EdgeInsets(top: 20, leading: 0,
                                                  bottom: 20, trailing: 0
@@ -58,6 +61,7 @@ struct MainView: View {
     @State var outputFormat: String = ""
     @State var eduidLocation: Int = 0
     @Binding var enrollmentViewState: Bool
+    @Binding var showLogo: Bool
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
@@ -76,7 +80,6 @@ struct MainView: View {
     var body: some View {
 
         VStack {
-//            Image("AppIcon.appiconset.png")
             InputFileUIView(enrollmentViewState: $enrollmentViewState, eduidLocation: $eduidLocation)
                 .padding(EdgeInsets(top: 30, leading: 30, bottom: 0, trailing: 30))
 
@@ -86,7 +89,7 @@ struct MainView: View {
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
 
-            Button(action: {}) {
+            Button(action: { self.showLogo.toggle() }) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)

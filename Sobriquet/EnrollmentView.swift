@@ -89,6 +89,7 @@ struct StudentScrollView: View {
                                            green: 65 / 255,
                                            blue: 67 / 255)
     private let textCornerRadius = CGFloat(7)
+    private let fromEdgeRadius = CGFloat(5)
     
     var body: some View {
         ScrollView {
@@ -104,7 +105,8 @@ struct StudentScrollView: View {
             } else {
                 ForEach(loadRange, id: \.self) { index in
                     EnrollmentCell(student: self.allStudents[self.viewableStudents[index]])
-                 .padding(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3))
+                        .padding(EdgeInsets(top: 0, leading: self.fromEdgeRadius,
+                                            bottom: 0, trailing: self.fromEdgeRadius))
                 }
             }
             
@@ -145,13 +147,15 @@ struct Filter: View {
         HStack {
             Text("Search:")
             Spacer()
-            TextField("Filter students.", text: $searchText)
+            TextField("Filter students.", text: $searchText, onCommit: updateViewableIndex)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             Button("Filter", action: updateViewableIndex)
        }
     }
     
     private func updateViewableIndex() {
+        if searchText.isEmpty { return }
+        
         var filteredIndices = [Int]()
         var names: [String]
         var student: Student
@@ -196,6 +200,8 @@ struct Filter: View {
 }
 
 struct EnrollmentFooter: View {
+    @State var showAlert: Bool = false
+    @State var activeAlert: CSVParser.ParserError = .Unknown
     @Binding var loadRange: Range<Int>
     
     var body: some View {
@@ -212,7 +218,7 @@ struct EnrollmentFooter: View {
             Spacer()
 
             // Update DB button
-            Button(action: {}) {
+            Button(action: updateStudents) {
                 VStack {
                     Text("Update")
                     Text("Database")
@@ -238,6 +244,59 @@ struct EnrollmentFooter: View {
                 .renderingMode(.template)
                 .frame(width: 20, height: 20)
             }.buttonStyle(PlainButtonStyle())
+        }.alert(isPresented: $showAlert) {
+            switch activeAlert {
+            case .FileNotFound:
+                return Alert(title: Text("File Not Found"), message: Text("Could not find file."),
+                             dismissButton: .default(Text("OK")))
+            case .MalformedCSV:
+                return Alert(title: Text("Malformed CSV"),
+                             message: Text("Ensure the CSV file has the right encoding and format: Last Name, First Name, Middle Name, EDUID"),
+                             dismissButton: .default(Text("OK")))
+            case .Unknown:
+                return Alert(title: Text("Unknown error."))
+            }
+        }
+    }
+    
+    func fileDialog() -> NSOpenPanel {
+        let fileDialog = NSOpenPanel()
+
+        fileDialog.prompt = "Select path"
+        fileDialog.worksWhenModal = true
+        fileDialog.canChooseDirectories = false
+        fileDialog.canChooseFiles = true
+        fileDialog.canCreateDirectories = false
+        fileDialog.allowsMultipleSelection = false
+        
+        return fileDialog
+    }
+    
+    func updateStudents() {
+        let fileDialog = self.fileDialog()
+        fileDialog.begin { response in
+            if response == .OK {
+                let selectedPath = fileDialog.url!.path
+                if !selectedPath.isEmpty {
+                    do {
+                        if let fields: [CSVFields] = try CSVParser.readCSV(csvURL: selectedPath, encoding: .utf8, inBundle: false) {
+                            for field in fields {
+                                print(field)
+                            }
+                        }
+                    } catch CSVParser.ParserError.FileNotFound {
+                        self.activeAlert = .FileNotFound
+                        self.showAlert.toggle()
+                    } catch CSVParser.ParserError.MalformedCSV{
+                        self.activeAlert = .MalformedCSV
+                        self.showAlert.toggle()
+                    } catch {
+                        self.activeAlert = .Unknown
+                        self.showAlert.toggle()
+                    }
+                }
+            }
+            fileDialog.close()
         }
     }
 }

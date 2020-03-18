@@ -13,7 +13,6 @@ struct OutputFileView: View {
     let padSize = CGFloat(15)
     @State var outputPath: String = ""
     @Binding var outputFormat: String
-//    @State var outputFormat: String = ""
     
     var body: some View {
         let dropDelegate = ComponentButtonDropDelegate(outputFormat: $outputFormat)

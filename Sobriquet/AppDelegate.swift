@@ -77,7 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func loadDefaultEnrollment() throws {
-        guard let students = CSVParser.readCSV(csvURL: self.DEFAULT_ENROLLMENT, encoding: .utf8) else {
+        guard let students = try CSVParser.readCSV(csvURL: self.DEFAULT_ENROLLMENT, encoding: .utf8) else {
             throw CSVParser.ParserError.MalformedCSV
         }
         
