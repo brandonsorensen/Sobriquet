@@ -63,8 +63,7 @@ struct ComponentButton: View {
                     .fixedSize()
                     .foregroundColor(self.hovered ? selectedColor : unselectColor)
             )
-            .padding(.top, 50)
-            .padding(.bottom, 50)
+            .padding(EdgeInsets(top: 50, leading: 0, bottom: 50, trailing: 0))
         }
     }
     
