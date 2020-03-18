@@ -18,12 +18,12 @@ struct ContentView: View {
     var body: some View {
         HStack {
             HStack {
-                MainView(enrollmentViewState: $showEnrollment, text: searchFilter)
+                MainView(enrollmentViewState: $showEnrollment)
                 Divider().padding(EdgeInsets(top: 20, leading: 0,
                                              bottom: 20, trailing: 0
                 ))
                 if showEnrollment {
-                    EnrollmentView(searchText: $searchFilter).frame(width: 333)
+                    EnrollmentView(text: searchFilter).frame(width: 333)
                     .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                     .transition(.slide)
                 }
@@ -39,17 +39,6 @@ struct MainView: View {
     @State var showSheetView = false
     @State var outputFormat: String = ""
     @Binding var enrollmentViewState: Bool
-   
-    var searchText: String
-    var studentsRequest : FetchRequest<Student>
-    var students : FetchedResults<Student>{ studentsRequest.wrappedValue }
-
-    init(enrollmentViewState: Binding<Bool>, text: String) {
-        self._enrollmentViewState = enrollmentViewState
-        self.searchText = text
-        self.studentsRequest = FetchRequest(entity: Student.entity(), sortDescriptors: [], predicate:
-            NSPredicate(format: "lastName == %@", text))
-    }
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false

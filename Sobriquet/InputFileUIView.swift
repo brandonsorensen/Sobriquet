@@ -68,12 +68,12 @@ struct TopLineView: View {
             Button(action: { self.enrollmentViewState.toggle() }) {
                 HStack {
                     Image("enrollment_icon")
-                        .renderingMode(.original)
+                    .renderingMode(.template)
                     .resizable()
                     .frame(width: 25, height: 25, alignment: .trailing)
                     
                     Image("right-arrow-icon")
-//                   .renderingMode(.template)
+                   .renderingMode(.template)
                     .resizable()
                     .frame(width: 10, height: 30, alignment: .trailing)
                         .rotationEffect(.degrees(enrollmentViewState ? 180 : 0))

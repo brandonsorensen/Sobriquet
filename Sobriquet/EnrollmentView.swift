@@ -29,10 +29,18 @@ struct EnrollmentCell: View {
 struct EnrollmentView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject private var student: Student
-    @Binding var searchText: String
+//    @Binding var searchText: String
     @State var loadRange: Range<Int> = 0..<100
+    @State var searchText: String = ""
     
+    var studentsRequest : FetchRequest<Student>
+    var students : FetchedResults<Student>{ studentsRequest.wrappedValue }
 
+    init(text: String) {
+        self._searchText = State(wrappedValue: text)
+        self.studentsRequest = FetchRequest(entity: Student.entity(), sortDescriptors: [], predicate:
+            NSPredicate(format: "lastName == %@", text))
+    }
 
     var body: some View {
         VStack {
@@ -107,7 +115,7 @@ struct StudentScrollView: View {
 }
 
 struct Filter: View {
-    @EnvironmentObject private var student: Student
+//    @EnvironmentObject private var student: Student
     @Binding var searchText: String
 
     var body: some View {
@@ -145,10 +153,10 @@ struct EnrollmentFooter: View {
                     Text("Database")
                 }.offset(x: 3)
                 
-                Image("upload-icon")
+                Image("overwrite-icon")
                 .resizable()
                 .renderingMode(.template)
-                .frame(width: 20, height: 20, alignment: .leading)
+                .frame(width: 30, height: 30, alignment: .leading)
             }.buttonStyle(PlainButtonStyle())
                 .offset(x: -5)
             
