@@ -208,14 +208,23 @@ struct Filter: View {
 struct EnrollmentFooter: View {
     @State var showAlert: Bool = false
     @State var activeAlert: CSVParser.ParserError = .Unknown
+    @State var mostRecentDate: Date = Student.getMostRecentDate()
     @Binding var loadRange: Range<Int>
     @Binding var allStudents: [Student]
     @Binding var viewableStudents: [Int]
     
     var body: some View {
-        HStack {
+        let df = DateFormatter()
+        df.dateFormat = "MMM d, yy h:mm a"
+        
+        return HStack {
+            VStack(alignment: .leading) {
+                Text("Last Updated:")
+                Text(df.string(from: mostRecentDate)).font(.system(size: 10))
+            }
+            
             Spacer()
-            // Load All Button
+//             Load All Button
             Button(action: { }) {
                 Text("Load All")
                 Image("refresh-icon")
@@ -309,6 +318,7 @@ struct EnrollmentFooter: View {
                             
                             self.loadRange = 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, newRoster.count)
                             self.viewableStudents = Array(0..<newRoster.count)
+                            self.mostRecentDate = Date()
                             
                             newRoster.sort {
                                 if $0.lastName != $1.lastName {

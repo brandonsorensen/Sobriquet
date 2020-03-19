@@ -66,6 +66,19 @@ public class Student: NSManagedObject, Identifiable {
         let managedObjectContext = appDelegate.persistentContainer.viewContext
         try managedObjectContext.executeAndMergeChanges(using: batchDeleteRequest)
     }
+    
+    static func getMostRecentDate() -> Date {
+        let appDelegate = (NSApplication.shared.delegate) as! AppDelegate
+        let moc = appDelegate.persistentContainer.viewContext
+        var mostRecent: Date = Date(timeIntervalSince1970: 0)
+        
+        let request: NSFetchRequest<Student> = NSFetchRequest(entityName: "Student")
+        let students = try! moc.fetch(request)
+        for student in students {
+            mostRecent = max(student.dateAdded, mostRecent)
+        }
+        return mostRecent
+    }
 }
 
 func renameFile(inputPath: String, outputPath: String) {
