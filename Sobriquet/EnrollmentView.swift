@@ -157,7 +157,10 @@ struct Filter: View {
     }
     
     private func updateViewableIndex() {
-        if searchText.isEmpty { return }
+        if searchText.isEmpty {
+            viewableStudents = Array(0..<allStudents.count)
+            return
+        }
         
         var filteredIndices = [Int]()
         var names: [String]
