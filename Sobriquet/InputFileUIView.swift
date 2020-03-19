@@ -13,17 +13,18 @@ struct InputFileUIView: View {
     @State private var selectedLocation = 0
     @Binding var enrollmentViewState: Bool
     @Binding var eduidLocation: Int
+    @Binding var inputPath: String
     
     var body: some View {
         VStack {
             TopLineView(selectedLocation: $eduidLocation, enrollmentViewState: $enrollmentViewState)
-            InputPathBar()
+            InputPathBar(inputPath: $inputPath)
         }
     }
 }
 
 struct InputPathBar: View {
-    @State private var inputPath: String = ""
+    @Binding var inputPath: String
     
     var body: some View {
         HStack {
@@ -91,6 +92,7 @@ struct TopLineView: View {
 
 struct InputFileUIView_Previews: PreviewProvider {
     static var previews: some View {
-        InputFileUIView(enrollmentViewState: .constant(false), eduidLocation: .constant(0))
+        InputFileUIView(enrollmentViewState: .constant(false), eduidLocation: .constant(0),
+                        inputPath: .constant(""))
     }
 }

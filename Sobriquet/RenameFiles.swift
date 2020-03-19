@@ -15,9 +15,21 @@ enum PATH_STATUS {
     case NOTEXIST
 }
 
+func renameFilesInDir(inputPath: String, outputPath: String, outputFormat: String) {
+    do {
+        let files = try FileManager.default.contentsOfDirectory(atPath: inputPath)
+        for file in files {
+            print(file)
+        }
+    } catch {
+        print(error)
+    }
+}
+
 func renameFile(inputPath: String, outputPath: String, outputFormat: String) {
     switch checkPath(path: inputPath) {
     case .SUCCESS:
+        
         print("success")
     case .NOTADIR:
         print("not a directory")
@@ -26,7 +38,7 @@ func renameFile(inputPath: String, outputPath: String, outputFormat: String) {
     }
 }
 
-private func checkPath(path: String) -> PATH_STATUS {
+func checkPath(path: String) -> PATH_STATUS {
     let fileManager = FileManager.default
     var isDir : ObjCBool = false
     if fileManager.fileExists(atPath: path, isDirectory:&isDir) {

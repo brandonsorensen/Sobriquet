@@ -40,6 +40,8 @@ struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var showPicker = false
     @State var showSheetView = false
+    @State var inputPath: String = ""
+    @State var outputPath: String = ""
     @State var outputFormat: String = ""
     @State var eduidLocation: Int = 0
     @State var showLogo: Bool = true
@@ -75,16 +77,18 @@ struct MainView: View {
 
             }
                         
-            InputFileUIView(enrollmentViewState: $enrollmentViewState, eduidLocation: $eduidLocation)
+            InputFileUIView(enrollmentViewState: $enrollmentViewState, eduidLocation: $eduidLocation,
+                            inputPath: $inputPath)
                 .padding(EdgeInsets(top: 30, leading: 30, bottom: 0, trailing: 30))
 
             ComponentButtonsUIView(outputFormat: $outputFormat)
 
-            OutputFileView(outputFormat: $outputFormat)
+            OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat)
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
 
-            Button(action: { self.showLogo.toggle() }) {
+            Button(action: { renameFilesInDir(inputPath: self.inputPath, outputPath: self.outputPath,
+                                              outputFormat: self.outputFormat) } ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)

@@ -11,7 +11,7 @@ import SwiftUI
 
 struct OutputFileView: View {
     let padSize = CGFloat(15)
-    @State var outputPath: String = ""
+    @Binding var outputPath: String
     @Binding var outputFormat: String
     
     var body: some View {
@@ -38,6 +38,7 @@ struct OutputFileView: View {
                 
                 Button(action: {
                     let fileDialog = createFileDialog()
+          
                     fileDialog.begin { response in
                         if response == .OK {
                             let selectedPath = fileDialog.url!.path
@@ -57,6 +58,7 @@ struct OutputFileView: View {
 
 struct OutputFileView_Previews: PreviewProvider {
     static var previews: some View {
-        OutputFileView(outputFormat: .constant("%Last Name%_%First Name%"))
+        OutputFileView(outputPath: .constant("place/to/go"),
+                       outputFormat: .constant("%Last Name%_%First Name%"))
     }
 }
