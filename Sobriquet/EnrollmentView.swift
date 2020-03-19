@@ -44,10 +44,13 @@ struct EnrollmentView: View {
             asArray.append(student)
         }
         
-        self._allStudents = State(wrappedValue: asArray)
-        
-        self._viewableStudents = State(wrappedValue: Array(0..<asArray.count))
-        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, asArray.count))
+        self.init(allStudents: asArray)
+    }
+    
+    init(allStudents: [Student]) {
+        self._allStudents = State(wrappedValue: allStudents)
+        self._viewableStudents = State(wrappedValue: Array(0..<allStudents.count))
+        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, allStudents.count))
     }
 
     var body: some View {
@@ -72,9 +75,9 @@ struct EnrollmentView: View {
             StudentScrollView(allStudents: $allStudents, loadRange: $loadRange,
                               viewableStudents: $viewableStudents)
             
-            EnrollmentFooter(loadRange: $loadRange)
+            EnrollmentFooter(loadRange: $loadRange, allStudents: $allStudents,
+                             viewableStudents: $viewableStudents)
         }
-        
     }
 }
 
@@ -203,6 +206,8 @@ struct EnrollmentFooter: View {
     @State var showAlert: Bool = false
     @State var activeAlert: CSVParser.ParserError = .Unknown
     @Binding var loadRange: Range<Int>
+    @Binding var allStudents: [Student]
+    @Binding var viewableStudents: [Int]
     
     var body: some View {
         HStack {
@@ -244,18 +249,20 @@ struct EnrollmentFooter: View {
                 .renderingMode(.template)
                 .frame(width: 20, height: 20)
             }.buttonStyle(PlainButtonStyle())
-        }.alert(isPresented: $showAlert) {
-            switch activeAlert {
-            case .FileNotFound:
-                return Alert(title: Text("File Not Found"), message: Text("Could not find file."),
-                             dismissButton: .default(Text("OK")))
-            case .MalformedCSV:
-                return Alert(title: Text("Malformed CSV"),
-                             message: Text("Ensure the CSV file has the right encoding and format: Last Name, First Name, Middle Name, EDUID"),
-                             dismissButton: .default(Text("OK")))
-            case .Unknown:
-                return Alert(title: Text("Unknown error."))
-            }
+        }.alert(isPresented: $showAlert) { return alertSwitch(activeAlert: activeAlert) }
+    }
+    
+    func alertSwitch(activeAlert: CSVParser.ParserError) -> Alert {
+        switch activeAlert {
+        case .FileNotFound:
+            return Alert(title: Text("File Not Found"), message: Text("Could not find file."),
+                         dismissButton: .default(Text("OK")))
+        case .MalformedCSV:
+            return Alert(title: Text("Malformed CSV"),
+                         message: Text("Ensure the CSV file has the right encoding and format: Last Name, First Name, Middle Name, EDUID"),
+                         dismissButton: .default(Text("OK")))
+        case .Unknown:
+            return Alert(title: Text("Unknown error."))
         }
     }
     
@@ -273,16 +280,45 @@ struct EnrollmentFooter: View {
     }
     
     func updateStudents() {
+        
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        let moc = appDelegate.persistentContainer.viewContext
+        if !moc.coreDataIsEmpty {
+            do {
+                try Student.deleteAllStudents()
+            } catch {
+                self.activeAlert = .Unknown
+                self.showAlert.toggle()
+            }
+            
+        }
+        
+        var newRoster = [Student]()
+        
         let fileDialog = self.fileDialog()
         fileDialog.begin { response in
             if response == .OK {
                 let selectedPath = fileDialog.url!.path
                 if !selectedPath.isEmpty {
                     do {
-                        if let fields: [CSVFields] = try CSVParser.readCSV(csvURL: selectedPath, encoding: .utf8, inBundle: false) {
+                        if let fields: [CSVFields] = try CSVParser.readCSV(csvURL: selectedPath, encoding: .utf8,
+                                                                           inBundle: false) {
                             for field in fields {
-                                print(field)
+                                let student = Student(context: moc)
+                                student.eduid = field.eduid
+                                student.lastName = field.lastName
+                                student.firstName = field.firstName
+                                student.middleName  = field.middleName
+                                student.dateAdded = Date()
+                                
+                                try moc.save()
+                                
+                                newRoster.append(student)
                             }
+                            
+                            self.loadRange = 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, newRoster.count)
+                            self.viewableStudents = Array(0..<newRoster.count)
+                            self.allStudents = newRoster
                         }
                     } catch CSVParser.ParserError.FileNotFound {
                         self.activeAlert = .FileNotFound
