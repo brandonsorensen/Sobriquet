@@ -214,6 +214,7 @@ struct EnrollmentFooter: View {
     
     var body: some View {
         HStack {
+            Spacer()
             // Load All Button
             Button(action: { }) {
                 Text("Load All")
@@ -238,20 +239,7 @@ struct EnrollmentFooter: View {
                 .frame(width: 30, height: 30, alignment: .leading)
             }.buttonStyle(PlainButtonStyle())
                 .offset(x: -5)
-            
             Spacer()
-            
-            Button(action: {}) {
-                VStack {
-                    Text("Add")
-                    Text("Students")
-                }.offset(x: 3)
-                
-                Image("plus-icon")
-                .resizable()
-                .renderingMode(.template)
-                .frame(width: 20, height: 20)
-            }.buttonStyle(PlainButtonStyle())
         }.alert(isPresented: $showAlert) { return alertSwitch(activeAlert: activeAlert) }
     }
     
