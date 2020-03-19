@@ -13,55 +13,37 @@ import CoreData
 
 struct ContentView: View {
     @State var showEnrollment: Bool = false
-    @State private var showLogo: Bool = true
     @FetchRequest(fetchRequest: Student.getAllStudents()) var allStudents: FetchedResults<Student>
-    @Environment(\.colorScheme) var colorScheme
+    
     
     var body: some View {
-        VStack {
-            Spacer()
-            if showLogo {
-                Image("sobriquet-text")
-                .renderingMode(.template)
-                .resizable()
-                .scaledToFit()
-                .rotationEffect(.degrees(-7))
-                .padding(EdgeInsets(top: 45, leading: 0, bottom: 0, trailing: 0))
-                .frame(maxHeight: 200)
-                .foregroundColor(colorScheme == .dark ? .orange : .black)
-                .shadow(radius: 10)
-
-            }
-                        
+        
+        HStack {
             HStack {
-                HStack {
-                    MainView(enrollmentViewState: $showEnrollment, showLogo: $showLogo)
-                        .frame(minWidth: 700)
-                    Divider().padding(EdgeInsets(top: 20, leading: 0,
-                                                 bottom: 20, trailing: 0
-                    ))
-                    if showEnrollment {
-                        EnrollmentView(allStudents: allStudents).frame(width: 333)
-                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                        .transition(.slide)
-                    }
+                MainView(enrollmentViewState: $showEnrollment)
+                    .frame(minWidth: 700)
+                Divider().padding(EdgeInsets(top: 20, leading: 0,
+                                             bottom: 20, trailing: 0
+                ))
+                if showEnrollment {
+                    EnrollmentView(allStudents: allStudents).frame(width: 333)
+                    .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                    .transition(.slide)
                 }
             }
-            
-            Spacer()
-            
         }.frame(minHeight: 600)
     }
 }
 
 struct MainView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.colorScheme) var colorScheme
     @State private var showPicker = false
     @State var showSheetView = false
     @State var outputFormat: String = ""
     @State var eduidLocation: Int = 0
+    @State var showLogo: Bool = true
     @Binding var enrollmentViewState: Bool
-    @Binding var showLogo: Bool
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
@@ -80,6 +62,19 @@ struct MainView: View {
     var body: some View {
 
         VStack {
+            if showLogo {
+                Image("sobriquet-text")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .rotationEffect(.degrees(-7))
+                .padding(EdgeInsets(top: 40, leading: 0, bottom: 0, trailing: 0))
+                .frame(maxHeight: 200)
+                .foregroundColor(colorScheme == .dark ? .orange : .black)
+                .shadow(radius: 10)
+
+            }
+                        
             InputFileUIView(enrollmentViewState: $enrollmentViewState, eduidLocation: $eduidLocation)
                 .padding(EdgeInsets(top: 30, leading: 30, bottom: 0, trailing: 30))
 

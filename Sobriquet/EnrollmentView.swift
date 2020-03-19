@@ -224,7 +224,25 @@ struct EnrollmentFooter: View {
             }
             
             Spacer()
-//             Load All Button
+            
+            // Update DB button
+            Button(action: updateStudents) {
+                 VStack {
+                     Text("Update")
+                     Text("Database")
+                 }.offset(x: 3)
+                 
+                 Image("overwrite-icon")
+                 .resizable()
+                 .renderingMode(.template)
+                 .frame(width: 30, height: 30, alignment: .leading)
+            }.buttonStyle(PlainButtonStyle())
+             .offset(x: -5)
+            
+            
+            Spacer()
+
+            // Load All Button
             Button(action: { }) {
                 Text("Load All")
                 Image("refresh-icon")
@@ -233,21 +251,6 @@ struct EnrollmentFooter: View {
                 .frame(width: 20, height: 20, alignment: .leading)
             }.buttonStyle(PlainButtonStyle())
             
-            Spacer()
-
-            // Update DB button
-            Button(action: updateStudents) {
-                VStack {
-                    Text("Update")
-                    Text("Database")
-                }.offset(x: 3)
-                
-                Image("overwrite-icon")
-                .resizable()
-                .renderingMode(.template)
-                .frame(width: 30, height: 30, alignment: .leading)
-            }.buttonStyle(PlainButtonStyle())
-                .offset(x: -5)
             Spacer()
         }.alert(isPresented: $showAlert) { return alertSwitch(activeAlert: activeAlert) }
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA072F472423BE7300018CA0 /* Student.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA072F462423BE7300018CA0 /* Student.swift */; };
 		CA1DEAF5241A8DC400092739 /* OutputFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAF4241A8DC400092739 /* OutputFileView.swift */; };
 		CA1DEAF9241AD45800092739 /* InputFileUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAF8241AD45800092739 /* InputFileUIView.swift */; };
 		CA1DEAFD241AD72300092739 /* openFileDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1DEAFC241AD72300092739 /* openFileDialog.swift */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA072F462423BE7300018CA0 /* Student.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Student.swift; sourceTree = "<group>"; };
 		CA1DEAF4241A8DC400092739 /* OutputFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputFileView.swift; sourceTree = "<group>"; };
 		CA1DEAF8241AD45800092739 /* InputFileUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFileUIView.swift; sourceTree = "<group>"; };
 		CA1DEAFC241AD72300092739 /* openFileDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = openFileDialog.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				CA1DEAFC241AD72300092739 /* openFileDialog.swift */,
 				CA1DEAF4241A8DC400092739 /* OutputFileView.swift */,
 				CAB4AA84241A7C2C00075238 /* rename-files.swift */,
+				CA072F462423BE7300018CA0 /* Student.swift */,
 				CAB4AA78241A48E100075238 /* Main.storyboard */,
 				CAB4AA7B241A48E100075238 /* Info.plist */,
 				CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */,
@@ -178,6 +181,7 @@
 				CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */,
 				CA1DEAF9241AD45800092739 /* InputFileUIView.swift in Sources */,
 				CA550934241CE5A700476B08 /* CSVParser.swift in Sources */,
+				CA072F472423BE7300018CA0 /* Student.swift in Sources */,
 				CA1DEAF5241A8DC400092739 /* OutputFileView.swift in Sources */,
 				CA550936241D0A6C00476B08 /* EnrollmentView.swift in Sources */,
 				CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */,
