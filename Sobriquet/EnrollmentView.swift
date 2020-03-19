@@ -309,6 +309,14 @@ struct EnrollmentFooter: View {
                             
                             self.loadRange = 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, newRoster.count)
                             self.viewableStudents = Array(0..<newRoster.count)
+                            
+                            newRoster.sort {
+                                if $0.lastName != $1.lastName {
+                                    return $0.lastName < $1.lastName
+                                } else {
+                                    return $0.firstName < $1.firstName
+                                }
+                            }
                             self.allStudents = newRoster
                         }
                     } catch CSVParser.ParserError.FileNotFound {
