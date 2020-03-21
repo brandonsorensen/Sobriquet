@@ -17,6 +17,7 @@ struct ContentView: View {
     @State var studentMap = Dictionary<Int, Student>()
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .Unknown
+    @State var showRenameView = true
     
     init() {
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
@@ -47,24 +48,30 @@ struct ContentView: View {
     }
     
     var body: some View {
-        
-        HStack {
+        ZStack(alignment: .top) {
             HStack {
-                MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap)
-                    .frame(minWidth: 700)
-                Divider().padding(EdgeInsets(top: 20, leading: 0,
-                                             bottom: 20, trailing: 0
-                ))
-                if showEnrollment {
-                    EnrollmentView(allStudents: $allStudents).frame(width: 333)
-                    .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                    .transition(.slide)
+                HStack {
+                    MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap)
+                        .frame(minWidth: 700)
+                    Divider().padding(EdgeInsets(top: 20, leading: 0,
+                                                 bottom: 20, trailing: 0
+                    ))
+                    if showEnrollment {
+                        EnrollmentView(allStudents: $allStudents).frame(width: 333)
+                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                        .transition(.slide)
+                    }
                 }
+            }.frame(minHeight: 600)
+                .alert(isPresented: $showAlert) {
+                    return errorSwitch(error: alertType)
             }
-        }.frame(minHeight: 600)
-            .alert(isPresented: $showAlert) {
-                return errorSwitch(error: alertType)
+            
+            if showRenameView {
+                RenameView().frame(minWidth: 600, minHeight: 600)
+            }
         }
+
     }
     
     enum AlertType {

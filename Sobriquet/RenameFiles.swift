@@ -60,8 +60,8 @@ func renameFile(inputPath: String, outputPath: String, outputFormat: String,
     }
     
     if !outputFormat.hasSuffix(".pdf") { returnValue += ".pdf" }
-    print("Before \(outputFormat)")
-    print("After: \(returnValue)")
+    print("Before: \(outputFormat)")
+    print("Output: \(outputPath)/\(returnValue)")
 }
 
 func componentStringSwitch(value: String, student: Student) throws -> String {

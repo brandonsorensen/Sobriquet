@@ -23,7 +23,7 @@ class SobriquetTests: XCTestCase {
         let baseDir = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/"
         let inputDir = baseDir + "test-files"
         let outputDir = baseDir + "test-output"
-        let outputFormat = "%Last Name%_%First Name%_%Middle Initial%_test"
+        let outputFormat = "%Last Name%_%First Name%_%Last Name%_test"
         
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
         let moc = appDelegate.persistentContainer.viewContext
