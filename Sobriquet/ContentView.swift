@@ -13,25 +13,73 @@ import CoreData
 
 struct ContentView: View {
     @State var showEnrollment: Bool = false
-    @FetchRequest(fetchRequest: Student.getAllStudents()) var allStudents: FetchedResults<Student>
+    @State var allStudents: [Student] = [Student]()
+    @State var studentMap = Dictionary<Int, Student>()
+    @State var showAlert: Bool = false
+    @State var alertType: AlertType = .Unknown
     
+    init() {
+        let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
+        let moc = appDelegate.persistentContainer.viewContext
+        let studentRequest = Student.getAllStudents()
+        var map = Dictionary<Int, Student>()
+        
+        do {
+            self._allStudents = State(wrappedValue: try moc.fetch(studentRequest))
+        } catch {
+            do {
+                try appDelegate.loadDefaultEnrollment()
+            } catch CSVParser.ParserError.MalformedCSV {
+                self.alertType = .BadDefaultCsv
+                self.showAlert.toggle()
+            } catch {
+                self.alertType = .Unknown
+                self.showAlert.toggle()
+            }
+        }
+//        allStudents = students
+        
+        for student in allStudents {
+            map[student.eduid] = student
+        }
+        
+        self._studentMap = State(wrappedValue: map)
+    }
     
     var body: some View {
         
         HStack {
             HStack {
-                MainView(enrollmentViewState: $showEnrollment)
+                MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap)
                     .frame(minWidth: 700)
                 Divider().padding(EdgeInsets(top: 20, leading: 0,
                                              bottom: 20, trailing: 0
                 ))
                 if showEnrollment {
-                    EnrollmentView(allStudents: allStudents).frame(width: 333)
+                    EnrollmentView(allStudents: $allStudents).frame(width: 333)
                     .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                     .transition(.slide)
                 }
             }
         }.frame(minHeight: 600)
+            .alert(isPresented: $showAlert) {
+                return errorSwitch(error: alertType)
+        }
+    }
+    
+    enum AlertType {
+        case BadDefaultCsv
+        case Unknown
+    }
+    
+    func errorSwitch(error: AlertType) -> Alert {
+        switch error {
+        case .BadDefaultCsv:
+            return Alert(title: Text("Corrupted internal CSV file"),
+                  message: Text("The default CSV file has been corrupted."), dismissButton: .default(Text("OK")))
+        default:
+            return Alert(title: Text("Unknown error."))
+        }
     }
 }
 
@@ -46,6 +94,7 @@ struct MainView: View {
     @State var eduidLocation: Int = 0
     @State var showLogo: Bool = true
     @Binding var enrollmentViewState: Bool
+    @Binding var studentMap: Dictionary<Int, Student>
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
@@ -87,8 +136,11 @@ struct MainView: View {
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
 
-            Button(action: { renameFilesInDir(inputPath: self.inputPath, outputPath: self.outputPath,
-                                              outputFormat: self.outputFormat) } ) {
+            Button(action: {
+                renameFilesInDir(inputPath: self.inputPath, outputPath: self.outputPath,
+                                 outputFormat: self.outputFormat, students: self.studentMap)
+                
+            } ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)

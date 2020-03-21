@@ -9,48 +9,91 @@
 import Cocoa
 import Foundation
 
-enum PATH_STATUS {
-    case SUCCESS
-    case NOTADIR
-    case NOTEXIST
-}
-
-func renameFilesInDir(inputPath: String, outputPath: String, outputFormat: String) {
+func renameFilesInDir(inputPath: String, outputPath: String, outputFormat: String,
+                      students: Dictionary<Int, Student>) {
+    let start = DispatchTime.now()
+    let eduidRegex = try! NSRegularExpression(pattern: "[0-9]{7,9}")
+    let regex = try! NSRegularExpression(pattern: "%(eduid|last|first|middle)( (name|initial))?%")
+    
     do {
         let files = try FileManager.default.contentsOfDirectory(atPath: inputPath)
+        var count = 0
         for file in files {
-            print(file)
+            if count > 3 { break }
+            let result = eduidRegex.firstMatch(in: file, range: NSRange(location: 0, length: file.utf16.count))
+            let eduid = result.map {
+                Int(String(file[Range($0.range, in: file)!]))}!!
+            do {
+                try renameFile(inputPath: inputPath, outputPath: outputPath,
+                outputFormat: outputFormat, student: students[eduid]!)
+            } catch RenameError.NoOutputComponentError {
+                // TODO
+            } catch {
+                // TODO
+            }
+            
+            
+            count += 1
         }
     } catch {
         print(error)
     }
+    
+    let interval = DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds
+    print(interval / 1_000_000)
 }
 
-func renameFile(inputPath: String, outputPath: String, outputFormat: String) {
-    switch checkPath(path: inputPath) {
-    case .SUCCESS:
-        
-        print("success")
-    case .NOTADIR:
-        print("not a directory")
-    case .NOTEXIST:
-        print("does not exist")
+func renameFile(inputPath: String, outputPath: String, outputFormat: String,
+                student: Student) throws {
+    
+    var returnValue = outputFormat
+    var replacementValue: String
+    
+    for value in ComponentButtonType.allValues {
+        replacementValue = try componentStringSwitch(value: value, student: student)
+        returnValue = returnValue.replacingOccurrences(of: value, with: replacementValue)
     }
+    
+    if returnValue == outputFormat {
+        // There was no change
+        throw RenameError.NoOutputComponentError
+    }
+    
+    if !outputFormat.hasSuffix(".pdf") { returnValue += ".pdf" }
+    print("Before \(outputFormat)")
+    print("After: \(returnValue)")
 }
 
-func checkPath(path: String) -> PATH_STATUS {
-    let fileManager = FileManager.default
-    var isDir : ObjCBool = false
-    if fileManager.fileExists(atPath: path, isDirectory:&isDir) {
-        if isDir.boolValue {
-            // file exists and is a directory
-            return PATH_STATUS.SUCCESS
-        } else {
-            // file exists and is not a directory
-            return PATH_STATUS.NOTADIR
+func componentStringSwitch(value: String, student: Student) throws -> String {
+    var replacementValue: String = ""
+    
+    switch value.lowercased() {
+    case "%eduid%":
+        replacementValue = String(student.eduid)
+    case "%first name%":
+        replacementValue = student.firstName
+    case "%last name%":
+        replacementValue = student.lastName
+    case "%middle name%":
+        if let middle = student.middleName {
+            replacementValue = middle
         }
-    } else {
-        // file does not exist
-        return PATH_STATUS.NOTEXIST
+    case "%middle initial%":
+        if let middle = student.middleName {
+            if !middle.isEmpty {
+                replacementValue = String(middle.first!)
+            }
+        }
+    default:
+        throw RenameError.ComponentIterationError
     }
+    
+    return replacementValue
+}
+
+enum RenameError: Error {
+    case NoOutputComponentError
+    case UnknownOutputComponentError
+    case RepeatedComponentError
+    case ComponentIterationError
 }

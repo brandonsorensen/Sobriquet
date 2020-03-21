@@ -14,6 +14,8 @@
 		CA1DEB01241ADED000092739 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA1DEB00241ADED000092739 /* Assets.xcassets */; };
 		CA1DEB04241B905300092739 /* default-enrollment.csv in Resources */ = {isa = PBXBuildFile; fileRef = CA1DEB03241B905300092739 /* default-enrollment.csv */; };
 		CA3B9F34241BB42B000E497B /* EnrollmentModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA3B9F32241BB42B000E497B /* EnrollmentModel.xcdatamodeld */; };
+		CA4AD34D2423CE5E0098C5CB /* SobriquetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4AD34C2423CE5E0098C5CB /* SobriquetTests.swift */; };
+		CA4AD3552423CE8F0098C5CB /* TestRenameFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4AD3542423CE8F0098C5CB /* TestRenameFile.swift */; };
 		CA550934241CE5A700476B08 /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA550932241CE38E00476B08 /* CSVParser.swift */; };
 		CA550936241D0A6C00476B08 /* EnrollmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA550935241D0A6C00476B08 /* EnrollmentView.swift */; };
 		CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA6F241A48DE00075238 /* AppDelegate.swift */; };
@@ -23,6 +25,16 @@
 		CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */; };
 		CAB4AA85241A7C2C00075238 /* RenameFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA84241A7C2C00075238 /* RenameFiles.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CA4AD34F2423CE5E0098C5CB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAB4AA64241A48DE00075238 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CAB4AA6B241A48DE00075238;
+			remoteInfo = Sobriquet;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		CA072F462423BE7300018CA0 /* Student.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Student.swift; sourceTree = "<group>"; };
@@ -34,6 +46,10 @@
 		CA1DEB03241B905300092739 /* default-enrollment.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-enrollment.csv"; sourceTree = "<group>"; };
 		CA3B9F33241BB42B000E497B /* EnrollmentModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EnrollmentModel.xcdatamodel; sourceTree = "<group>"; };
 		CA4AD3452423C7170098C5CB /* SobriquetRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SobriquetRelease.entitlements; sourceTree = "<group>"; };
+		CA4AD34A2423CE5E0098C5CB /* SobriquetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SobriquetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA4AD34C2423CE5E0098C5CB /* SobriquetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SobriquetTests.swift; sourceTree = "<group>"; };
+		CA4AD34E2423CE5E0098C5CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CA4AD3542423CE8F0098C5CB /* TestRenameFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRenameFile.swift; sourceTree = "<group>"; };
 		CA550932241CE38E00476B08 /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		CA550935241D0A6C00476B08 /* EnrollmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollmentView.swift; sourceTree = "<group>"; };
 		CAB4AA6C241A48DE00075238 /* Sobriquet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobriquet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -48,6 +64,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CA4AD3472423CE5E0098C5CB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CAB4AA69241A48DE00075238 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -58,10 +81,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA4AD34B2423CE5E0098C5CB /* SobriquetTests */ = {
+			isa = PBXGroup;
+			children = (
+				CA4AD3542423CE8F0098C5CB /* TestRenameFile.swift */,
+				CA4AD34C2423CE5E0098C5CB /* SobriquetTests.swift */,
+				CA4AD34E2423CE5E0098C5CB /* Info.plist */,
+			);
+			path = SobriquetTests;
+			sourceTree = "<group>";
+		};
 		CAB4AA63241A48DE00075238 = {
 			isa = PBXGroup;
 			children = (
 				CAB4AA6E241A48DE00075238 /* Sobriquet */,
+				CA4AD34B2423CE5E0098C5CB /* SobriquetTests */,
 				CAB4AA6D241A48DE00075238 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -70,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				CAB4AA6C241A48DE00075238 /* Sobriquet.app */,
+				CA4AD34A2423CE5E0098C5CB /* SobriquetTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,6 +146,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		CA4AD3492423CE5E0098C5CB /* SobriquetTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA4AD3512423CE5E0098C5CB /* Build configuration list for PBXNativeTarget "SobriquetTests" */;
+			buildPhases = (
+				CA4AD3462423CE5E0098C5CB /* Sources */,
+				CA4AD3472423CE5E0098C5CB /* Frameworks */,
+				CA4AD3482423CE5E0098C5CB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CA4AD3502423CE5E0098C5CB /* PBXTargetDependency */,
+			);
+			name = SobriquetTests;
+			productName = SobriquetTests;
+			productReference = CA4AD34A2423CE5E0098C5CB /* SobriquetTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		CAB4AA6B241A48DE00075238 /* Sobriquet */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CAB4AA7F241A48E100075238 /* Build configuration list for PBXNativeTarget "Sobriquet" */;
@@ -138,6 +191,10 @@
 				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Brandon Sorensen";
 				TargetAttributes = {
+					CA4AD3492423CE5E0098C5CB = {
+						CreatedOnToolsVersion = 11.3.1;
+						TestTargetID = CAB4AA6B241A48DE00075238;
+					};
 					CAB4AA6B241A48DE00075238 = {
 						CreatedOnToolsVersion = 11.3.1;
 					};
@@ -157,11 +214,19 @@
 			projectRoot = "";
 			targets = (
 				CAB4AA6B241A48DE00075238 /* Sobriquet */,
+				CA4AD3492423CE5E0098C5CB /* SobriquetTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		CA4AD3482423CE5E0098C5CB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CAB4AA6A241A48DE00075238 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -176,6 +241,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		CA4AD3462423CE5E0098C5CB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA4AD34D2423CE5E0098C5CB /* SobriquetTests.swift in Sources */,
+				CA4AD3552423CE8F0098C5CB /* TestRenameFile.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CAB4AA68241A48DE00075238 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -196,6 +270,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		CA4AD3502423CE5E0098C5CB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CAB4AA6B241A48DE00075238 /* Sobriquet */;
+			targetProxy = CA4AD34F2423CE5E0098C5CB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		CAB4AA78241A48E100075238 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -208,6 +290,46 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		CA4AD3522423CE5E0098C5CB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 7KB23NJMDW;
+				INFOPLIST_FILE = SobriquetTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = Myself.SobriquetTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sobriquet.app/Contents/MacOS/Sobriquet";
+			};
+			name = Debug;
+		};
+		CA4AD3532423CE5E0098C5CB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 7KB23NJMDW;
+				INFOPLIST_FILE = SobriquetTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = Myself.SobriquetTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sobriquet.app/Contents/MacOS/Sobriquet";
+			};
+			name = Release;
+		};
 		CAB4AA7D241A48E100075238 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -374,6 +496,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CA4AD3512423CE5E0098C5CB /* Build configuration list for PBXNativeTarget "SobriquetTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA4AD3522423CE5E0098C5CB /* Debug */,
+				CA4AD3532423CE5E0098C5CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CAB4AA67241A48DE00075238 /* Build configuration list for PBXProject "Sobriquet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

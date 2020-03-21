@@ -26,6 +26,11 @@ enum ComponentButtonType: String, CaseIterable {
     case EDUID = "%EDUID%";
     case MIDDLE_NAME = "%Middle Name%";
     case MIDDLE_INITIAL = "%Middle Initial%";
+    
+    static let allValues = [
+        LAST_NAME, FIRST_NAME, EDUID,
+        MIDDLE_NAME, MIDDLE_INITIAL
+        ].map { $0.rawValue }
 }
 
 struct ComponentButtonsUIView: View {

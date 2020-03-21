@@ -34,23 +34,13 @@ struct EnrollmentView: View {
     
     @State var loadRange: Range<Int> //= 0..<DEFAULT_MAX_PER_ENROLLMENT_VIEW
     @State var searchText: String = ""
-    @State var allStudents: [Student]
+    @Binding var allStudents: [Student]
     @State var viewableStudents: [Int]
     
-    init(allStudents: FetchedResults<Student>) {
-        var asArray = [Student]()
-        
-        for student in allStudents {
-            asArray.append(student)
-        }
-        
-        self.init(allStudents: asArray)
-    }
-    
-    init(allStudents: [Student]) {
-        self._allStudents = State(wrappedValue: allStudents)
-        self._viewableStudents = State(wrappedValue: Array(0..<allStudents.count))
-        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, allStudents.count))
+    init(allStudents: Binding<[Student]>) {
+        self._allStudents = allStudents
+        self._viewableStudents = State(wrappedValue: Array(0..<allStudents.wrappedValue.count))
+        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, allStudents.wrappedValue.count))
     }
 
     var body: some View {
