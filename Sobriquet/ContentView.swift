@@ -51,7 +51,7 @@ struct ContentView: View {
         ZStack(alignment: .top) {
             HStack {
                 HStack {
-                    MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap)
+                    MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap, showRenameView: $showRenameView)
                         .frame(minWidth: 700)
                     Divider().padding(EdgeInsets(top: 20, leading: 0,
                                                  bottom: 20, trailing: 0
@@ -65,10 +65,12 @@ struct ContentView: View {
             }.frame(minHeight: 600)
                 .alert(isPresented: $showAlert) {
                     return errorSwitch(error: alertType)
-            }
+            }.allowsHitTesting(!showRenameView)
             
             if showRenameView {
-                RenameView().frame(minWidth: 600, minHeight: 600)
+                RenameView(showView: $showRenameView).frame(minWidth: 600, minHeight: 600)
+                    .transition(.move(edge: .top))
+                    .animation(.default)
             }
         }
 
@@ -100,8 +102,14 @@ struct MainView: View {
     @State var outputFormat: String = ""
     @State var eduidLocation: Int = 0
     @State var showLogo: Bool = true
+    @State var currentFile: Double = 50
+    @State var numFiles: Double = 100
+    @State var renameInProgress: Bool = true
     @Binding var enrollmentViewState: Bool
     @Binding var studentMap: Dictionary<Int, Student>
+    @Binding var showRenameView: Bool
+    
+    let edgeSpace = CGFloat(30)
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
@@ -135,22 +143,23 @@ struct MainView: View {
                         
             InputFileUIView(enrollmentViewState: $enrollmentViewState, eduidLocation: $eduidLocation,
                             inputPath: $inputPath)
-                .padding(EdgeInsets(top: 30, leading: 30, bottom: 0, trailing: 30))
+                .padding(EdgeInsets(top: 30, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
 
             ComponentButtonsUIView(outputFormat: $outputFormat)
 
             OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat)
-                .padding(.leading, 30)
+                .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
                 .padding(.trailing, 30)
 
-            Button(action: {
-                renameFilesInDir(inputPath: self.inputPath, outputPath: self.outputPath,
-                                 outputFormat: self.outputFormat, students: self.studentMap)
-                
-            } ) {
+            Button(action: { self.showRenameView.toggle() } ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)
+            
+            if renameInProgress {
+                ProgressBar(value: $currentFile, maxValue: $numFiles)
+                .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
+            }
 
         }
     }

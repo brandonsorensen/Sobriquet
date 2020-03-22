@@ -9,21 +9,25 @@
 import SwiftUI
 
 struct RenameView: View {
+    @Binding var showView: Bool
+    
     var body: some View {
-        VStack {
-            Text("Hello, world!")
-            HStack {
-                Button(action: {}) { Text("Cancel") }
-                Button(action: {}) { Text("OK") }
-            }
-        }.frame(minWidth: 500, minHeight: 500)
+        ZStack {
+//            .frame(width: 550, height: 550)
+            VStack {
+                HStack {
+                    Button(action: { self.showView.toggle() }) { Text("Cancel") }
+                    Button(action: {}) { Text("OK") }
+                }
+                Spacer()
+            }.frame(width: 500, height: 500)
             .background(Color.white)
-        .padding(10)
+        }
     }
 }
 
 struct RenameView_Previews: PreviewProvider {
     static var previews: some View {
-        RenameView()
+        RenameView(showView: .constant(true))
     }
 }
