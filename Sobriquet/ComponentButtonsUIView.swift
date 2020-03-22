@@ -35,12 +35,13 @@ enum ComponentButtonType: String, CaseIterable {
 
 struct ComponentButtonsUIView: View {
     @Binding var outputFormat: String
+    @Binding var isDeactivated: Bool
     
     var body: some View {
          
         HStack {
             ForEach(ComponentButtonType.allCases, id: \.self) { button in
-                ComponentButton(outputFormat: self.$outputFormat, type: button)
+                ComponentButton(windowDeactivated: self.$isDeactivated, outputFormat: self.$outputFormat, type: button)
             }
         }
     }
@@ -48,12 +49,14 @@ struct ComponentButtonsUIView: View {
 
 struct ComponentButton: View {
     @State private var hovered = false
+    @Binding var windowDeactivated: Bool
     @Binding var outputFormat: String
     
     var type: ComponentButtonType
     
     struct ComponentButtonStyle: ViewModifier {
         @Binding var hovered: Bool
+        @Binding var deactivated: Bool
         
         let unselectColor = Color(red: 76 / 255, green: 83 / 255, blue: 94 / 255)
         let selectedColor = Color(red: 119 / 255, green: 123 / 255, blue: 128 / 255)
@@ -66,7 +69,7 @@ struct ComponentButton: View {
                 RoundedRectangle(cornerRadius: 4)
                     .frame(idealWidth: 120, idealHeight: 40)
                     .fixedSize()
-                    .foregroundColor(self.hovered ? selectedColor : unselectColor)
+                    .foregroundColor(self.hovered && !self.deactivated ? selectedColor : unselectColor)
             )
             .padding(EdgeInsets(top: 50, leading: 0, bottom: 50, trailing: 0))
         }
@@ -79,7 +82,7 @@ struct ComponentButton: View {
         
         return Button(action: { self.outputFormat.append(self.type.rawValue) }) {
             Text(buttonString)
-            .textStyle(ComponentButtonStyle(hovered: $hovered))
+            .textStyle(ComponentButtonStyle(hovered: $hovered, deactivated: $windowDeactivated))
             .onDrag { return NSItemProvider(object: self.type.rawValue as NSString) }
         }.buttonStyle(PlainButtonStyle())
          .onHover { _ in self.hovered.toggle() }
@@ -106,6 +109,6 @@ struct ComponentButtonDropDelegate: DropDelegate {
 
 struct ComponentButtonsUIView_Previews: PreviewProvider {
     static var previews: some View {
-        ComponentButtonsUIView(outputFormat: .constant("%Last Name%_%First Name%"))
+        ComponentButtonsUIView(outputFormat: .constant("%Last Name%_%First Name%"), isDeactivated: .constant(true))
     }
 }

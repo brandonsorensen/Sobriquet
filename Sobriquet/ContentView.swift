@@ -18,6 +18,8 @@ struct ContentView: View {
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = true
+    @State var currentFile: Double = 50
+    @State var numFiles: Double = 100
     
     init() {
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
@@ -68,7 +70,7 @@ struct ContentView: View {
             }.allowsHitTesting(!showRenameView)
             
             if showRenameView {
-                RenameView(showView: $showRenameView).frame(minWidth: 600, minHeight: 600)
+                RenameView(showView: $showRenameView, currentProgress: $currentFile, numFiles: $numFiles)
                     .transition(.move(edge: .top))
                     .animation(.default)
             }
@@ -145,22 +147,15 @@ struct MainView: View {
                             inputPath: $inputPath)
                 .padding(EdgeInsets(top: 30, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
 
-            ComponentButtonsUIView(outputFormat: $outputFormat)
+            ComponentButtonsUIView(outputFormat: $outputFormat, isDeactivated: $showRenameView)
 
             OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat)
                 .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
-                .padding(.trailing, 30)
 
-            Button(action: { self.showRenameView.toggle() } ) {
+            Button(action: { self.showRenameView.toggle(); self.renameInProgress.toggle() } ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)
-            
-            if renameInProgress {
-                ProgressBar(value: $currentFile, maxValue: $numFiles)
-                .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
-            }
-
         }
     }
 }
