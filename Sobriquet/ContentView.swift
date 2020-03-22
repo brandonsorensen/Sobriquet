@@ -68,6 +68,7 @@ struct ContentView: View {
                 .alert(isPresented: $showAlert) {
                     return errorSwitch(error: alertType)
             }.allowsHitTesting(!showRenameView)
+                .overlay(Color.black.opacity(showRenameView ? 0.1 : 0))
             
             if showRenameView {
                 RenameView(showView: $showRenameView, currentProgress: $currentFile, numFiles: $numFiles)

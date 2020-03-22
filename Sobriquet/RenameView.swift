@@ -68,7 +68,7 @@ struct RenameView: View {
             
             ScrollView(displayText.isEmpty ? .vertical : [], showsIndicators: true) {
                 if self.displayText.isEmpty {
-                    Text("Rename operations will display here.")
+                    Text("\nRename operations will display here.")
                         .foregroundColor(.gray)
                 } else {
                     Text("")
@@ -112,7 +112,7 @@ struct RenameView: View {
         .background(colorScheme == .dark ? darkModeBackground : lightModeBackground)
             .border(colorScheme == .dark ? darkModeOutline : outlineColor, width: 1)
         .clipped()
-        .shadow(radius: 2)
+        .shadow(radius: 3)
         .offset(y: -1)  // Hides top shadow
     }
 }
