@@ -140,7 +140,6 @@ struct MainView: View {
                 .frame(maxHeight: 200)
                 .foregroundColor(colorScheme == .dark ? .orange : .black)
                 .shadow(radius: 10)
-
             }
                         
             InputFileUIView(enrollmentViewState: $enrollmentViewState, eduidLocation: $eduidLocation,

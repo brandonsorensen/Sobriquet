@@ -9,25 +9,72 @@
 import SwiftUI
 
 struct RenameView: View {
+    @Environment(\.colorScheme) var colorScheme
+    @State var displayText: String = ""
     @Binding var showView: Bool
     @Binding var currentProgress: Double
     @Binding var numFiles: Double
     
+    let cornerRadius = CGFloat(7)
+    let buttonWidth = CGFloat(100)
+    
+    let lightModeBackground = Color(
+        red: 235 / 255,
+        green: 235 / 255,
+        blue: 235 / 255
+    )
+    
+    let darkModeBackground = Color(
+        red: 53 / 255,
+        green: 54 / 255,
+        blue: 55 / 255
+    )
+    
+    let outlineColor = Color(
+        red: 206 / 255,
+        green: 206 / 255,
+        blue: 206 / 255
+    )
+    
     var body: some View {
-        ZStack {
-//            .frame(width: 550, height: 550)
-            VStack {
-                Spacer()
-                HStack {
-                    Button(action: { self.showView.toggle() }) { Text("Cancel") }
-                    Button(action: {}) { Text("OK") }
+        VStack {
+            Spacer()
+            Text("Renaming Files").font(.headline)
+            Spacer()
+            
+            ScrollView(displayText.isEmpty ? .vertical : [], showsIndicators: true) {
+                if self.displayText.isEmpty {
+                    Text("\nRename operations will display here.")
+                        .foregroundColor(.gray)
+                } else {
+                    Text("")
+                    Text(displayText)
                 }
-                Spacer()
-                ProgressBar(value: $currentProgress, maxValue: $numFiles).padding(EdgeInsets(top: 0, leading: 30, bottom: 30, trailing: 30))
-            }.frame(width: 600, height: 500)
+            }
+            .frame(width: 530, height: 450)
             .background(Color.white)
-            .shadow(radius: 3)
-        }
+            .cornerRadius(cornerRadius)
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(outlineColor, lineWidth: 1)
+            )
+            
+            ProgressBar(value: $currentProgress, maxValue: $numFiles).padding(EdgeInsets(top: 0, leading: 30, bottom: 0, trailing: 30))
+            
+            Spacer()
+    
+            HStack {
+                Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }
+                Button(action: { self.displayText = "HELLO!" }) { Text("   OK   ") }
+            }
+            Spacer()
+            
+        }.frame(width: 600, height: 550)
+        .background(colorScheme == .dark ? darkModeBackground : lightModeBackground)
+        .border(outlineColor, width: 1)
+        .clipped()
+        .shadow(radius: 2)
+        .offset(y: -1)
     }
 }
 
