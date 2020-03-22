@@ -12,6 +12,8 @@ struct RenameView: View {
     @Environment(\.colorScheme) var colorScheme
     @State var displayText: String = ""
     @State var selectedFilter = 0
+    @State var allFiles = [StudentFile]()
+    @State var executed = false
     @Binding var showView: Bool
     @Binding var currentProgress: Double
     @Binding var numFiles: Double
@@ -58,6 +60,21 @@ struct RenameView: View {
         blue: 206 / 255
     )
     
+    struct ExecuteButtonStyle: ButtonStyle {
+        @State private var isPressed = false
+        
+        static let cornerRadius = CGFloat(4.0)
+        
+        func makeBody(configuration: Self.Configuration) -> some View {
+            configuration.label
+                .frame(width: 70, height: 20)
+                .foregroundColor(configuration.isPressed ? Color.blue : Color.white)
+                .background(configuration.isPressed ? Color.white : Color.blue)
+                .cornerRadius(ExecuteButtonStyle.cornerRadius)
+                .disableAutocorrection(true)
+        }
+    }
+    
     var body: some View {
         let safeWidth = sheetWidth * 0.88
         
@@ -80,7 +97,7 @@ struct RenameView: View {
             .cornerRadius(cornerRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(colorScheme == .dark ? darkModeOutline : outlineColor, lineWidth: 1)
+                .stroke(colorScheme == .dark ? darkModeOutline : outlineColor, lineWidth: 1)
             )
             
             ProgressBar(value: $currentProgress, maxValue: $numFiles,
@@ -97,11 +114,15 @@ struct RenameView: View {
                     }
                 }.frame(width: 200, alignment: .leading)
                     .offset(x: -9)  // Make up for empty label
+                    .disabled(!executed)
                 
                 Spacer()
                 Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }.frame(alignment: .center)
-                Button(action: { self.displayText = "HELLO!" }) { Text("   OK   ") }
-                .frame(alignment: .center)
+                Button(action: {
+                    self.displayText = "HELLO!"
+                    self.allFiles.removeAll()
+                    }) { Text("Execute") }
+                .buttonStyle(ExecuteButtonStyle())
                 
             }.padding(.bottom, 10)
             .frame(width: safeWidth)
@@ -117,8 +138,26 @@ struct RenameView: View {
     }
 }
 
+struct RenameOperationCell: View {
+    
+    private let color: Color
+    private let studentFile: StudentFile
+    
+    init(currentIndex: Int, studentFile: StudentFile) {
+        self.color = currentIndex % 2 == 0 ? Color.white : Color.gray
+        self.studentFile = studentFile
+    }
+    
+    var body: some View {
+        HStack {
+            Text(studentFile.getStudent().lastName)
+        }
+    }
+}
+
 struct RenameView_Previews: PreviewProvider {
     static var previews: some View {
         RenameView(showView: .constant(true), currentProgress: .constant(10), numFiles: .constant(100))
+//        RenameOperationCell(currentIndex: 4)
     }
 }
