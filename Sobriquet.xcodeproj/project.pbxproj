@@ -20,6 +20,7 @@
 		CA550936241D0A6C00476B08 /* EnrollmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA550935241D0A6C00476B08 /* EnrollmentView.swift */; };
 		CA6E5B04242671EA001F5737 /* RenameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6E5B03242671EA001F5737 /* RenameView.swift */; };
 		CA804E15242763E00048112C /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA804E14242763E00048112C /* ProgressBarView.swift */; };
+		CA804E172427B9880048112C /* StudentFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA804E162427B9880048112C /* StudentFile.swift */; };
 		CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA6F241A48DE00075238 /* AppDelegate.swift */; };
 		CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA71241A48DE00075238 /* ContentView.swift */; };
 		CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA76241A48E100075238 /* Preview Assets.xcassets */; };
@@ -56,6 +57,7 @@
 		CA550935241D0A6C00476B08 /* EnrollmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollmentView.swift; sourceTree = "<group>"; };
 		CA6E5B03242671EA001F5737 /* RenameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameView.swift; sourceTree = "<group>"; };
 		CA804E14242763E00048112C /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
+		CA804E162427B9880048112C /* StudentFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentFile.swift; sourceTree = "<group>"; };
 		CAB4AA6C241A48DE00075238 /* Sobriquet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobriquet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAB4AA6F241A48DE00075238 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CAB4AA71241A48DE00075238 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				CA6E5B03242671EA001F5737 /* RenameView.swift */,
 				CA804E14242763E00048112C /* ProgressBarView.swift */,
 				CA072F462423BE7300018CA0 /* Student.swift */,
+				CA804E162427B9880048112C /* StudentFile.swift */,
 				CAB4AA78241A48E100075238 /* Main.storyboard */,
 				CAB4AA7B241A48E100075238 /* Info.plist */,
 				CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */,
@@ -271,6 +274,7 @@
 				CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */,
 				CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */,
 				CA3B9F34241BB42B000E497B /* EnrollmentModel.xcdatamodeld in Sources */,
+				CA804E172427B9880048112C /* StudentFile.swift in Sources */,
 				CAB4AA85241A7C2C00075238 /* RenameFiles.swift in Sources */,
 				CA1DEAFD241AD72300092739 /* openFileDialog.swift in Sources */,
 			);

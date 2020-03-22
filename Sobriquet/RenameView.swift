@@ -11,12 +11,22 @@ import SwiftUI
 struct RenameView: View {
     @Environment(\.colorScheme) var colorScheme
     @State var displayText: String = ""
+    @State var selectedFilter = 0
     @Binding var showView: Bool
     @Binding var currentProgress: Double
     @Binding var numFiles: Double
     
+    private let filters = [
+        "-- Select Filter --",
+        "Successfully copied",
+        "File Not Found",
+        "File already exists",
+        "File overwritten"
+    ]
+    
     let cornerRadius = CGFloat(7)
     let buttonWidth = CGFloat(100)
+    let sheetWidth = CGFloat(600)
     
     let lightModeBackground = Color(
         red: 235 / 255,
@@ -37,7 +47,9 @@ struct RenameView: View {
     )
     
     var body: some View {
-        VStack {
+        let safeWidth = sheetWidth * 0.88
+        
+        return VStack {
             Spacer()
             Text("Renaming Files").font(.headline)
             Spacer()
@@ -51,7 +63,7 @@ struct RenameView: View {
                     Text(displayText)
                 }
             }
-            .frame(width: 530, height: 450)
+            .frame(width: safeWidth, height: 470)
             .background(Color.white)
             .cornerRadius(cornerRadius)
             .overlay(
@@ -59,27 +71,41 @@ struct RenameView: View {
                     .stroke(outlineColor, lineWidth: 1)
             )
             
-            ProgressBar(value: $currentProgress, maxValue: $numFiles).padding(EdgeInsets(top: 0, leading: 30, bottom: 0, trailing: 30))
+            ProgressBar(value: $currentProgress, maxValue: $numFiles)
+                .frame(width: safeWidth)
             
             Spacer()
     
             HStack {
-                Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }
+                Picker(selection: $selectedFilter, label:
+                Text("")) {
+                    ForEach(0..<filters.count) {
+                        Text(self.filters[$0])
+                    }
+                }.frame(width: 200, alignment: .leading)
+                    .offset(x: -9)  // Make up for empty label
+                
+                Spacer()
+                Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }.frame(alignment: .center)
                 Button(action: { self.displayText = "HELLO!" }) { Text("   OK   ") }
-            }
+                .frame(alignment: .center)
+                
+            }.padding(.bottom, 10)
+            .frame(width: safeWidth)
+            
             Spacer()
             
-        }.frame(width: 600, height: 550)
+        }.frame(width: sheetWidth, height: 580)
         .background(colorScheme == .dark ? darkModeBackground : lightModeBackground)
         .border(outlineColor, width: 1)
         .clipped()
         .shadow(radius: 2)
-        .offset(y: -1)
+        .offset(y: -1)  // Hides top shadow
     }
 }
 
 struct RenameView_Previews: PreviewProvider {
     static var previews: some View {
-        RenameView(showView: .constant(true), currentProgress: .constant(50), numFiles: .constant(100))
+        RenameView(showView: .constant(true), currentProgress: .constant(10), numFiles: .constant(100))
     }
 }

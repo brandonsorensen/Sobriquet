@@ -96,4 +96,5 @@ enum RenameError: Error {
     case UnknownOutputComponentError
     case RepeatedComponentError
     case ComponentIterationError
+    case FileNotFoundError
 }
