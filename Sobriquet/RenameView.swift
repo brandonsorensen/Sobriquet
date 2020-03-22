@@ -24,20 +24,32 @@ struct RenameView: View {
         "File overwritten"
     ]
     
-    let cornerRadius = CGFloat(7)
-    let buttonWidth = CGFloat(100)
-    let sheetWidth = CGFloat(600)
+    private let cornerRadius = CGFloat(7)
+    private let buttonWidth = CGFloat(100)
+    private let sheetWidth = CGFloat(600)
     
-    let lightModeBackground = Color(
+    private let lightModeBackground = Color(
         red: 235 / 255,
         green: 235 / 255,
         blue: 235 / 255
     )
     
-    let darkModeBackground = Color(
+    private let darkModeBackground = Color(
         red: 53 / 255,
         green: 54 / 255,
         blue: 55 / 255
+    )
+    
+    private let darkModeTextViewBackground = Color(
+        red: 64 / 255,
+        green: 65 / 255,
+        blue: 67 / 255
+    )
+    
+    private let darkModeOutline = Color(
+        red: 77 / 255,
+        green: 78 / 255,
+        blue: 80 / 255
     )
     
     let outlineColor = Color(
@@ -56,7 +68,7 @@ struct RenameView: View {
             
             ScrollView(displayText.isEmpty ? .vertical : [], showsIndicators: true) {
                 if self.displayText.isEmpty {
-                    Text("\nRename operations will display here.")
+                    Text("Rename operations will display here.")
                         .foregroundColor(.gray)
                 } else {
                     Text("")
@@ -64,14 +76,15 @@ struct RenameView: View {
                 }
             }
             .frame(width: safeWidth, height: 470)
-            .background(Color.white)
+            .background(colorScheme == .dark ? darkModeTextViewBackground : Color.white)
             .cornerRadius(cornerRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(outlineColor, lineWidth: 1)
+                    .stroke(colorScheme == .dark ? darkModeOutline : outlineColor, lineWidth: 1)
             )
             
-            ProgressBar(value: $currentProgress, maxValue: $numFiles)
+            ProgressBar(value: $currentProgress, maxValue: $numFiles,
+                        backgroundColor: colorScheme == .dark ? darkModeTextViewBackground : Color.white)
                 .frame(width: safeWidth)
             
             Spacer()
@@ -79,7 +92,7 @@ struct RenameView: View {
             HStack {
                 Picker(selection: $selectedFilter, label:
                 Text("")) {
-                    ForEach(0..<filters.count) {
+                    ForEach(0..<filters.count, id: \.self) {
                         Text(self.filters[$0])
                     }
                 }.frame(width: 200, alignment: .leading)
@@ -97,7 +110,7 @@ struct RenameView: View {
             
         }.frame(width: sheetWidth, height: 580)
         .background(colorScheme == .dark ? darkModeBackground : lightModeBackground)
-        .border(outlineColor, width: 1)
+            .border(colorScheme == .dark ? darkModeOutline : outlineColor, width: 1)
         .clipped()
         .shadow(radius: 2)
         .offset(y: -1)  // Hides top shadow
