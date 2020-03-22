@@ -52,7 +52,7 @@ struct RenameView: View {
         blue: 80 / 255
     )
     
-    let outlineColor = Color(
+    private let outlineColor = Color(
         red: 206 / 255,
         green: 206 / 255,
         blue: 206 / 255
@@ -66,7 +66,7 @@ struct RenameView: View {
             Text("Renaming Files").font(.headline)
             Spacer()
             
-            ScrollView(displayText.isEmpty ? .vertical : [], showsIndicators: true) {
+            ScrollView(displayText.isEmpty ? [] : .vertical, showsIndicators: false) {
                 if self.displayText.isEmpty {
                     Text("\nRename operations will display here.")
                         .foregroundColor(.gray)

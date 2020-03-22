@@ -152,7 +152,10 @@ struct MainView: View {
             OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat)
                 .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
 
-            Button(action: { self.showRenameView.toggle(); self.renameInProgress.toggle() } ) {
+            Button(action: {
+                self.showRenameView.toggle()
+                self.renameInProgress.toggle()
+            } ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)

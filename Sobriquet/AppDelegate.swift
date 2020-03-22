@@ -93,6 +93,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+// To combat focus ring overlaying over top view
+extension NSTextField {
+    open override var focusRingType: NSFocusRingType {
+        get { .none }
+        set { }
+    }
+}
+
 extension NSManagedObjectContext {
     var coreDataIsEmpty: Bool {
         let appDelegate = (NSApplication.shared.delegate) as! AppDelegate
