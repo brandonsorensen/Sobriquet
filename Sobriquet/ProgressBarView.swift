@@ -79,6 +79,10 @@ struct ProgressBar: View {
     
     func progress(value: Double, maxValue: Double,
                   width: CGFloat) -> CGFloat {
+        if maxValue == 0 {
+            return 0
+        }
+        
         let percentage = value / maxValue
         return width *  CGFloat(percentage)
     }
