@@ -18,8 +18,8 @@ struct ContentView: View {
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = true
-    @State var currentFile: Double = 50
-    @State var numFiles: Double = 100
+    @State var currentFile: Double = 0
+    @State var numFiles: Double = 0
     
     init() {
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
@@ -40,7 +40,6 @@ struct ContentView: View {
                 self.showAlert.toggle()
             }
         }
-//        allStudents = students
         
         for student in allStudents {
             map[student.eduid] = student
