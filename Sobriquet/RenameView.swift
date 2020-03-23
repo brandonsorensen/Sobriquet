@@ -14,75 +14,86 @@ struct RenameView: View {
     @State var selectedFilter = 0
     @State var allFiles = [StudentFile]()
     @State var executed = false
+    @State var overwrite = false
     @Binding var showView: Bool
     @Binding var currentProgress: Double
     @Binding var numFiles: Double
     
-    private let filters = [
-        "-- Select Filter --",
-        "Successfully copied",
-        "File Not Found",
-        "File already exists",
-        "File overwritten"
-    ]
+    private static let cornerRadius = CGFloat(7)
+    private static let buttonWidth = CGFloat(100)
+    private static let sheetWidth = CGFloat(600)
+    private static let safeWidth = sheetWidth * 0.88
     
-    private let cornerRadius = CGFloat(7)
-    private let buttonWidth = CGFloat(100)
-    private let sheetWidth = CGFloat(600)
-    
-    private let lightModeBackground = Color(
+    private static let lightModeBackground = Color(
         red: 235 / 255,
         green: 235 / 255,
         blue: 235 / 255
     )
     
-    private let darkModeBackground = Color(
+    private static let darkModeBackground = Color(
         red: 53 / 255,
         green: 54 / 255,
         blue: 55 / 255
     )
     
-    private let darkModeTextViewBackground = Color(
+    private static let darkModeTextViewBackground = Color(
         red: 64 / 255,
         green: 65 / 255,
         blue: 67 / 255
     )
     
-    private let darkModeOutline = Color(
+    private static let darkModeOutline = Color(
         red: 77 / 255,
         green: 78 / 255,
         blue: 80 / 255
     )
     
-    private let outlineColor = Color(
+    private static let outlineColor = Color(
         red: 206 / 255,
         green: 206 / 255,
         blue: 206 / 255
     )
     
-    struct ExecuteButtonStyle: ButtonStyle {
-        @State private var isPressed = false
+    var body: some View {
         
-        static let cornerRadius = CGFloat(4.0)
-        
-        func makeBody(configuration: Self.Configuration) -> some View {
-            configuration.label
-                .frame(width: 70, height: 20)
-                .foregroundColor(configuration.isPressed ? Color.blue : Color.white)
-                .background(configuration.isPressed ? Color.white : Color.blue)
-                .cornerRadius(ExecuteButtonStyle.cornerRadius)
-                .disableAutocorrection(true)
+        VStack {
+            Spacer()
+            Header()
+            RenameOperations(displayText: $displayText)
+            
+            ProgressBar(value: $currentProgress, maxValue: $numFiles,
+                        backgroundColor: colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
+                .frame(width: RenameView.safeWidth)
+            
+            Spacer()
+            Footer(displayText: $displayText, selectedFilter: $selectedFilter, executed: $executed,
+                   overwrite: $overwrite, allFiles: $allFiles, showView: $showView)
+            Spacer()
+            
+        }.frame(width: RenameView.sheetWidth, height: 580)
+            .background(colorScheme == .dark ? RenameView.darkModeBackground : RenameView.lightModeBackground)
+            .border(colorScheme == .dark ? RenameView.darkModeOutline : RenameView.outlineColor, width: 1)
+        .clipped()
+        .shadow(radius: 3)
+        .offset(y: -1)  // Hides top shadow
+    }
+    
+    private struct Header: View {
+        var body: some View {
+            VStack {
+                Text("Rename Files").font(.headline)
+                Spacer()
+                Text("The following files will be renamed:")
+                    .frame(width: RenameView.safeWidth, alignment: .leading)
+            }
         }
     }
     
-    var body: some View {
-        let safeWidth = sheetWidth * 0.88
+    private struct RenameOperations: View {
+        @Environment(\.colorScheme) var colorScheme
+        @Binding var displayText: String
         
-        return VStack {
-            Spacer()
-            Text("Renaming Files").font(.headline)
-            Spacer()
-            
+        var body: some View {
             ScrollView(displayText.isEmpty ? [] : .vertical, showsIndicators: false) {
                 if self.displayText.isEmpty {
                     Text("\nRename operations will display here.")
@@ -92,20 +103,50 @@ struct RenameView: View {
                     Text(displayText)
                 }
             }
-            .frame(width: safeWidth, height: 470)
+            .frame(width: RenameView.safeWidth, height: 470)
             .background(colorScheme == .dark ? darkModeTextViewBackground : Color.white)
-            .cornerRadius(cornerRadius)
+            .cornerRadius(RenameView.cornerRadius)
             .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
+                RoundedRectangle(cornerRadius: RenameView.cornerRadius)
                 .stroke(colorScheme == .dark ? darkModeOutline : outlineColor, lineWidth: 1)
             )
-            
-            ProgressBar(value: $currentProgress, maxValue: $numFiles,
-                        backgroundColor: colorScheme == .dark ? darkModeTextViewBackground : Color.white)
-                .frame(width: safeWidth)
-            
-            Spacer()
+        }
+    }
     
+    private struct Footer: View {
+        @Binding var displayText: String
+        @Binding var selectedFilter: Int
+        @Binding var executed: Bool
+        @Binding var overwrite: Bool
+        @Binding var allFiles: [StudentFile]
+        @Binding var showView: Bool
+        
+        private struct ExecuteButtonStyle: ButtonStyle {
+            @State private var isPressed = false
+            
+            static let cornerRadius = CGFloat(4.0)
+            
+            func makeBody(configuration: Self.Configuration) -> some View {
+                configuration.label
+                    .frame(width: 70, height: 20)
+                    .foregroundColor(.white)
+                    .background(Color.blue)
+                    .overlay(Color.black.opacity(configuration.isPressed ? 0.15 : 0))
+                    .cornerRadius(ExecuteButtonStyle.cornerRadius)
+                    .disableAutocorrection(true)
+                    .animation(.none)
+            }
+        }
+        
+        private let filters = [
+            "-- Select Filter --",
+            "Successfully copied",
+            "File Not Found",
+            "File already exists",
+            "File overwritten"
+        ]
+        
+        var body: some View {
             HStack {
                 Picker(selection: $selectedFilter, label:
                 Text("")) {
@@ -116,6 +157,10 @@ struct RenameView: View {
                     .offset(x: -9)  // Make up for empty label
                     .disabled(!executed)
                 
+                Toggle(isOn: $overwrite) {
+                    Text("Overwrite existing files")
+                }
+                
                 Spacer()
                 Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }.frame(alignment: .center)
                 Button(action: {
@@ -125,16 +170,8 @@ struct RenameView: View {
                 .buttonStyle(ExecuteButtonStyle())
                 
             }.padding(.bottom, 10)
-            .frame(width: safeWidth)
-            
-            Spacer()
-            
-        }.frame(width: sheetWidth, height: 580)
-        .background(colorScheme == .dark ? darkModeBackground : lightModeBackground)
-            .border(colorScheme == .dark ? darkModeOutline : outlineColor, width: 1)
-        .clipped()
-        .shadow(radius: 3)
-        .offset(y: -1)  // Hides top shadow
+                .frame(width: RenameView.safeWidth)
+        }
     }
 }
 
