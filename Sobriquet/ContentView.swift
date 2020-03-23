@@ -13,6 +13,7 @@ import CoreData
 
 struct ContentView: View {
     @State var showEnrollment: Bool = false
+    @State var studentManager: StudentManager
     @State var allStudents: [Student] = [Student]()
     @State var studentMap = Dictionary<Int, Student>()
     @State var showAlert: Bool = false
@@ -20,6 +21,7 @@ struct ContentView: View {
     @State var showRenameView = true
     @State var currentFile: Double = 0
     @State var numFiles: Double = 0
+    @State var copyManager: CopyManager = CopyManager()
     
     init() {
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
@@ -52,7 +54,7 @@ struct ContentView: View {
         ZStack(alignment: .top) {
             HStack {
                 HStack {
-                    MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap, showRenameView: $showRenameView)
+                    MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap, showRenameView: $showRenameView, copyManager: $copyManager)
                         .frame(minWidth: 700)
                     Divider().padding(EdgeInsets(top: 20, leading: 0,
                                                  bottom: 20, trailing: 0
@@ -70,7 +72,7 @@ struct ContentView: View {
                 .overlay(Color.black.opacity(showRenameView ? 0.1 : 0))
             
             if showRenameView {
-                RenameView(showView: $showRenameView, currentProgress: $currentFile, numFiles: $numFiles)
+                RenameView(showView: $showRenameView, currentProgress: $currentFile, numFiles: $numFiles, copyManager: $copyManager)
                     .transition(.move(edge: .top))
                     .animation(.default)
             }
@@ -110,6 +112,7 @@ struct MainView: View {
     @Binding var enrollmentViewState: Bool
     @Binding var studentMap: Dictionary<Int, Student>
     @Binding var showRenameView: Bool
+    @Binding var copyManager: CopyManager
     
     let edgeSpace = CGFloat(30)
     
@@ -154,6 +157,11 @@ struct MainView: View {
             Button(action: {
                 self.showRenameView.toggle()
                 self.renameInProgress.toggle()
+                let filesInDir = try! generateStudentFiles(inputPath: self.inputPath,
+                                                           outputPath: self.outputPath,
+                                                           outputFormat: self.outputFormat,
+                                                           students: self.studentMap)
+                self.copyManager.update(operations: filesInDir)
             } ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())

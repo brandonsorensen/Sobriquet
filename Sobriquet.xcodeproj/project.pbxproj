@@ -18,6 +18,7 @@
 		CA4AD3552423CE8F0098C5CB /* TestRenameFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4AD3542423CE8F0098C5CB /* TestRenameFile.swift */; };
 		CA550934241CE5A700476B08 /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA550932241CE38E00476B08 /* CSVParser.swift */; };
 		CA550936241D0A6C00476B08 /* EnrollmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA550935241D0A6C00476B08 /* EnrollmentView.swift */; };
+		CA5F451A2428C4A60060632E /* CopyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5F45192428C4A60060632E /* CopyManager.swift */; };
 		CA6E5B04242671EA001F5737 /* RenameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6E5B03242671EA001F5737 /* RenameView.swift */; };
 		CA804E15242763E00048112C /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA804E14242763E00048112C /* ProgressBarView.swift */; };
 		CA804E172427B9880048112C /* StudentFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA804E162427B9880048112C /* StudentFile.swift */; };
@@ -55,6 +56,7 @@
 		CA4AD3542423CE8F0098C5CB /* TestRenameFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRenameFile.swift; sourceTree = "<group>"; };
 		CA550932241CE38E00476B08 /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
 		CA550935241D0A6C00476B08 /* EnrollmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollmentView.swift; sourceTree = "<group>"; };
+		CA5F45192428C4A60060632E /* CopyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyManager.swift; sourceTree = "<group>"; };
 		CA6E5B03242671EA001F5737 /* RenameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameView.swift; sourceTree = "<group>"; };
 		CA804E14242763E00048112C /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
 		CA804E162427B9880048112C /* StudentFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentFile.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				CAB4AA6F241A48DE00075238 /* AppDelegate.swift */,
 				CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */,
 				CAB4AA71241A48DE00075238 /* ContentView.swift */,
+				CA5F45192428C4A60060632E /* CopyManager.swift */,
 				CA550932241CE38E00476B08 /* CSVParser.swift */,
 				CA550935241D0A6C00476B08 /* EnrollmentView.swift */,
 				CA1DEAF8241AD45800092739 /* InputFileUIView.swift */,
@@ -270,6 +273,7 @@
 				CA072F472423BE7300018CA0 /* Student.swift in Sources */,
 				CA1DEAF5241A8DC400092739 /* OutputFileView.swift in Sources */,
 				CA550936241D0A6C00476B08 /* EnrollmentView.swift in Sources */,
+				CA5F451A2428C4A60060632E /* CopyManager.swift in Sources */,
 				CA6E5B04242671EA001F5737 /* RenameView.swift in Sources */,
 				CAB4AA72241A48DE00075238 /* ContentView.swift in Sources */,
 				CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */,
