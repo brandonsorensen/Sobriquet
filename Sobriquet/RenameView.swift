@@ -70,7 +70,7 @@ struct RenameView: View {
                    overwrite: $overwrite, allFiles: $allFiles, showView: $showView)
             Spacer()
             
-        }.frame(width: RenameView.sheetWidth, height: 580)
+        }.frame(width: RenameView.sheetWidth, height: 600)
             .background(colorScheme == .dark ? RenameView.darkModeBackground : RenameView.lightModeBackground)
             .border(colorScheme == .dark ? RenameView.darkModeOutline : RenameView.outlineColor, width: 1)
         .clipped()
@@ -79,13 +79,28 @@ struct RenameView: View {
     }
     
     private struct Header: View {
+        private let columns = [
+                   "Student", "Output Preview", "Status"
+               ]
+        
         var body: some View {
             VStack {
                 Text("Rename Files").font(.headline)
                 Spacer()
-                Text("The following files will be renamed:")
-                    .frame(width: RenameView.safeWidth, alignment: .leading)
-            }
+                Divider().frame(width: RenameView.safeWidth)
+                HStack {
+                    ForEach(0..<self.columns.count) { index in
+                        Spacer()
+                        Text(self.columns[index])
+                        Spacer()
+                        if index != self.columns.count - 1 {
+                            Divider()
+                        }
+                    }
+                }//.foregroundColor(.gray)
+                .frame(width: RenameView.safeWidth, height: 15, alignment: .top)
+            }.offset(y: 2)
+
         }
     }
     
@@ -94,10 +109,12 @@ struct RenameView: View {
         @Binding var displayText: String
         
         var body: some View {
-            ScrollView(displayText.isEmpty ? [] : .vertical, showsIndicators: false) {
+            ScrollView(showsIndicators: false) {
+                
                 if self.displayText.isEmpty {
                     Text("\nRename operations will display here.")
                         .foregroundColor(.gray)
+                        .frame(alignment: .center)
                 } else {
                     Text("")
                     Text(displayText)
