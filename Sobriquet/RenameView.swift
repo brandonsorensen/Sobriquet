@@ -12,12 +12,12 @@ struct RenameView: View {
     @Environment(\.colorScheme) var colorScheme
     @State var displayText: String = ""
     @State var selectedFilter = 0
-    @State var allFiles = [StudentFile]()
     @State var executed = false
     @State var overwrite = false
     @Binding var showView: Bool
     @Binding var currentProgress: Double
     @Binding var numFiles: Double
+    @Binding var copyManager: CopyManager
     
     private static let cornerRadius = CGFloat(7)
     private static let buttonWidth = CGFloat(100)
@@ -59,7 +59,7 @@ struct RenameView: View {
         VStack {
             Spacer()
             Header()
-            RenameOperations(displayText: $displayText)
+            RenameOperations(manager: $copyManager)
             
             ProgressBar(value: $currentProgress, maxValue: $numFiles,
                         backgroundColor: colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
@@ -67,15 +67,15 @@ struct RenameView: View {
             
             Spacer()
             Footer(displayText: $displayText, selectedFilter: $selectedFilter, executed: $executed,
-                   overwrite: $overwrite, allFiles: $allFiles, showView: $showView)
+                   overwrite: $overwrite, copyManager: $copyManager, showView: $showView)
             Spacer()
             
         }.frame(width: RenameView.sheetWidth, height: 600)
             .background(colorScheme == .dark ? RenameView.darkModeBackground : RenameView.lightModeBackground)
             .border(colorScheme == .dark ? RenameView.darkModeOutline : RenameView.outlineColor, width: 1)
-        .clipped()
-        .shadow(radius: 3)
-        .offset(y: -1)  // Hides top shadow
+            .clipped()
+            .shadow(radius: 3)
+            .offset(y: -1)  // Hides top shadow
     }
     
     private struct Header: View {
@@ -97,7 +97,7 @@ struct RenameView: View {
                             Divider()
                         }
                     }
-                }//.foregroundColor(.gray)
+                }
                 .frame(width: RenameView.safeWidth, height: 15, alignment: .top)
             }.offset(y: 2)
 
@@ -106,18 +106,19 @@ struct RenameView: View {
     
     private struct RenameOperations: View {
         @Environment(\.colorScheme) var colorScheme
-        @Binding var displayText: String
+        @Binding var manager: CopyManager
         
         var body: some View {
             ScrollView(showsIndicators: false) {
                 
-                if self.displayText.isEmpty {
+                if self.manager.isEmpty {
                     Text("\nRename operations will display here.")
                         .foregroundColor(.gray)
                         .frame(alignment: .center)
                 } else {
-                    Text("")
-                    Text(displayText)
+                    ForEach(0..<self.manager.count) { index in
+                        RenameOperationCell(currentIndex: index, op: self.manager.getOperation(at: index))
+                    }
                 }
             }
             .frame(width: RenameView.safeWidth, height: 470)
@@ -135,7 +136,7 @@ struct RenameView: View {
         @Binding var selectedFilter: Int
         @Binding var executed: Bool
         @Binding var overwrite: Bool
-        @Binding var allFiles: [StudentFile]
+        @Binding var copyManager: CopyManager
         @Binding var showView: Bool
         
         private struct ExecuteButtonStyle: ButtonStyle {
@@ -182,7 +183,7 @@ struct RenameView: View {
                 Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }.frame(alignment: .center)
                 Button(action: {
                     self.displayText = "HELLO!"
-                    self.allFiles.removeAll()
+                    self.copyManager.clearAll()
                     }) { Text("Execute") }
                 .buttonStyle(ExecuteButtonStyle())
                 
@@ -195,23 +196,27 @@ struct RenameView: View {
 struct RenameOperationCell: View {
     
     private let color: Color
-    private let studentFile: StudentFile
+    private let operation: CopyOperation
+    private var studentFile: StudentFile { return operation.getStudentFile() }
+    private var student: Student { return studentFile.getStudent() }
     
-    init(currentIndex: Int, studentFile: StudentFile) {
+    init(currentIndex: Int, op: CopyOperation) {
         self.color = currentIndex % 2 == 0 ? Color.white : Color.gray
-        self.studentFile = studentFile
+        self.operation = op
     }
     
     var body: some View {
         HStack {
-            Text(studentFile.getStudent().lastName)
+            Text(student.lastName)
         }
     }
 }
 
 struct RenameView_Previews: PreviewProvider {
     static var previews: some View {
-        RenameView(showView: .constant(true), currentProgress: .constant(10), numFiles: .constant(100))
+        RenameView(showView: .constant(true),
+                   currentProgress: .constant(10),
+                   numFiles: .constant(100), copyManager: .constant(CopyManager()))
 //        RenameOperationCell(currentIndex: 4)
     }
 }

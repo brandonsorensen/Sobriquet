@@ -10,7 +10,16 @@ import Foundation
 
 
 public struct CopyManager {
-    private var allOperations: [CopyOperation]
+    public static let COMPONENT_REGEX = "%(eduid|last|first|middle)( (name|initial))?%"
+    
+    private var allOperations = [CopyOperation]()
+    
+    
+    public mutating func addFromDirectory(inputPath: String,
+                                          studentMap: Dictionary<Int, Student>) {
+        
+        
+    }
     
     public func countSuccessful() -> Int {
         var count = 0
@@ -50,11 +59,43 @@ public struct CopyManager {
         }
         return count
     }
+
+    public var isEmpty: Bool { return allOperations.isEmpty }
+    
+    public var count: Int { return allOperations.count }
+    
+    public func getOperation(at: Int) -> CopyOperation {
+        return self.allOperations[at]
+    }
+    
+    public func getAllOperations() -> [CopyOperation] {
+        return self.allOperations
+    }
+    
+    public mutating func setOperationList(operations: [CopyOperation]) {
+        allOperations = operations
+    }
+    
+    public mutating func update(operations: [CopyOperation]) {
+        setOperationList(operations: operations)
+    }
+    
+    public mutating func addOperation(op: CopyOperation) {
+        allOperations.append(op)
+    }
+    
+    public mutating func clearAll() {
+        allOperations.removeAll()
+    }
     
     public func executeAll() {
         for operation in allOperations {
             let _ = operation.execute()
         }
+    }
+    
+    public static func operationsFromStudentFiles(files: [StudentFile], outputFormat: String, outputDir: String) -> [CopyOperation] {
+        return [CopyOperation]()
     }
 }
 
@@ -70,6 +111,7 @@ public class CopyOperation {
     
     public enum CopyError: Error {
         case AlreadyExistsError
+        case NoOutputComponentsError
     }
     
     private var status: CopyStatus = .Pending

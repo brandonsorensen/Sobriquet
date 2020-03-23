@@ -13,8 +13,7 @@ public class StudentFile {
     
     private var student: Student
     private var path: String
-    private var exists: Bool
-    private var copyStatus: CopyOperation.CopyStatus = .Pending
+    private var exists: Bool { return FileManager.default.fileExists(atPath: path) }
     
     public enum StudentFileError: Error {
         case NoEduidInPath
@@ -24,7 +23,6 @@ public class StudentFile {
     public init(student: Student, path: String) {
         self.student = student
         self.path = path
-        self.exists = !FileManager.default.fileExists(atPath: path)
     }
     
     public convenience init(path: String) throws {
@@ -51,7 +49,12 @@ public class StudentFile {
         throw StudentFileError.NoStudentFound
     }
     
-    public func renameFile(newPath: String) throws -> CopyOperation.CopyStatus {
+    public func renameFile(newPath: String, overwrite: Bool = false) throws -> CopyOperation.CopyStatus {
+        if FileManager.default.fileExists(atPath: newPath) {
+            if overwrite {
+                
+            } else { throw CopyOperation.CopyError.AlreadyExistsError }
+        }
         // TODO
         return .Copied
     }
@@ -72,13 +75,5 @@ public class StudentFile {
     
     public func getPath() -> String {
         return self.path
-    }
-    
-    public func setCopyStatus(newCopyStatus: CopyStatus) {
-        self.copyStatus = newCopyStatus
-    }
-    
-    public func getCopyStatus() -> CopyStatus {
-        return self.copyStatus
     }
 }

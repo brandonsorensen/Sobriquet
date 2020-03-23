@@ -12,55 +12,43 @@ import CoreData
 
 
 struct ContentView: View {
-    @State var showEnrollment: Bool = false
     @State var studentManager: StudentManager
-    @State var allStudents: [Student] = [Student]()
-    @State var studentMap = Dictionary<Int, Student>()
+    @State var copyManager: CopyManager = CopyManager()
+    @State var showEnrollment: Bool = false
+//    @State var allStudents: [Student] = [Student]()
+//    @State var studentMap = Dictionary<Int, Student>()
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = true
     @State var currentFile: Double = 0
     @State var numFiles: Double = 0
-    @State var copyManager: CopyManager = CopyManager()
     
     init() {
-        let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
-        let moc = appDelegate.persistentContainer.viewContext
-        let studentRequest = Student.getAllStudents()
-        var map = Dictionary<Int, Student>()
-        
         do {
-            self._allStudents = State(wrappedValue: try moc.fetch(studentRequest))
+            try self._studentManager = State(wrappedValue: StudentManager())
+        } catch StudentManager.StudentManagerError.NonUniqueElementError {
+            self._studentManager = try! State(wrappedValue: StudentManager(students: [Student]()))
+            self._alertType = State(wrappedValue: .NonUniqueStudent)
+            self._showAlert = .init(wrappedValue: true)
+            try! (NSApplication.shared.delegate as! AppDelegate).loadDefaultEnrollment()
         } catch {
-            do {
-                try appDelegate.loadDefaultEnrollment()
-            } catch CSVParser.ParserError.MalformedCSV {
-                self.alertType = .BadDefaultCsv
-                self.showAlert.toggle()
-            } catch {
-                self.alertType = .Unknown
-                self.showAlert.toggle()
-            }
+            self._studentManager = try! State(wrappedValue: StudentManager(students: [Student]()))
+            self._alertType = State(wrappedValue: .Unknown)
+            self._showAlert = .init(wrappedValue: true)
         }
-        
-        for student in allStudents {
-            map[student.eduid] = student
-        }
-        
-        self._studentMap = State(wrappedValue: map)
     }
     
     var body: some View {
         ZStack(alignment: .top) {
             HStack {
                 HStack {
-                    MainView(enrollmentViewState: $showEnrollment, studentMap: $studentMap, showRenameView: $showRenameView, copyManager: $copyManager)
+                    MainView(enrollmentViewState: $showEnrollment, studentManager: $studentManager, showRenameView: $showRenameView, copyManager: $copyManager)
                         .frame(minWidth: 700)
                     Divider().padding(EdgeInsets(top: 20, leading: 0,
                                                  bottom: 20, trailing: 0
                     ))
                     if showEnrollment {
-                        EnrollmentView(allStudents: $allStudents).frame(width: 333)
+                        EnrollmentView(studentManager: $studentManager).frame(width: 333)
                         .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                         .transition(.slide)
                     }
@@ -82,6 +70,7 @@ struct ContentView: View {
     
     enum AlertType {
         case BadDefaultCsv
+        case NonUniqueStudent
         case Unknown
     }
     
@@ -90,6 +79,11 @@ struct ContentView: View {
         case .BadDefaultCsv:
             return Alert(title: Text("Corrupted internal CSV file"),
                   message: Text("The default CSV file has been corrupted."), dismissButton: .default(Text("OK")))
+        case .NonUniqueStudent:
+            let message = Text("At least two students in the data base have the same EDUID. Resorting to default data base.")
+            return Alert(title: Text("Non unique student"),
+                         message: message,
+                         dismissButton: .default(Text("OK")))
         default:
             return Alert(title: Text("Unknown error."))
         }
@@ -110,7 +104,7 @@ struct MainView: View {
     @State var numFiles: Double = 100
     @State var renameInProgress: Bool = true
     @Binding var enrollmentViewState: Bool
-    @Binding var studentMap: Dictionary<Int, Student>
+    @Binding var studentManager: StudentManager
     @Binding var showRenameView: Bool
     @Binding var copyManager: CopyManager
     
@@ -157,11 +151,11 @@ struct MainView: View {
             Button(action: {
                 self.showRenameView.toggle()
                 self.renameInProgress.toggle()
-                let filesInDir = try! generateStudentFiles(inputPath: self.inputPath,
-                                                           outputPath: self.outputPath,
-                                                           outputFormat: self.outputFormat,
-                                                           students: self.studentMap)
-                self.copyManager.update(operations: filesInDir)
+//                let filesInDir = try! loadCopyOperations(inputPath: self.inputPath,
+//                                                           outputPath: self.outputPath,
+//                                                           outputFormat: self.outputFormat,
+//                                                           studentManager: self.studentManager)
+//                self.copyManager.update(operations: filesInDir)
             } ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())

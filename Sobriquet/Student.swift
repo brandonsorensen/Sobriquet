@@ -76,13 +76,18 @@ public class Student: NSManagedObject, Identifiable {
 }
 
 public struct StudentManager {
+    
+    public enum StudentManagerError: Error {
+        case NonUniqueElementError
+    }
+    
     private var allStudents: [Student]
     private var eduid2StudentIndex: Dictionary<Int, Int>
     
     public var count: Int { return allStudents.count }
     public var isEmpty: Bool { return allStudents.isEmpty }
     
-    public init() {
+    public init() throws {
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
         let moc = appDelegate.persistentContainer.viewContext
         
@@ -92,11 +97,19 @@ public struct StudentManager {
             allStudents = [Student]()
         }
             eduid2StudentIndex = StudentManager.getMapFromStudents(students: allStudents)
+        
+        if !ensureUnique() {
+            throw StudentManagerError.NonUniqueElementError
+        }
     }
     
-    public init(students: [Student]) {
+    public init(students: [Student]) throws {
         allStudents = students
         eduid2StudentIndex = StudentManager.getMapFromStudents(students: students)
+        
+        if !ensureUnique() {
+            throw StudentManagerError.NonUniqueElementError
+        }
     }
     
     public func getStudentFromFileName(fileName: String) -> Student? {
@@ -121,13 +134,22 @@ public struct StudentManager {
     }
     
     public mutating func addStudent(student: Student) {
-        allStudents.append(student)
-        eduid2StudentIndex[student.eduid] = self.count - 1
+        if getStudentForEduid(eduid: student.eduid) != nil {
+            let index = eduid2StudentIndex[student.eduid]!
+            allStudents[index] = student
+        } else {
+            allStudents.append(student)
+            eduid2StudentIndex[student.eduid] = self.count - 1
+        }
     }
     
-    public mutating func update(students: [Student]) {
+    public mutating func update(students: [Student]) throws {
         allStudents = students
         eduid2StudentIndex = StudentManager.getMapFromStudents(students: students)
+        
+        if !ensureUnique() {
+            throw StudentManagerError.NonUniqueElementError
+        }
     }
     
     public func getAllStudents() -> [Student] {
@@ -140,5 +162,34 @@ public struct StudentManager {
             map[student.eduid] = index
         }
         return map
+    }
+    
+    public func getStudentMap() -> Dictionary<Int, Student> {
+        var map = Dictionary<Int, Student>()
+        
+        for student in allStudents {
+            map[student.eduid] = student
+        }
+        
+        return map
+    }
+    
+    public mutating func clearAll() {
+        try! self.update(students: [Student]())
+    }
+    
+    public func ensureUnique() -> Bool {
+        var eduidSet = Set<Int>()
+        for student in allStudents {
+            if eduidSet.contains(student.eduid) {
+                return false
+            }
+            eduidSet.insert(student.eduid)
+        }
+        return true
+    }
+    
+    public func atIndex(index: Int) -> Student {
+        return self.allStudents[index]
     }
 }

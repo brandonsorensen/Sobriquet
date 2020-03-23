@@ -64,6 +64,56 @@ func renameFile(inputPath: String, outputPath: String, outputFormat: String,
     print("Output: \(outputPath)/\(returnValue)")
 }
 
+func loadCopyOperations(inputPath: String,
+                          outputPath: String,
+                          outputFormat: String,
+                          studentManager: StudentManager)
+    throws -> [CopyOperation] {
+        
+    if outputFormat.range(of: CopyManager.COMPONENT_REGEX, options: .regularExpression) == nil {
+        throw CopyOperation.CopyError.NoOutputComponentsError
+    }
+
+    var absolutePath: String
+    var currentStudentFile: StudentFile
+    var currentOperation: CopyOperation
+    var operations = [CopyOperation]()
+    
+    let files = try FileManager.default.contentsOfDirectory(atPath: inputPath)
+    var count = 0
+    for file in files {
+        absolutePath = inputPath + "/" + file
+        if let currentStudent = studentManager.getStudentFromFileName(fileName: file) {
+            currentStudentFile = StudentFile(student: currentStudent, path: absolutePath)
+            currentOperation = try! loadCopyOperation(studentFile: currentStudentFile, outputFormat: outputFormat)
+
+            operations.append(currentOperation)
+        }
+        if count > 3 { break }
+        count += 1
+    }
+    
+    return operations
+}
+
+func loadCopyOperation(studentFile: StudentFile, outputFormat: String) throws -> CopyOperation {
+    var returnValue = outputFormat
+    var replacementValue: String
+    let student = studentFile.getStudent()
+    
+    for value in ComponentButtonType.allValues {
+        replacementValue = try componentStringSwitch(value: value, student: student)
+        returnValue = returnValue.replacingOccurrences(of: value, with: replacementValue)
+    }
+    
+    if returnValue == outputFormat {
+        // There was no change
+        throw CopyOperation.CopyError.NoOutputComponentsError
+    }
+    
+    return CopyOperation(file: studentFile, outputPath: returnValue)
+}
+
 func componentStringSwitch(value: String, student: Student) throws -> String {
     var replacementValue: String = ""
     

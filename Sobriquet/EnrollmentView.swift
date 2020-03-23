@@ -34,19 +34,19 @@ struct EnrollmentView: View {
     
     @State var loadRange: Range<Int> //= 0..<DEFAULT_MAX_PER_ENROLLMENT_VIEW
     @State var searchText: String = ""
-    @Binding var allStudents: [Student]
+    @Binding var studentManager: StudentManager
     @State var viewableStudents: [Int]
     
-    init(allStudents: Binding<[Student]>) {
-        self._allStudents = allStudents
-        self._viewableStudents = State(wrappedValue: Array(0..<allStudents.wrappedValue.count))
-        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, allStudents.wrappedValue.count))
+    init(studentManager: Binding<StudentManager>) {
+        self._studentManager = studentManager
+        self._viewableStudents = State(wrappedValue: Array(0..<studentManager.wrappedValue.count))
+        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, studentManager.wrappedValue.count))
     }
 
     var body: some View {
         VStack {
             Text("Enrollment").font(.subheadline)
-            Filter(allStudents: $allStudents, viewableStudents: $viewableStudents,
+            Filter(studentManager: $studentManager, viewableStudents: $viewableStudents,
                    searchText: $searchText, loadRange: $loadRange)
                 .padding(EdgeInsets(top: 0, leading: 0,
                                     bottom: 3, trailing: 0))
@@ -62,17 +62,17 @@ struct EnrollmentView: View {
             
             Divider()
             
-            StudentScrollView(allStudents: $allStudents, loadRange: $loadRange,
+            StudentScrollView(studentManager: $studentManager, loadRange: $loadRange,
                               viewableStudents: $viewableStudents)
             
-            EnrollmentFooter(loadRange: $loadRange, allStudents: $allStudents,
+            EnrollmentFooter(loadRange: $loadRange, studentManager: $studentManager,
                              viewableStudents: $viewableStudents)
         }
     }
 }
 
 struct StudentScrollView: View {
-    @Binding var allStudents: [Student]
+    @Binding var studentManager: StudentManager
     @Binding var loadRange: Range<Int>
     @Binding var viewableStudents: [Int]
     @Environment(\.colorScheme) var colorScheme
@@ -90,14 +90,14 @@ struct StudentScrollView: View {
             // There were fewer than 100 elements returned by the search
             if viewableStudents.count < DEFAULT_MAX_PER_ENROLLMENT_VIEW {
                ForEach(viewableStudents, id: \.self) { index in
-                    EnrollmentCell(student: self.allStudents[index])
+                EnrollmentCell(student: self.studentManager.atIndex(index: index))
                 .padding(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3))
                }
                 
            // There were more than 100 elements returned by the search
             } else {
                 ForEach(loadRange, id: \.self) { index in
-                    EnrollmentCell(student: self.allStudents[self.viewableStudents[index]])
+                    EnrollmentCell(student: self.studentManager.atIndex( index: self.viewableStudents[index]))
                         .padding(EdgeInsets(top: 0, leading: self.fromEdgeRadius,
                                             bottom: 0, trailing: self.fromEdgeRadius))
                 }
@@ -131,7 +131,7 @@ struct StudentScrollView: View {
 }
 
 struct Filter: View {
-    @Binding var allStudents: [Student]
+    @Binding var studentManager: StudentManager
     @Binding var viewableStudents: [Int]
     @Binding var searchText: String
     @Binding var loadRange: Range<Int>
@@ -148,7 +148,7 @@ struct Filter: View {
     
     private func updateViewableIndex() {
         if searchText.isEmpty {
-            viewableStudents = Array(0..<allStudents.count)
+            viewableStudents = Array(0..<studentManager.count)
             return
         }
         
@@ -157,8 +157,8 @@ struct Filter: View {
         var student: Student
         var keepStudent: Bool
         
-        for index in 0..<allStudents.count {
-            student = allStudents[index]
+        for index in 0..<studentManager.count {
+            student = studentManager.atIndex(index: index)
             keepStudent = false
             names = searchText.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .whitespaces)
         
@@ -199,8 +199,9 @@ struct EnrollmentFooter: View {
     @State var showAlert: Bool = false
     @State var activeAlert: CSVParser.ParserError = .Unknown
     @State var mostRecentDate: Date = Student.getMostRecentDate()
+    @State var isUniqueError = false
     @Binding var loadRange: Range<Int>
-    @Binding var allStudents: [Student]
+    @Binding var studentManager: StudentManager
     @Binding var viewableStudents: [Int]
     
     var body: some View {
@@ -255,6 +256,12 @@ struct EnrollmentFooter: View {
                          message: Text("Ensure the CSV file has the right encoding and format: Last Name, First Name, Middle Name, EDUID"),
                          dismissButton: .default(Text("OK")))
         case .Unknown:
+            if isUniqueError {
+                isUniqueError = false
+                return Alert(title: Text("Non-unique students"),
+                             message: Text("Two or more students have the same EDUID."),
+                             dismissButton: .default(Text("OK")))
+            }
             return Alert(title: Text("Unknown error."))
         }
     }
@@ -320,13 +327,20 @@ struct EnrollmentFooter: View {
                                     return $0.firstName < $1.firstName
                                 }
                             }
-                            self.allStudents = newRoster
+                            
+                           try self.studentManager.update(students: newRoster)
+
+                            
                         }
                     } catch CSVParser.ParserError.FileNotFound {
                         self.activeAlert = .FileNotFound
                         self.showAlert.toggle()
                     } catch CSVParser.ParserError.MalformedCSV{
                         self.activeAlert = .MalformedCSV
+                        self.showAlert.toggle()
+                    } catch StudentManager.StudentManagerError.NonUniqueElementError {
+                        self.activeAlert = .Unknown
+                        self.isUniqueError = true
                         self.showAlert.toggle()
                     } catch {
                         self.activeAlert = .Unknown
