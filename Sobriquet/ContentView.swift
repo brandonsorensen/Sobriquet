@@ -64,7 +64,7 @@ struct ContentView: View {
                         .transition(.slide)
                     }
                 }
-            }.frame(minHeight: 600)
+            }.frame(minHeight: 650)
                 .alert(isPresented: $showAlert) {
                     return errorSwitch(error: alertType)
             }.allowsHitTesting(!showRenameView)
