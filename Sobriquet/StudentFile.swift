@@ -7,35 +7,56 @@
 //
 
 import Foundation
+import SwiftUI
 
 public class StudentFile {
     
-    public enum CopyStatus {
-        case Uncopied
-        case Copied
-        case Overwrite
-        case NotFound
-    }
-    
     private var student: Student
     private var path: String
-    private var copyStatus: CopyStatus = .Uncopied
-    private let fileManager: FileManager = FileManager.default
+    private var exists: Bool
+    private var copyStatus: CopyOperation.CopyStatus = .Pending
+    
+    public enum StudentFileError: Error {
+        case NoEduidInPath
+        case NoStudentFound
+    }
     
     public init(student: Student, path: String) {
         self.student = student
         self.path = path
+        self.exists = !FileManager.default.fileExists(atPath: path)
+    }
+    
+    public convenience init(path: String) throws {
+        let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
+        let moc = appDelegate.persistentContainer.viewContext
+        var eduid: Int
         
-        if !fileManager.fileExists(atPath: path) { self.copyStatus = .NotFound }
+        let eduidRegex = #"[0-9]{7,9}"#
+        
+        if let result = path.range(of: eduidRegex, options: .regularExpression) {
+            eduid = Int(String(path[result]))!
+        } else {
+            throw StudentFileError.NoEduidInPath
+        }
+        
+        let allStudents = try moc.fetch(Student.getAllStudents())
+        for student in allStudents {
+            if student.eduid == eduid {
+                self.init(student: student, path: path)
+                return
+            }
+        }
+        
+        throw StudentFileError.NoStudentFound
     }
     
-    public func renameFile(newPath: String) throws -> CopyStatus {
+    public func renameFile(newPath: String) throws -> CopyOperation.CopyStatus {
         // TODO
-        if self.copyStatus == CopyStatus.NotFound { throw RenameError.FileNotFoundError }
-        return .Uncopied
+        return .Copied
     }
     
-    public func renameFile(newPath: URL) throws -> CopyStatus { return try self.renameFile(newPath: newPath.absoluteString) }
+    public func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus { return try self.renameFile(newPath: newPath.absoluteString) }
     
     public func setStudent(newStudent: Student) {
         self.student = newStudent
