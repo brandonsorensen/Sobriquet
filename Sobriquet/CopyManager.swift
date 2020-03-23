@@ -12,6 +12,45 @@ import Foundation
 public struct CopyManager {
     private var allOperations: [CopyOperation]
     
+    public func countSuccessful() -> Int {
+        var count = 0
+        var status: CopyOperation.CopyStatus
+        
+        for operation in allOperations {
+            status = operation.getStatus()
+            if status == .Copied || status == .Overwritten {
+                count += 1
+            }
+        }
+        return count
+    }
+    
+    public func countFailed() -> Int {
+        var count = 0
+        var status: CopyOperation.CopyStatus
+         
+        for operation in allOperations {
+            status = operation.getStatus()
+            if status == .Unsuccessful || status == .AlreadyExists {
+                count += 1
+            }
+        }
+        return count
+    }
+    
+    public func countPending() -> Int {
+        var count = 0
+        var status: CopyOperation.CopyStatus
+         
+        for operation in allOperations {
+            status = operation.getStatus()
+            if status == .Pending {
+                count += 1
+            }
+        }
+        return count
+    }
+    
     public func executeAll() {
         for operation in allOperations {
             let _ = operation.execute()
