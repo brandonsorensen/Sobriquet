@@ -98,6 +98,16 @@ public struct CopyManager {
         return [CopyOperation]()
     }
     
+    public mutating func setStatus(at: Int, to: CopyOperation.CopyStatus) {
+        self.allOperations[at].setStatus(newStatus: to)
+    }
+    
+    public mutating func updateStatuses(to: CopyOperation.CopyStatus) {
+        for operation in allOperations {
+            operation.setStatus(newStatus: to)
+        }
+    }
+    
     public static func loadCopyOperations(inputPath: String,
                               outputPath: String,
                               outputFormat: String,
@@ -131,7 +141,7 @@ public struct CopyManager {
     }
 }
 
-public class CopyOperation {
+public class CopyOperation: ObservableObject {
     
     public enum CopyStatus {
         case Copied
@@ -146,7 +156,7 @@ public class CopyOperation {
         case NoOutputComponentsError
     }
     
-    private var status: CopyStatus = .Pending
+    @Published private var status: CopyStatus = .Pending
     private var file: StudentFile
     private var outputPath: String
 
@@ -173,6 +183,10 @@ public class CopyOperation {
     
     public func getStatus() -> CopyStatus {
         return self.status
+    }
+    
+    public func setStatus(newStatus: CopyStatus) {
+        self.status = newStatus
     }
     
     public func getStudentFile() -> StudentFile {

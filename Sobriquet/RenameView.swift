@@ -60,7 +60,7 @@ struct RenameView: View {
         VStack {
             Spacer()
             Header()
-            RenameOperations(manager: $copyManager)
+            RenameOperations(manager: $copyManager, executed: $executed)
             
             ProgressBar(value: $currentProgress, maxValue: $numFiles,
                         backgroundColor: colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
@@ -92,7 +92,7 @@ struct RenameView: View {
                 Spacer()
                 Divider().frame(width: RenameView.safeWidth)
                 HStack {
-                    List(0..<self.columns.count) { index in
+                    ForEach(0..<self.columns.count) { index in
                         Text(self.columns[index]).frame(width: RenameView.safeWidth / Header.getQuotientForIndex(index: index))
                         if index != self.columns.count - 1 {
                             Divider()
@@ -111,20 +111,21 @@ struct RenameView: View {
     private struct RenameOperations: View {
         @Environment(\.colorScheme) var colorScheme
         @Binding var manager: CopyManager
+        @Binding var executed: Bool
         
         var body: some View {
             List {
-                
                 if self.manager.isEmpty {
                     Text("\nRename operations will display here.")
                         .foregroundColor(.gray)
                         .frame(alignment: .center)
                 } else {
-                    ForEach(0..<self.manager.count) { index in
+                    ForEach(0..<self.manager.count, id: \.self) { index in
                         RenameOperationCell(currentIndex: index, op: self.manager.getOperation(at: index))
                     }
                 }
             }
+            .padding(.horizontal, -9)
             .frame(width: RenameView.safeWidth, height: 470)
             .background(colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
             .cornerRadius(RenameView.cornerRadius)
@@ -186,10 +187,12 @@ struct RenameView: View {
                 Spacer()
                 Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }.frame(alignment: .center)
                 Button(action: {
-                    self.displayText = "HELLO!"
-                    self.copyManager.clearAll()
+                    self.copyManager.updateStatuses(to: .Copied)
+                    self.executed.toggle()
+//                    self.copyManager.clearAll()
                     }) { Text("Execute") }
                 .buttonStyle(ExecuteButtonStyle())
+                .disabled(executed)
                 
             }.padding(.bottom, 10)
                 .frame(width: RenameView.safeWidth)
@@ -211,9 +214,10 @@ struct RenameOperationCell: View {
     private let dividerInsets = EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0)
     
     private let color: Color
-    private let operation: CopyOperation
     private var studentFile: StudentFile { return operation.getStudentFile() }
     private var student: Student { return studentFile.getStudent() }
+    
+    @ObservedObject private var operation: CopyOperation
     
     init(currentIndex: Int, op: CopyOperation) {
         self.color = currentIndex % 2 == 0 ? Color.white : RenameOperationCell.lightGray
@@ -223,14 +227,12 @@ struct RenameOperationCell: View {
     var body: some View {
 
         HStack {
-                
-                
             StudentNameView(student: student)
                 .frame(width: RenameOperationCell.edgeWidth)
             
             Divider().padding(dividerInsets)
             
-            OutputPreviewView(outputPath: (operation.getOutputPath() as NSString).lastPathComponent)
+            Text((operation.getOutputPath() as NSString).lastPathComponent)
                 .frame(width: RenameOperationCell.centerWidth)
 
             Divider().padding(dividerInsets)
@@ -240,8 +242,6 @@ struct RenameOperationCell: View {
                 
             
         }.frame(width: RenameView.safeWidth, height: 30)
-//        .padding(EdgeInsets(top: 0, leading: RenameOperationCell.edgePadding,
-//                            bottom: 0, trailing: RenameOperationCell.edgePadding))
         .background(self.color)
     }
     
@@ -266,35 +266,25 @@ struct RenameOperationCell: View {
             
             switch s {
             case .AlreadyExists:
-                text = "Already exists – not overwritten"
+                text = "Already exists"
                 textColor = .blue
             case .Copied:
-                text = "Successfully renamed"
+                text = "Renamed"
                 textColor = .green
             case .Overwritten:
                 text = "Overwrote existing file"
                 textColor = .orange
             case .Pending:
-                text = "Pending copy"
+                text = "Pending"
                 textColor = .black
             case .Unsuccessful:
-                text = "Rename failed"
+                text = "Failed"
                 textColor = .red
             }
             
             return Text(text)
             .font(.system(size: 14, weight: .heavy, design: .default))
                 .foregroundColor(textColor)
-        }
-    }
-    
-    private struct OutputPreviewView: View {
-        let outputPath: String
-        
-        var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                Text(outputPath).frame(alignment: .trailing)
-            }.frame(alignment: .center)
         }
     }
 }
@@ -309,7 +299,8 @@ struct RenameView_Previews: PreviewProvider {
         
         let operations = try! CopyManager.loadCopyOperations(inputPath: path, outputPath: outputPath, outputFormat: outputFormat, studentManager: try! StudentManager())
         
-        manager.update(operations: operations)
+        let firstFive = operations[0...5]
+        manager.update(operations: Array(firstFive))
         return manager
     }
     
