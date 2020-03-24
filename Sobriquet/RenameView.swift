@@ -92,7 +92,7 @@ struct RenameView: View {
                 Spacer()
                 Divider().frame(width: RenameView.safeWidth)
                 HStack {
-                    ForEach(0..<self.columns.count) { index in
+                    List(0..<self.columns.count) { index in
                         Text(self.columns[index]).frame(width: RenameView.safeWidth / Header.getQuotientForIndex(index: index))
                         if index != self.columns.count - 1 {
                             Divider()
@@ -113,7 +113,7 @@ struct RenameView: View {
         @Binding var manager: CopyManager
         
         var body: some View {
-            ScrollView(showsIndicators: false) {
+            List {
                 
                 if self.manager.isEmpty {
                     Text("\nRename operations will display here.")
