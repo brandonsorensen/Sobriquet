@@ -41,19 +41,19 @@ struct ProgressBar: View {
     // https://programmingwithswift.com/swiftui-progress-bar-indicator/
     @Environment(\.colorScheme) var colorScheme
     @Binding var value: Double
-    @Binding var maxValue: Double
+    let maxValue: Double
     private let backgroundEnabled: Bool
     private let backgroundColor: Color
     
     init(value: Binding<Double>,
-         maxValue: Binding<Double>,
+         maxValue: Double,
          backgroundEnabled: Bool = true,
          backgroundColor: Color = Color(red: 245/255,
                                         green: 245/255,
                                         blue: 245/255),
          foregroundColor: Color = Color.green) {
         self._value = value
-        self._maxValue = maxValue
+        self.maxValue = maxValue
         self.backgroundEnabled = backgroundEnabled
         self.backgroundColor = backgroundColor
 
@@ -90,7 +90,7 @@ struct ProgressBar: View {
 
 struct SliderView_Previews: PreviewProvider {
     static var previews: some View {
-        ProgressBar(value: .constant(50), maxValue: .constant(100))
+        ProgressBar(value: .constant(50), maxValue: 100)
     }
 }
 

@@ -58,7 +58,8 @@ struct ContentView: View {
                 .overlay(Color.black.opacity(showRenameView ? 0.1 : 0))
             
             if showRenameView {
-                RenameView(showView: $showRenameView, currentProgress: $currentFile, numFiles: $numFiles, copyManager: $copyManager)
+                RenameView(showView: $showRenameView, currentProgress: $currentFile,
+                           numFiles: numFiles, copyManager: $copyManager)
                     .transition(.move(edge: .top))
                     .animation(.default)
             }
@@ -99,8 +100,8 @@ struct MainView: View {
     @State var extensionText: String = ".pdf"
     @State var eduidLocation: Int = 1
     @State var showLogo: Bool = true
-    @State var currentFile: Double = 50
-    @State var numFiles: Double = 100
+    @State var currentFile: Double = 0
+    @State var numFiles: Double = 0
     @State var renameInProgress: Bool = true
     @Binding var enrollmentViewState: Bool
     @Binding var studentManager: StudentManager

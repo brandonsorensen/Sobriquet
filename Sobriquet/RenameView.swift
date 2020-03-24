@@ -16,7 +16,7 @@ struct RenameView: View {
     @State var overwrite = false
     @Binding var showView: Bool
     @Binding var currentProgress: Double
-    @Binding var numFiles: Double
+    let numFiles: Double
     @Binding var copyManager: CopyManager
     
     private static let cornerRadius = CGFloat(7)
@@ -62,13 +62,14 @@ struct RenameView: View {
             Header()
             RenameOperations(manager: $copyManager, executed: $executed)
             
-            ProgressBar(value: $currentProgress, maxValue: $numFiles,
+            ProgressBar(value: $currentProgress, maxValue: numFiles,
                         backgroundColor: colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
                 .frame(width: RenameView.safeWidth)
             
             Spacer()
             Footer(displayText: $displayText, selectedFilter: $selectedFilter, executed: $executed,
-                   overwrite: $overwrite, copyManager: $copyManager, showView: $showView)
+                   overwrite: $overwrite, copyManager: $copyManager, showView: $showView,
+                   copyProgress: $currentProgress, numFiles: numFiles)
             Spacer()
             
         }.frame(width: RenameView.sheetWidth, height: 600)
@@ -143,6 +144,8 @@ struct RenameView: View {
         @Binding var overwrite: Bool
         @Binding var copyManager: CopyManager
         @Binding var showView: Bool
+        @Binding var copyProgress: Double
+        let numFiles: Double
         
         private struct ExecuteButtonStyle: ButtonStyle {
             @State private var isPressed = false
@@ -185,19 +188,26 @@ struct RenameView: View {
                 }
                 
                 Spacer()
-                Button(action: { self.displayText = ""; self.showView.toggle() }) { Text("Cancel") }.frame(alignment: .center)
-                Button(action: {
-                    self.copyManager.updateStatuses(to: .Copied)
-                    self.executed.toggle()
-//                    self.copyManager.clearAll()
-                    }) { Text("Execute") }
+                Button(action: { self.showView.toggle(); }) { Text("Cancel") }.frame(alignment: .center)
+                Button(action: executeCopy) { Text("Execute") }
                 .buttonStyle(ExecuteButtonStyle())
                 .disabled(executed)
                 
             }.padding(.bottom, 10)
                 .frame(width: RenameView.safeWidth)
         }
+        
+        func executeCopy() {
+            for index in 0..<copyManager.count {
+                let _ = copyManager.getOperation(at: index).execute()
+                self.copyProgress += 1
+            }
+            self.executed.toggle()
+            
+        }
     }
+    
+
 }
 
 struct RenameOperationCell: View {
@@ -228,17 +238,8 @@ struct RenameOperationCell: View {
     var body: some View {
         
         HStack {
-            ZStack {
-                StudentNameView(student: student)
-                    .frame(width: RenameOperationCell.edgeWidth)
-                if hovered {
-                    Text(String(student.eduid)).frame(minWidth: 50)
-                        .background(Rectangle().fill(Color.yellow))
-                        .shadow(radius: 5)
-                        .offset(x: 40, y: -20)
-                        .opacity(0.5)
-                }
-            }.onHover(perform: { _ in self.hovered.toggle() })
+            StudentNameView(student: student)
+                .frame(width: RenameOperationCell.edgeWidth)
             
             Divider().padding(dividerInsets)
             
@@ -257,9 +258,19 @@ struct RenameOperationCell: View {
     
     private struct StudentNameView: View {
         let student: Student
+        @State var hovered: Bool = false
         
         var body: some View {
-            Text(student.firstName + " " + student.lastName)
+            ZStack {
+                Text(student.firstName + " " + student.lastName)
+                if hovered {
+                    Text(String(student.eduid)).frame(minWidth: 50)
+                        .background(Rectangle().fill(Color.yellow))
+                        .shadow(radius: 5)
+                        .offset(x: 40, y: -20)
+                        .opacity(0.5)
+                }
+            }.onHover(perform: { _ in self.hovered.toggle() })
         }
     }
     
@@ -328,7 +339,7 @@ struct RenameView_Previews: PreviewProvider {
         
         return RenameView(showView: .constant(true),
                    currentProgress: .constant(1),
-                   numFiles: .constant(10), copyManager: .constant(manager))
+                   numFiles: 10, copyManager: .constant(manager))
 //        RenameOperationCell(currentIndex: 4,
 //                            op: RenameView_Previews.initCopyOperation())
     }

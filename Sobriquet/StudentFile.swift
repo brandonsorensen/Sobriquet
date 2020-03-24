@@ -52,7 +52,8 @@ public class StudentFile {
     public func renameFile(newPath: String, overwrite: Bool = false) throws -> CopyOperation.CopyStatus {
         if FileManager.default.fileExists(atPath: newPath) {
             if overwrite {
-                
+                // TODO: Do actually overwrite.
+                return .Overwritten
             } else { throw CopyOperation.CopyError.AlreadyExistsError }
         }
         // TODO
