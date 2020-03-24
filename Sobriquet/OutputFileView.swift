@@ -13,29 +13,30 @@ struct OutputFileView: View {
     let padSize = CGFloat(15)
     @Binding var outputPath: String
     @Binding var outputFormat: String
+    @Binding var extensionText: String
     
     var body: some View {
         let dropDelegate = ComponentButtonDropDelegate(outputFormat: $outputFormat)
         
         return VStack {
             HStack {
-                    Text("Output Format:").font(.subheadline)
-                        .padding(.bottom, padSize)
+                Text("Output Format:").font(.subheadline)
                 TextField("Enter output format.", text: $outputFormat)
                     .focusable(false)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.bottom, padSize)
                     .onDrop(of: ["String"], delegate: dropDelegate)
+                Text("Ext:")
+                TextField("Extension", text: $extensionText)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(width: 92)
                 }
         
             HStack {
                 Text("Output Path:").font(.subheadline)
                     .padding(.trailing, 18)
-                    .padding(.bottom, padSize)
 
                 TextField("Enter path to files.", text: $outputPath)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.bottom, padSize)
                 
                 Button(action: {
                     let fileDialog = createFileDialog()
@@ -51,8 +52,8 @@ struct OutputFileView: View {
                     }
                 }) {
                     Text("Browse").frame(minWidth: 100)
-                    }.offset(y: -8)
-            }
+                    }
+            }.padding(.bottom, padSize)
         }
     }
 }
@@ -60,6 +61,7 @@ struct OutputFileView: View {
 struct OutputFileView_Previews: PreviewProvider {
     static var previews: some View {
         OutputFileView(outputPath: .constant("place/to/go"),
-                       outputFormat: .constant("%Last Name%_%First Name%"))
+                       outputFormat: .constant("%Last Name%_%First Name%"),
+                       extensionText: .constant(".pdf"))
     }
 }

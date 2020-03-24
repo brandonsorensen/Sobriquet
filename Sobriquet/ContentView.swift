@@ -96,6 +96,7 @@ struct MainView: View {
     @State var inputPath: String = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
     @State var outputPath: String = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
     @State var outputFormat: String = "%Last Name%_%First Name%_%Last Name%_test"
+    @State var extensionText: String = ".pdf"
     @State var eduidLocation: Int = 1
     @State var showLogo: Bool = true
     @State var currentFile: Double = 50
@@ -143,7 +144,7 @@ struct MainView: View {
 
             ComponentButtonsUIView(outputFormat: $outputFormat, isDeactivated: $showRenameView)
 
-            OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat)
+            OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat, extensionText: $extensionText)
                 .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
 
             Button(action: activateRenameView) {
@@ -158,7 +159,7 @@ struct MainView: View {
         self.renameInProgress.toggle()
         let newOperations = try! CopyManager.loadCopyOperations(inputPath: self.inputPath,
                                                                 outputPath: self.outputPath,
-                                                                outputFormat: self.outputFormat,
+                                                                outputFormat: self.outputFormat + self.extensionText,
                                                                 studentManager: self.studentManager)
         self.copyManager.update(operations: newOperations)
     }

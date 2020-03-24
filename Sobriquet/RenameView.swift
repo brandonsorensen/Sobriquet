@@ -218,6 +218,7 @@ struct RenameOperationCell: View {
     private var student: Student { return studentFile.getStudent() }
     
     @ObservedObject private var operation: CopyOperation
+    @State var hovered: Bool = false
     
     init(currentIndex: Int, op: CopyOperation) {
         self.color = currentIndex % 2 == 0 ? Color.white : RenameOperationCell.lightGray
@@ -225,10 +226,19 @@ struct RenameOperationCell: View {
     }
     
     var body: some View {
-
+        
         HStack {
-            StudentNameView(student: student)
-                .frame(width: RenameOperationCell.edgeWidth)
+            ZStack {
+                StudentNameView(student: student)
+                    .frame(width: RenameOperationCell.edgeWidth)
+                if hovered {
+                    Text(String(student.eduid)).frame(minWidth: 50)
+                        .background(Rectangle().fill(Color.yellow))
+                        .shadow(radius: 5)
+                        .offset(x: 40, y: -20)
+                        .opacity(0.5)
+                }
+            }.onHover(perform: { _ in self.hovered.toggle() })
             
             Divider().padding(dividerInsets)
             
@@ -255,12 +265,13 @@ struct RenameOperationCell: View {
     
     private struct StatusView: View {
         var status: CopyOperation.CopyStatus
+        let baseFontSize = CGFloat(14)
         
         var body: some View {
-            StatusView.statusToText(s: status).frame(alignment: .trailing)
+            StatusView.statusToText(s: status, fontSize: baseFontSize)
         }
         
-        static func statusToText(s: CopyOperation.CopyStatus) -> Text {
+        static func statusToText(s: CopyOperation.CopyStatus, fontSize: CGFloat) -> Text {
             var textColor: Color
             var text: String
             
@@ -283,7 +294,7 @@ struct RenameOperationCell: View {
             }
             
             return Text(text)
-            .font(.system(size: 14, weight: .heavy, design: .default))
+                .font(.system(size: fontSize, weight: .heavy, design: .rounded))
                 .foregroundColor(textColor)
         }
     }
