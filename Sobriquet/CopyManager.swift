@@ -10,7 +10,7 @@ import Foundation
 
 
 public struct CopyManager {
-    public static let COMPONENT_REGEX = "%(eduid|last|first|middle)( (name|initial))?%"
+    public static let COMPONENT_REGEX = #"%(eduid|last|first|middle)( (name|initial))?%"#
     
     private var allOperations = [CopyOperation]()
     
@@ -97,6 +97,38 @@ public struct CopyManager {
     public static func operationsFromStudentFiles(files: [StudentFile], outputFormat: String, outputDir: String) -> [CopyOperation] {
         return [CopyOperation]()
     }
+    
+    public static func loadCopyOperations(inputPath: String,
+                              outputPath: String,
+                              outputFormat: String,
+                              studentManager: StudentManager)
+        throws -> [CopyOperation] {
+            
+            if outputFormat.range(of: CopyManager.COMPONENT_REGEX, options: [.regularExpression, .caseInsensitive]) == nil {
+            throw CopyOperation.CopyError.NoOutputComponentsError
+        }
+
+        var absolutePath: String
+        var currentStudentFile: StudentFile
+        var currentOperation: CopyOperation
+        var operations = [CopyOperation]()
+        
+        let files = try FileManager.default.contentsOfDirectory(atPath: inputPath)
+        var count = 0
+        for file in files {
+            absolutePath = inputPath + "/" + file
+            if let currentStudent = studentManager.getStudentFromFileName(fileName: file) {
+                currentStudentFile = StudentFile(student: currentStudent, path: absolutePath)
+                currentOperation = try! loadCopyOperation(studentFile: currentStudentFile, outputFormat: outputFormat)
+
+                operations.append(currentOperation)
+            }
+            if count > 3 { break }
+            count += 1
+        }
+        
+        return operations
+    }
 }
 
 public class CopyOperation {
@@ -161,5 +193,23 @@ public class CopyOperation {
     
     public func setOutputPath(newPath: URL) {
         self.setOutputPath(newPath: newPath.absoluteString)
+    }
+    
+    public static func loadCopyOperation(studentFile: StudentFile, outputFormat: String) throws -> CopyOperation {
+        var returnValue = outputFormat
+        var replacementValue: String
+        let student = studentFile.getStudent()
+        
+        for value in ComponentButtonType.allValues {
+            replacementValue = try componentStringSwitch(value: value, student: student)
+            returnValue = returnValue.replacingOccurrences(of: value, with: replacementValue)
+        }
+        
+        if returnValue == outputFormat {
+            // There was no change
+            throw CopyOperation.CopyError.NoOutputComponentsError
+        }
+        
+        return CopyOperation(file: studentFile, outputPath: returnValue)
     }
 }

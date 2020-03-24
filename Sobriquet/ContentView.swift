@@ -19,7 +19,7 @@ struct ContentView: View {
 //    @State var studentMap = Dictionary<Int, Student>()
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .Unknown
-    @State var showRenameView = true
+    @State var showRenameView = false
     @State var currentFile: Double = 0
     @State var numFiles: Double = 0
     
@@ -148,19 +148,21 @@ struct MainView: View {
             OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat)
                 .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
 
-            Button(action: {
-                self.showRenameView.toggle()
-                self.renameInProgress.toggle()
-//                let filesInDir = try! loadCopyOperations(inputPath: self.inputPath,
-//                                                           outputPath: self.outputPath,
-//                                                           outputFormat: self.outputFormat,
-//                                                           studentManager: self.studentManager)
-//                self.copyManager.update(operations: filesInDir)
-            } ) {
+            Button(action: activateRenameView) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)
         }
+    }
+    
+    func activateRenameView() {
+        self.showRenameView.toggle()
+        self.renameInProgress.toggle()
+        let newOperations = try! CopyManager.loadCopyOperations(inputPath: self.inputPath,
+                                                                outputPath: self.outputPath,
+                                                                outputFormat: self.outputFormat,
+                                                                studentManager: self.studentManager)
+        self.copyManager.update(operations: newOperations)
     }
 }
 

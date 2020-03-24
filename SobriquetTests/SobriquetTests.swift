@@ -28,15 +28,9 @@ class SobriquetTests: XCTestCase {
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
         let moc = appDelegate.persistentContainer.viewContext
         
-        let students = try! moc.fetch(Student.getAllStudents())
-        var studentMap = Dictionary<Int, Student>()
+        let app = XCUIApplication()
+        app.textFields["Enter path to files."].typeText(outputDir)
         
-        for student in students {
-            studentMap[student.eduid] = student
-        }
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        renameFilesInDir(inputPath: inputDir, outputPath: outputDir, outputFormat: outputFormat, students: studentMap)
     }
 
     func testPerformanceExample() {
