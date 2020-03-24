@@ -21,8 +21,9 @@ struct RenameView: View {
     
     private static let cornerRadius = CGFloat(7)
     private static let buttonWidth = CGFloat(100)
-    private static let sheetWidth = CGFloat(600)
-    private static let safeWidth = sheetWidth * 0.88
+    
+    static let sheetWidth = CGFloat(600)
+    static let safeWidth = sheetWidth * 0.88
     
     private static let lightModeBackground = Color(
         red: 235 / 255,
@@ -78,10 +79,12 @@ struct RenameView: View {
             .offset(y: -1)  // Hides top shadow
     }
     
-    private struct Header: View {
-        private let columns = [
+    struct Header: View {
+        let columns = [
                    "Student", "Output Preview", "Status"
                ]
+        static let spacingQuotient = CGFloat(4.2)
+        static let sizeRatio = CGFloat(0.6)
         
         var body: some View {
             VStack {
@@ -90,9 +93,7 @@ struct RenameView: View {
                 Divider().frame(width: RenameView.safeWidth)
                 HStack {
                     ForEach(0..<self.columns.count) { index in
-                        Spacer()
-                        Text(self.columns[index])
-                        Spacer()
+                        Text(self.columns[index]).frame(width: RenameView.safeWidth / Header.getQuotientForIndex(index: index))
                         if index != self.columns.count - 1 {
                             Divider()
                         }
@@ -100,7 +101,10 @@ struct RenameView: View {
                 }
                 .frame(width: RenameView.safeWidth, height: 15, alignment: .top)
             }.offset(y: 2)
-
+        }
+        
+        static func getQuotientForIndex(index: Int) -> CGFloat {
+            return CGFloat(index != 1 ? Header.spacingQuotient : Header.spacingQuotient * Header.sizeRatio)
         }
     }
     
@@ -122,11 +126,11 @@ struct RenameView: View {
                 }
             }
             .frame(width: RenameView.safeWidth, height: 470)
-            .background(colorScheme == .dark ? darkModeTextViewBackground : Color.white)
+            .background(colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
             .cornerRadius(RenameView.cornerRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: RenameView.cornerRadius)
-                .stroke(colorScheme == .dark ? darkModeOutline : outlineColor, lineWidth: 1)
+                    .stroke(colorScheme == .dark ? RenameView.darkModeOutline : RenameView.outlineColor, lineWidth: 1)
             )
         }
     }
@@ -195,28 +199,135 @@ struct RenameView: View {
 
 struct RenameOperationCell: View {
     
+    private static let edgePadding = CGFloat(10)
+    private static let nViews = CGFloat(3)
+    private static var centerWidth: CGFloat {
+        RenameView.safeWidth /  RenameView.Header.getQuotientForIndex(index: 1)
+    }
+    private static var edgeWidth: CGFloat {
+        RenameView.safeWidth / RenameView.Header.getQuotientForIndex(index: 0)
+    }
+    static let lightGray = Color(red: 249 / 255, green: 250 / 255, blue: 250 / 255)
+    private let dividerInsets = EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0)
+    
     private let color: Color
     private let operation: CopyOperation
     private var studentFile: StudentFile { return operation.getStudentFile() }
     private var student: Student { return studentFile.getStudent() }
     
     init(currentIndex: Int, op: CopyOperation) {
-        self.color = currentIndex % 2 == 0 ? Color.white : Color.gray
+        self.color = currentIndex % 2 == 0 ? Color.white : RenameOperationCell.lightGray
         self.operation = op
     }
     
     var body: some View {
+
         HStack {
-            Text(student.lastName)
+                
+                
+            StudentNameView(student: student)
+                .frame(width: RenameOperationCell.edgeWidth)
+            
+            Divider().padding(dividerInsets)
+            
+            OutputPreviewView(outputPath: (operation.getOutputPath() as NSString).lastPathComponent)
+                .frame(width: RenameOperationCell.centerWidth)
+
+            Divider().padding(dividerInsets)
+                
+            StatusView(status: operation.getStatus())
+                .frame(width: RenameOperationCell.edgeWidth)
+                
+            
+        }.frame(width: RenameView.safeWidth, height: 30)
+//        .padding(EdgeInsets(top: 0, leading: RenameOperationCell.edgePadding,
+//                            bottom: 0, trailing: RenameOperationCell.edgePadding))
+        .background(self.color)
+    }
+    
+    private struct StudentNameView: View {
+        let student: Student
+        
+        var body: some View {
+            Text(student.firstName + " " + student.lastName)
+        }
+    }
+    
+    private struct StatusView: View {
+        var status: CopyOperation.CopyStatus
+        
+        var body: some View {
+            StatusView.statusToText(s: status).frame(alignment: .trailing)
+        }
+        
+        static func statusToText(s: CopyOperation.CopyStatus) -> Text {
+            var textColor: Color
+            var text: String
+            
+            switch s {
+            case .AlreadyExists:
+                text = "Already exists – not overwritten"
+                textColor = .blue
+            case .Copied:
+                text = "Successfully renamed"
+                textColor = .green
+            case .Overwritten:
+                text = "Overwrote existing file"
+                textColor = .orange
+            case .Pending:
+                text = "Pending copy"
+                textColor = .black
+            case .Unsuccessful:
+                text = "Rename failed"
+                textColor = .red
+            }
+            
+            return Text(text)
+            .font(.system(size: 14, weight: .heavy, design: .default))
+                .foregroundColor(textColor)
+        }
+    }
+    
+    private struct OutputPreviewView: View {
+        let outputPath: String
+        
+        var body: some View {
+            ScrollView(.horizontal, showsIndicators: false) {
+                Text(outputPath).frame(alignment: .trailing)
+            }.frame(alignment: .center)
         }
     }
 }
 
 struct RenameView_Previews: PreviewProvider {
+    
+    private static func initCopyManager() -> CopyManager {
+        let path = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files/"
+        let outputPath = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
+        let outputFormat = "%Last Name%_%First Name%_%Last Name%_test"
+        var manager = CopyManager()
+        
+        let operations = try! CopyManager.loadCopyOperations(inputPath: path, outputPath: outputPath, outputFormat: outputFormat, studentManager: try! StudentManager())
+        
+        manager.update(operations: operations)
+        return manager
+    }
+    
+    private static func initStudent() -> Student {
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        let moc = appDelegate.persistentContainer.viewContext
+        let allStudents = try! moc.fetch(Student.getAllStudents())
+        
+        return allStudents[0]
+    }
+    
     static var previews: some View {
-        RenameView(showView: .constant(true),
-                   currentProgress: .constant(10),
-                   numFiles: .constant(100), copyManager: .constant(CopyManager()))
-//        RenameOperationCell(currentIndex: 4)
+        let manager = initCopyManager()
+        
+        return RenameView(showView: .constant(true),
+                   currentProgress: .constant(1),
+                   numFiles: .constant(10), copyManager: .constant(manager))
+//        RenameOperationCell(currentIndex: 4,
+//                            op: RenameView_Previews.initCopyOperation())
     }
 }

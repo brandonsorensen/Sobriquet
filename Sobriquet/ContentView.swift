@@ -15,8 +15,6 @@ struct ContentView: View {
     @State var studentManager: StudentManager
     @State var copyManager: CopyManager = CopyManager()
     @State var showEnrollment: Bool = false
-//    @State var allStudents: [Student] = [Student]()
-//    @State var studentMap = Dictionary<Int, Student>()
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = false
@@ -95,10 +93,10 @@ struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var showPicker = false
     @State var showSheetView = false
-    @State var inputPath: String = ""
-    @State var outputPath: String = ""
-    @State var outputFormat: String = ""
-    @State var eduidLocation: Int = 0
+    @State var inputPath: String = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
+    @State var outputPath: String = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
+    @State var outputFormat: String = "%Last Name%_%First Name%_%Last Name%_test"
+    @State var eduidLocation: Int = 1
     @State var showLogo: Bool = true
     @State var currentFile: Double = 50
     @State var numFiles: Double = 100

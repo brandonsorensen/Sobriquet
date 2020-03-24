@@ -123,7 +123,7 @@ public struct CopyManager {
 
                 operations.append(currentOperation)
             }
-            if count > 3 { break }
+//            if count > 3 { break }
             count += 1
         }
         
@@ -195,8 +195,9 @@ public class CopyOperation {
         self.setOutputPath(newPath: newPath.absoluteString)
     }
     
-    public static func loadCopyOperation(studentFile: StudentFile, outputFormat: String) throws -> CopyOperation {
+    public static func loadCopyOperation(studentFile: StudentFile, outputFormat: String, outputDir: String) throws -> CopyOperation {
         var returnValue = outputFormat
+        let returnOutputDir = outputDir.last == "/" ? outputDir : outputDir + "/"
         var replacementValue: String
         let student = studentFile.getStudent()
         
@@ -210,6 +211,6 @@ public class CopyOperation {
             throw CopyOperation.CopyError.NoOutputComponentsError
         }
         
-        return CopyOperation(file: studentFile, outputPath: returnValue)
+        return CopyOperation(file: studentFile, outputPath: returnOutputDir + returnValue)
     }
 }
