@@ -85,7 +85,7 @@ struct StudentScrollView: View {
     private let fromEdgeRadius = CGFloat(5)
     
     var body: some View {
-        ScrollView {
+        List {
            VStack {
             // There were fewer than 100 elements returned by the search
             if viewableStudents.count < DEFAULT_MAX_PER_ENROLLMENT_VIEW {
