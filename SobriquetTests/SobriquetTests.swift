@@ -32,6 +32,13 @@ class SobriquetTests: XCTestCase {
         app.textFields["Enter path to files."].typeText(outputDir)
         
     }
+    
+    func testPDF() {
+        let pdfPath = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-pdfs/IHLA_Report_Card_19-20_Sem1 1733.pdf"
+        
+        let manager = try! StudentManager()
+        print(manager.getStudentFromFileContents(fileName: pdfPath))
+    }
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
