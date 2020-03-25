@@ -16,6 +16,7 @@ public class StudentFile {
     private var exists: Bool { return FileManager.default.fileExists(atPath: path) }
     
     public enum StudentFileError: Error {
+        case BadOutputDir
         case NoEduidInPath
         case NoStudentFound
         case UnknownCopyError
@@ -53,6 +54,13 @@ public class StudentFile {
     public func renameFile(newPath: String, overwrite: Bool = false) throws -> CopyOperation.CopyStatus {
         let manager = FileManager.default
         
+        let url = URL(fileURLWithPath: newPath)
+        let baseDir = url.deletingLastPathComponent()
+        var isDir: ObjCBool = true
+        if !manager.fileExists(atPath: baseDir.absoluteString, isDirectory: &isDir) {
+            throw CopyOperation.CopyError.BadOutputDir
+        }
+        
         do {
             if manager.fileExists(atPath: newPath) {
                 if overwrite {
@@ -64,8 +72,11 @@ public class StudentFile {
             
             try manager.copyItem(atPath: self.path, toPath: newPath)
             return .Copied
+        } catch let e as CopyOperation.CopyError {
+            throw e
         } catch {
-            throw StudentFileError.UnknownCopyError
+            print("\(error)")
+            throw CopyOperation.CopyError.Unknown
         }
     }
     

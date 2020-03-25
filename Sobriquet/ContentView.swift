@@ -10,7 +10,6 @@ import SwiftUI
 import AppKit
 import CoreData
 
-
 struct ContentView: View {
     @State var studentManager: StudentManager
     @State var copyManager: CopyManager = CopyManager()
@@ -40,7 +39,7 @@ struct ContentView: View {
             HStack {
                 HStack {
                     MainView(enrollmentViewState: $showEnrollment, studentManager: $studentManager,
-                             showRenameView: $showRenameView, copyManager: $copyManager)
+                             showRenameView: $showRenameView, copyManager: $copyManager, showAlert: $showAlert, alertType: $alertType)
                         .frame(minWidth: 700)
                     Divider().padding(EdgeInsets(top: 20, leading: 0,
                                                  bottom: 20, trailing: 0
@@ -68,6 +67,7 @@ struct ContentView: View {
     }
     
     enum AlertType {
+        case BadOutputDirectory
         case BadDefaultCsv
         case NonUniqueStudent
         case Unknown
@@ -75,6 +75,10 @@ struct ContentView: View {
     
     func errorSwitch(error: AlertType) -> Alert {
         switch error {
+        case .BadOutputDirectory:
+            return Alert(title: Text("Output Directory Error"),
+                         message: Text("The provided output directory does not exist."),
+                         dismissButton: .default(Text("OK")))
         case .BadDefaultCsv:
             return Alert(title: Text("Corrupted internal CSV file"),
                   message: Text("The default CSV file has been corrupted."), dismissButton: .default(Text("OK")))
@@ -106,6 +110,8 @@ struct MainView: View {
     @Binding var studentManager: StudentManager
     @Binding var showRenameView: Bool
     @Binding var copyManager: CopyManager
+    @Binding var showAlert: Bool
+    @Binding var alertType: ContentView.AlertType
     
     let edgeSpace = CGFloat(30)
     
@@ -147,7 +153,7 @@ struct MainView: View {
             OutputFileView(outputPath: $outputPath, outputFormat: $outputFormat, extensionText: $extensionText)
                 .padding(EdgeInsets(top: 0, leading: edgeSpace, bottom: 0, trailing: edgeSpace))
 
-            Button(action: activateRenameView) {
+            Button(action: activateRenameView ) {
                 Text("Start").frame(width: 200, height: 50)
             }.buttonStyle(StartButtonStyle())
             .disabled(eduidLocation == 0)
@@ -155,6 +161,15 @@ struct MainView: View {
     }
     
     func activateRenameView() {
+        // If the output directory doesn't exist
+        var isDir: ObjCBool = true
+        if !FileManager.default.fileExists(atPath: outputPath,
+                                           isDirectory: &isDir) {
+            self.alertType = .BadOutputDirectory
+            self.showAlert.toggle()
+            return
+        }
+        
         self.showRenameView.toggle()
         self.renameInProgress.toggle()
         let newOperations = try! CopyManager.loadCopyOperations(inputPath: self.inputPath,
@@ -163,6 +178,7 @@ struct MainView: View {
                                                                 studentManager: self.studentManager)
         self.copyManager.update(operations: newOperations)
     }
+        
 }
 
 struct ContentView_Previews: PreviewProvider {

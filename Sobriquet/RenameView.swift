@@ -200,14 +200,12 @@ struct RenameView: View {
         
         func executeCopy() {
             for index in 0..<copyManager.count {
-                let _ = copyManager.getOperation(at: index).execute()
+                let _ = copyManager.getOperation(at: index).execute(overwrite: overwrite)
                 self.copyProgress += 1
             }
             self.executed.toggle()
         }
     }
-    
-
 }
 
 struct RenameOperationCell: View {
@@ -267,7 +265,7 @@ struct RenameOperationCell: View {
                     Text(String(student.eduid)).frame(minWidth: 50)
                         .background(Rectangle().fill(Color.yellow))
                         .shadow(radius: 5)
-                        .offset(x: 40, y: -10)
+                        .offset(x: 40, y: -13)
                         .opacity(0.5)
                 }
             }.onHover(perform: { _ in self.hovered.toggle() })

@@ -154,8 +154,10 @@ public class CopyOperation: ObservableObject {
     }
     
     public enum CopyError: Error {
+        case BadOutputDir
         case AlreadyExistsError
         case NoOutputComponentsError
+        case Unknown
     }
     
     @Published private var status: CopyStatus = .Pending
@@ -172,10 +174,10 @@ public class CopyOperation: ObservableObject {
         self.status = status
     }
     
-    public func execute() -> CopyStatus {
+    public func execute(overwrite: Bool = false) -> CopyStatus {
         do {
-            self.status = try self.file.renameFile(newPath: outputPath)
-        } catch CopyError.AlreadyExistsError {
+            self.status = try self.file.renameFile(newPath: outputPath, overwrite: overwrite)
+        } catch CopyOperation.CopyError.AlreadyExistsError {
             self.status = .AlreadyExists
         } catch {
             self.status = .Unsuccessful
