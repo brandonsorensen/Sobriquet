@@ -57,7 +57,7 @@ public class StudentFile {
         let url = URL(fileURLWithPath: newPath)
         let baseDir = url.deletingLastPathComponent()
         var isDir: ObjCBool = true
-        if !manager.fileExists(atPath: baseDir.absoluteString, isDirectory: &isDir) {
+        if !manager.fileExists(atPath: baseDir.path, isDirectory: &isDir) {
             throw CopyOperation.CopyError.BadOutputDir
         }
         

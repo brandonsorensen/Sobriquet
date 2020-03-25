@@ -113,19 +113,28 @@ struct RenameView: View {
         @Binding var manager: CopyManager
         @Binding var executed: Bool
         @Binding var selectedFilter: Int
+        var filteredIndices: [Int] {
+            let filter = RenameOperations.intToCopyStatus(i: selectedFilter)
+            return manager.filter(by: filter)
+        }
         
         var body: some View {
             List {
-                if self.manager.isEmpty {
-                    Text("\nRename operations will display here.")
-                        .foregroundColor(.gray)
-                        .frame(alignment: .center)
+                if self.filteredIndices.isEmpty {
+                    HStack{
+                        Spacer()
+                        Text("\nRename operations will display here.")
+                            .foregroundColor(.gray)
+                            .frame(alignment: .center)
+                        Spacer()
+                    }
                 } else {
-                    ForEach(self.manager.filter(by: RenameOperations.intToCopyStatus(i: selectedFilter)), id: \.self) { index in
+                    ForEach(self.filteredIndices, id: \.self) { index in
                         RenameOperationCell(currentIndex: index, op: self.manager.getOperation(at: index))
                     }
                 }
             }
+            .id(UUID())  // Forces complete reload
             .padding(.horizontal, -9)
             .frame(width: RenameView.safeWidth, height: 470)
             .background(colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
