@@ -16,7 +16,6 @@ struct RenameView: View {
     @State var overwrite = false
     @Binding var showView: Bool
     @Binding var currentProgress: Double
-    let numFiles: Double
     @Binding var copyManager: CopyManager
     
     private static let cornerRadius = CGFloat(7)
@@ -62,14 +61,14 @@ struct RenameView: View {
             Header()
             RenameOperations(manager: $copyManager, executed: $executed)
             
-            ProgressBar(value: $currentProgress, maxValue: numFiles,
+            ProgressBar(value: $currentProgress, maxValue: Double(copyManager.count),
                         backgroundColor: colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
                 .frame(width: RenameView.safeWidth)
             
             Spacer()
             Footer(displayText: $displayText, selectedFilter: $selectedFilter, executed: $executed,
                    overwrite: $overwrite, copyManager: $copyManager, showView: $showView,
-                   copyProgress: $currentProgress, numFiles: numFiles)
+                   copyProgress: $currentProgress)
             Spacer()
             
         }.frame(width: RenameView.sheetWidth, height: 600)
@@ -145,10 +144,10 @@ struct RenameView: View {
         @Binding var copyManager: CopyManager
         @Binding var showView: Bool
         @Binding var copyProgress: Double
-        let numFiles: Double
         
         private struct ExecuteButtonStyle: ButtonStyle {
             @State private var isPressed = false
+            @Binding var isDisabled: Bool
             
             static let cornerRadius = CGFloat(4.0)
             
@@ -158,9 +157,11 @@ struct RenameView: View {
                     .foregroundColor(.white)
                     .background(Color.blue)
                     .overlay(Color.black.opacity(configuration.isPressed ? 0.15 : 0))
+                    .overlay(Color.black.opacity(isDisabled ? 0.2 : 0))
                     .cornerRadius(ExecuteButtonStyle.cornerRadius)
                     .disableAutocorrection(true)
                     .animation(.none)
+                    
             }
         }
         
@@ -188,9 +189,9 @@ struct RenameView: View {
                 }
                 
                 Spacer()
-                Button(action: { self.showView.toggle(); }) { Text("Cancel") }.frame(alignment: .center)
+                Button(action: { self.showView.toggle(); self.copyProgress = 0 }) { Text("Cancel") }.frame(alignment: .center)
                 Button(action: executeCopy) { Text("Execute") }
-                .buttonStyle(ExecuteButtonStyle())
+                .buttonStyle(ExecuteButtonStyle(isDisabled: $executed))
                 .disabled(executed)
                 
             }.padding(.bottom, 10)
@@ -203,7 +204,6 @@ struct RenameView: View {
                 self.copyProgress += 1
             }
             self.executed.toggle()
-            
         }
     }
     
@@ -339,7 +339,7 @@ struct RenameView_Previews: PreviewProvider {
         
         return RenameView(showView: .constant(true),
                    currentProgress: .constant(1),
-                   numFiles: 10, copyManager: .constant(manager))
+                   copyManager: .constant(manager))
 //        RenameOperationCell(currentIndex: 4,
 //                            op: RenameView_Previews.initCopyOperation())
     }

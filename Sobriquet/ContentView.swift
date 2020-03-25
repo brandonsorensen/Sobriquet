@@ -19,7 +19,6 @@ struct ContentView: View {
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = false
     @State var currentFile: Double = 0
-    @State var numFiles: Double = 0
     
     init() {
         do {
@@ -59,7 +58,7 @@ struct ContentView: View {
             
             if showRenameView {
                 RenameView(showView: $showRenameView, currentProgress: $currentFile,
-                           numFiles: numFiles, copyManager: $copyManager)
+                           copyManager: $copyManager)
                     .transition(.move(edge: .top))
                     .animation(.default)
             }
@@ -101,7 +100,6 @@ struct MainView: View {
     @State var eduidLocation: Int = 1
     @State var showLogo: Bool = true
     @State var currentFile: Double = 0
-    @State var numFiles: Double = 0
     @State var renameInProgress: Bool = true
     @Binding var enrollmentViewState: Bool
     @Binding var studentManager: StudentManager
