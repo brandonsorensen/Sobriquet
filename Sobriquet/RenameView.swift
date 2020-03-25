@@ -10,7 +10,6 @@ import SwiftUI
 
 struct RenameView: View {
     @Environment(\.colorScheme) var colorScheme
-    @State var displayText: String = ""
     @State var selectedFilter = 0
     @State var executed = false
     @State var overwrite = false
@@ -66,7 +65,7 @@ struct RenameView: View {
                 .frame(width: RenameView.safeWidth)
             
             Spacer()
-            Footer(displayText: $displayText, selectedFilter: $selectedFilter, executed: $executed,
+            Footer(selectedFilter: $selectedFilter, executed: $executed,
                    overwrite: $overwrite, copyManager: $copyManager, showView: $showView,
                    copyProgress: $currentProgress)
             Spacer()
@@ -137,7 +136,6 @@ struct RenameView: View {
     }
     
     private struct Footer: View {
-        @Binding var displayText: String
         @Binding var selectedFilter: Int
         @Binding var executed: Bool
         @Binding var overwrite: Bool
