@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import CoreData
+import Quartz
 
 /// Creates a `Student` object and saves it to Core Data persistent storage.
 public func addStudent(eduid: Int, lastName: String, firstName: String, middleName: String?) {
@@ -179,6 +180,24 @@ public struct StudentManager {
         if let eduid: Int = StudentManager.getEduidFromString(s: fileName) {
             return getStudentForEduid(eduid: eduid)
         }
+        return nil
+    }
+    
+    /**
+     Given a PDF file with an EDUID, retrieves the student to whom that EDUID belongs if
+     one is found.
+     
+     - Returns: the student matching the EDUID in the file name if one exists.
+     */
+    public func getStudentFromFileContents(fileName: String) -> Student? {
+        let pdf = PDFDocument(url: URL(fileURLWithPath: fileName))
+        
+        guard let contents = pdf?.string else { return nil }
+        
+        if let eduid: Int = StudentManager.getEduidFromString(s: contents) {
+            return getStudentForEduid(eduid: eduid)
+        }
+        
         return nil
     }
     
