@@ -80,7 +80,10 @@ public class StudentFile {
         }
     }
     
-    public func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus { return try self.renameFile(newPath: newPath.absoluteString) }
+    public func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus {
+        return try self.renameFile(newPath: newPath.absoluteString)
+        
+    }
     
     public func setStudent(newStudent: Student) {
         self.student = newStudent

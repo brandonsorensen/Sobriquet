@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 public struct CopyManager {
     public static let COMPONENT_REGEX = #"%(eduid|last|first|middle)( (name|initial))?%"#
     
@@ -135,7 +134,8 @@ public struct CopyManager {
     public static func loadCopyOperations(inputPath: String,
                               outputPath: String,
                               outputFormat: String,
-                              studentManager: StudentManager)
+                              studentManager: StudentManager,
+                              inFileName: Bool = false)
         throws -> [CopyOperation] {
             
             if outputFormat.range(of: CopyManager.COMPONENT_REGEX, options: [.regularExpression, .caseInsensitive]) == nil {
@@ -143,24 +143,27 @@ public struct CopyManager {
         }
 
         var absolutePath: String
+        var currentStudent: Student?
         var currentStudentFile: StudentFile
         var currentOperation: CopyOperation
         var operations = [CopyOperation]()
         
         let files = try FileManager.default.contentsOfDirectory(atPath: inputPath)
-        var count = 0
         for file in files {
             absolutePath = inputPath + "/" + file
-            if let currentStudent = studentManager.getStudentFromFileName(fileName: file) {
-                currentStudentFile = StudentFile(student: currentStudent, path: absolutePath)
+            if inFileName {
+                currentStudent = studentManager.getStudentFromFileName(fileName: absolutePath)
+            } else {
+                currentStudent = studentManager.getStudentFromFileContents(fileName: absolutePath)
+            }
+            
+            if currentStudent != nil {
+                currentStudentFile = StudentFile(student: currentStudent!, path: absolutePath)
                 currentOperation = try! CopyOperation.loadCopyOperation(studentFile: currentStudentFile,
                                                                         outputFormat: outputFormat,
                                                                         outputDir: outputPath)
-
                 operations.append(currentOperation)
             }
-//            if count > 3 { break }
-            count += 1
         }
         
         return operations

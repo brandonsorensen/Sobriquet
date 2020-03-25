@@ -10,6 +10,15 @@ import SwiftUI
 import AppKit
 import CoreData
 
+let INPUT_DEFAULT = ""
+let OUTPUT_PATH_DEFAULT = ""
+let OUTPUT_FORMAT = ""
+
+// DEBUG
+//let INPUT_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
+//let OUTPUT_PATH_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
+//let OUTPUT_FORMAT = "%Last Name%_%First Name%_%eduid%_test"
+
 struct ContentView: View {
     @State var studentManager: StudentManager
     @State var copyManager: CopyManager = CopyManager()
@@ -102,11 +111,11 @@ struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var showPicker = false
     @State var showSheetView = false
-    @State var inputPath: String = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
-    @State var outputPath: String = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
-    @State var outputFormat: String = "%Last Name%_%First Name%_%Last Name%_test"
+    @State var inputPath: String = INPUT_DEFAULT
+    @State var outputPath: String = OUTPUT_PATH_DEFAULT
+    @State var outputFormat: String = OUTPUT_PATH_DEFAULT
     @State var extensionText: String = ".pdf"
-    @State var eduidLocation: Int = 1
+    @State var eduidLocation: Int = 0
     @State var showLogo: Bool = true
     @State var currentFile: Double = 0
     @State var renameInProgress: Bool = true
@@ -121,12 +130,23 @@ struct MainView: View {
     
     struct StartButtonStyle: ButtonStyle {
         @State private var isPressed = false
+        @Binding var inputPath: String
+        @Binding var outputPath: String
+        @Binding var outputFormat: String
+        @Binding var eduidLocation: Int
+        
+        var enabled: Bool {
+            return eduidLocation != 0 &&
+                       !outputPath.isEmpty &&
+                       !outputFormat.isEmpty &&
+                       !inputPath.isEmpty
+        }
         
         func makeBody(configuration: Self.Configuration) -> some View {
             configuration.label
                 .foregroundColor(configuration.isPressed ? Color.blue : Color.white)
                 .background(configuration.isPressed ? Color.white : Color.blue)
-                .scaleEffect(isPressed ? 1.4 : 1.0)
+                .overlay(Color.gray.opacity(enabled ? 0 : 0.4))
                 .cornerRadius(6.0)
                 .padding()
                 .disableAutocorrection(true)
@@ -159,9 +179,20 @@ struct MainView: View {
 
             Button(action: activateRenameView ) {
                 Text("Start").frame(width: 200, height: 50)
-            }.buttonStyle(StartButtonStyle())
-            .disabled(eduidLocation == 0)
+            }.buttonStyle(StartButtonStyle(
+                inputPath: $inputPath,
+                outputPath: $outputPath,
+                outputFormat: $outputFormat,
+                eduidLocation: $eduidLocation))
+            .disabled(!enableStartButton)
         }
+    }
+    
+    var enableStartButton: Bool {
+        return eduidLocation != 0 &&
+            !outputPath.isEmpty &&
+            !outputFormat.isEmpty &&
+            !inputPath.isEmpty
     }
     
     func activateRenameView() {
@@ -178,7 +209,8 @@ struct MainView: View {
             let newOperations = try CopyManager.loadCopyOperations(inputPath: self.inputPath,
                                                                     outputPath: self.outputPath,
                                                                     outputFormat: self.outputFormat + self.extensionText,
-                                                                    studentManager: self.studentManager)
+                                                                    studentManager: self.studentManager,
+                                                                    inFileName: self.eduidLocation == 1)
             self.copyManager.update(operations: newOperations)
             
             self.showRenameView.toggle()
