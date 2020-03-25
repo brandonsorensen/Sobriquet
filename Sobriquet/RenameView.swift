@@ -267,7 +267,7 @@ struct RenameOperationCell: View {
                     Text(String(student.eduid)).frame(minWidth: 50)
                         .background(Rectangle().fill(Color.yellow))
                         .shadow(radius: 5)
-                        .offset(x: 40, y: -20)
+                        .offset(x: 40, y: -10)
                         .opacity(0.5)
                 }
             }.onHover(perform: { _ in self.hovered.toggle() })
@@ -291,10 +291,10 @@ struct RenameOperationCell: View {
                 text = "Already exists"
                 textColor = .blue
             case .Copied:
-                text = "Renamed"
+                text = "Copied"
                 textColor = .green
             case .Overwritten:
-                text = "Overwrote existing file"
+                text = "Overwritten"
                 textColor = .orange
             case .Pending:
                 text = "Pending"

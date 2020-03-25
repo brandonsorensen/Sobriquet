@@ -39,7 +39,8 @@ struct ContentView: View {
         ZStack(alignment: .top) {
             HStack {
                 HStack {
-                    MainView(enrollmentViewState: $showEnrollment, studentManager: $studentManager, showRenameView: $showRenameView, copyManager: $copyManager)
+                    MainView(enrollmentViewState: $showEnrollment, studentManager: $studentManager,
+                             showRenameView: $showRenameView, copyManager: $copyManager)
                         .frame(minWidth: 700)
                     Divider().padding(EdgeInsets(top: 20, leading: 0,
                                                  bottom: 20, trailing: 0

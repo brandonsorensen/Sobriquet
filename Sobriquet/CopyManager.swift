@@ -129,7 +129,9 @@ public struct CopyManager {
             absolutePath = inputPath + "/" + file
             if let currentStudent = studentManager.getStudentFromFileName(fileName: file) {
                 currentStudentFile = StudentFile(student: currentStudent, path: absolutePath)
-                currentOperation = try! loadCopyOperation(studentFile: currentStudentFile, outputFormat: outputFormat)
+                currentOperation = try! CopyOperation.loadCopyOperation(studentFile: currentStudentFile,
+                                                                        outputFormat: outputFormat,
+                                                                        outputDir: outputPath)
 
                 operations.append(currentOperation)
             }
@@ -207,6 +209,33 @@ public class CopyOperation: ObservableObject {
     
     public func setOutputPath(newPath: URL) {
         self.setOutputPath(newPath: newPath.absoluteString)
+    }
+    
+    public static func componentStringSwitch(value: String, student: Student) throws -> String {
+        var replacementValue: String = ""
+        
+        switch value.lowercased() {
+        case "%eduid%":
+            replacementValue = String(student.eduid)
+        case "%first name%":
+            replacementValue = student.firstName
+        case "%last name%":
+            replacementValue = student.lastName
+        case "%middle name%":
+            if let middle = student.middleName {
+                replacementValue = middle
+            }
+        case "%middle initial%":
+            if let middle = student.middleName {
+                if !middle.isEmpty {
+                    replacementValue = String(middle.first!)
+                }
+            }
+        default:
+            throw RenameError.ComponentIterationError
+        }
+        
+        return replacementValue
     }
     
     public static func loadCopyOperation(studentFile: StudentFile, outputFormat: String, outputDir: String) throws -> CopyOperation {

@@ -18,6 +18,7 @@ public class StudentFile {
     public enum StudentFileError: Error {
         case NoEduidInPath
         case NoStudentFound
+        case UnknownCopyError
     }
     
     public init(student: Student, path: String) {
@@ -50,14 +51,22 @@ public class StudentFile {
     }
     
     public func renameFile(newPath: String, overwrite: Bool = false) throws -> CopyOperation.CopyStatus {
-        if FileManager.default.fileExists(atPath: newPath) {
-            if overwrite {
-                // TODO: Do actually overwrite.
-                return .Overwritten
-            } else { throw CopyOperation.CopyError.AlreadyExistsError }
+        let manager = FileManager.default
+        
+        do {
+            if manager.fileExists(atPath: newPath) {
+                if overwrite {
+                    // TODO: Do actually overwrite.
+                    try manager.removeItem(atPath: newPath)
+                    return .Overwritten
+                } else { throw CopyOperation.CopyError.AlreadyExistsError }
+            }
+            
+            try manager.copyItem(atPath: self.path, toPath: newPath)
+            return .Copied
+        } catch {
+            throw StudentFileError.UnknownCopyError
         }
-        // TODO
-        return .Copied
     }
     
     public func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus { return try self.renameFile(newPath: newPath.absoluteString) }
