@@ -68,6 +68,7 @@ struct ContentView: View {
     
     enum AlertType {
         case BadOutputDirectory
+        case NoComponentError
         case BadDefaultCsv
         case NonUniqueStudent
         case Unknown
@@ -82,6 +83,9 @@ struct ContentView: View {
         case .BadDefaultCsv:
             return Alert(title: Text("Corrupted internal CSV file"),
                   message: Text("The default CSV file has been corrupted."), dismissButton: .default(Text("OK")))
+        case .NoComponentError:
+            return Alert(title: Text("No Format Component"),
+                  message: Text("The output format must contain at least one of the provided components."), dismissButton: .default(Text("OK")))
         case .NonUniqueStudent:
             let message = Text("At least two students in the data base have the same EDUID. Resorting to default data base.")
             return Alert(title: Text("Non unique student"),
@@ -170,13 +174,22 @@ struct MainView: View {
             return
         }
         
-        self.showRenameView.toggle()
-        self.renameInProgress.toggle()
-        let newOperations = try! CopyManager.loadCopyOperations(inputPath: self.inputPath,
-                                                                outputPath: self.outputPath,
-                                                                outputFormat: self.outputFormat + self.extensionText,
-                                                                studentManager: self.studentManager)
-        self.copyManager.update(operations: newOperations)
+        do {
+            let newOperations = try CopyManager.loadCopyOperations(inputPath: self.inputPath,
+                                                                    outputPath: self.outputPath,
+                                                                    outputFormat: self.outputFormat + self.extensionText,
+                                                                    studentManager: self.studentManager)
+            self.copyManager.update(operations: newOperations)
+            
+            self.showRenameView.toggle()
+            self.renameInProgress.toggle()
+        } catch CopyOperation.CopyError.NoOutputComponentsError {
+            self.alertType = .NoComponentError
+            self.showAlert.toggle()
+        } catch {
+            self.alertType = .Unknown
+            self.showAlert.toggle()
+        }
     }
         
 }
