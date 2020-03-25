@@ -14,13 +14,6 @@ public struct CopyManager {
     
     private var allOperations = [CopyOperation]()
     
-    
-    public mutating func addFromDirectory(inputPath: String,
-                                          studentMap: Dictionary<Int, Student>) {
-        
-        
-    }
-    
     public func countSuccessful() -> Int {
         var count = 0
         var status: CopyOperation.CopyStatus
@@ -92,6 +85,37 @@ public struct CopyManager {
         for operation in allOperations {
             let _ = operation.execute()
         }
+    }
+    
+    public func filter(by: CopyOperation.CopyStatus?) -> [Int] {
+        if by == nil {
+            return Array(0..<allOperations.count)
+        }
+        
+        var returnIndices = [Int]()
+        for (i, operation) in allOperations.enumerated() {
+            if operation.getStatus() == by {
+                returnIndices.append(i)
+            }
+        }
+        return returnIndices
+    }
+    
+    public func filter(by: [CopyOperation.CopyStatus]) -> [Int] {
+        // TODO
+        var returnIndices = [Int]()
+        var status: CopyOperation.CopyStatus
+        
+        for (i, operation) in allOperations.enumerated() {
+            status = operation.getStatus()
+            for filter in by {
+                if status == filter {
+                    returnIndices.append(i)
+                    break
+                }
+            }
+        }
+        return returnIndices
     }
     
     public static func operationsFromStudentFiles(files: [StudentFile], outputFormat: String, outputDir: String) -> [CopyOperation] {

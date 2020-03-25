@@ -58,7 +58,8 @@ struct RenameView: View {
         VStack {
             Spacer()
             Header()
-            RenameOperations(manager: $copyManager, executed: $executed)
+            RenameOperations(manager: $copyManager, executed: $executed,
+                             selectedFilter: $selectedFilter)
             
             ProgressBar(value: $currentProgress, maxValue: Double(copyManager.count),
                         backgroundColor: colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
@@ -111,6 +112,7 @@ struct RenameView: View {
         @Environment(\.colorScheme) var colorScheme
         @Binding var manager: CopyManager
         @Binding var executed: Bool
+        @Binding var selectedFilter: Int
         
         var body: some View {
             List {
@@ -119,7 +121,7 @@ struct RenameView: View {
                         .foregroundColor(.gray)
                         .frame(alignment: .center)
                 } else {
-                    ForEach(0..<self.manager.count, id: \.self) { index in
+                    ForEach(self.manager.filter(by: RenameOperations.intToCopyStatus(i: selectedFilter)), id: \.self) { index in
                         RenameOperationCell(currentIndex: index, op: self.manager.getOperation(at: index))
                     }
                 }
@@ -132,6 +134,22 @@ struct RenameView: View {
                 RoundedRectangle(cornerRadius: RenameView.cornerRadius)
                     .stroke(colorScheme == .dark ? RenameView.darkModeOutline : RenameView.outlineColor, lineWidth: 1)
             )
+        }
+        
+        private static func intToCopyStatus(i: Int) -> CopyOperation.CopyStatus? {
+            switch i {
+                
+            case 1:
+                return .Copied
+            case 2:
+                return .AlreadyExists
+            case 3:
+                return .Overwritten
+            case 4:
+                return .Unsuccessful
+            default:
+                return nil
+            }
         }
     }
     
@@ -166,9 +184,9 @@ struct RenameView: View {
         private let filters = [
             "-- Select Filter --",
             "Successfully copied",
-            "File Not Found",
             "File already exists",
-            "File overwritten"
+            "File overwritten",
+            "Failure"
         ]
         
         var body: some View {
