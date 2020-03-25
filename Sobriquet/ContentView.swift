@@ -144,8 +144,9 @@ struct MainView: View {
         
         func makeBody(configuration: Self.Configuration) -> some View {
             configuration.label
-                .foregroundColor(configuration.isPressed ? Color.blue : Color.white)
-                .background(configuration.isPressed ? Color.white : Color.blue)
+                .foregroundColor(Color.white)
+                .background(Color.blue)
+                .overlay(Color.black.opacity(configuration.isPressed ? 0.2 : 0))
                 .overlay(Color.gray.opacity(enabled ? 0 : 0.4))
                 .cornerRadius(6.0)
                 .padding()

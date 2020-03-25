@@ -182,7 +182,7 @@ struct RenameView: View {
                     .foregroundColor(.white)
                     .background(Color.blue)
                     .overlay(Color.black.opacity(configuration.isPressed ? 0.15 : 0))
-                    .overlay(Color.black.opacity(isDisabled ? 0.2 : 0))
+                    .overlay(Color.gray.opacity(isDisabled ? 0.4 : 0))
                     .cornerRadius(ExecuteButtonStyle.cornerRadius)
                     .disableAutocorrection(true)
                     .animation(.none)
