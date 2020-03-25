@@ -241,6 +241,7 @@ public class CopyOperation: ObservableObject {
     }
     
     public static func componentStringSwitch(value: String, student: Student) throws -> String {
+        // TODO: Why does lowercase EDUID not work?
         var replacementValue: String = ""
         
         switch value.lowercased() {

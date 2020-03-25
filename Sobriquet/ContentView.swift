@@ -12,12 +12,12 @@ import CoreData
 
 let INPUT_DEFAULT = ""
 let OUTPUT_PATH_DEFAULT = ""
-let OUTPUT_FORMAT = ""
+let OUTPUT_FORMAT_DEFAULT = ""
 
 // DEBUG
 //let INPUT_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
 //let OUTPUT_PATH_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
-//let OUTPUT_FORMAT = "%Last Name%_%First Name%_%eduid%_test"
+//let OUTPUT_FORMAT_DEFAULT = "%Last Name%_%First Name%_%eduid%_test"
 
 struct ContentView: View {
     @State var studentManager: StudentManager
@@ -113,7 +113,7 @@ struct MainView: View {
     @State var showSheetView = false
     @State var inputPath: String = INPUT_DEFAULT
     @State var outputPath: String = OUTPUT_PATH_DEFAULT
-    @State var outputFormat: String = OUTPUT_PATH_DEFAULT
+    @State var outputFormat: String = OUTPUT_FORMAT_DEFAULT
     @State var extensionText: String = ".pdf"
     @State var eduidLocation: Int = 0
     @State var showLogo: Bool = true
