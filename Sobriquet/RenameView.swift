@@ -383,7 +383,8 @@ struct RenameOperationCell: View {
                     Text(student.firstName + " " + student.lastName)
                 }
                 if hovered {
-                    Text(String(student.eduid)).frame(minWidth: 50)
+                    Text("EDUID: " + String(student.eduid))
+                        .frame(minWidth: 50)
                         .background(Rectangle().fill(Color.yellow))
                         .shadow(radius: 5)
                         .offset(x: 40, y: -13)
