@@ -117,8 +117,9 @@ struct RenameView: View {
         @Binding var executed: Bool
         @Binding var selectedFilter: Int
         var filteredIndices: [Int] {
-            let filter = RenameOperations.intToCopyStatus(i: selectedFilter)
-            return manager.filter(by: filter)
+            let filter = intToCopyStatus(i: selectedFilter)
+            let filterByExclude = !executed && filter == .Copied
+            return manager.filter(by: filter, exclude: filterByExclude)
         }
         
         var body: some View {
@@ -148,19 +149,29 @@ struct RenameView: View {
             )
         }
         
-        private static func intToCopyStatus(i: Int) -> CopyOperation.CopyStatus? {
-            switch i {
-                
-            case 1:
-                return .Copied
-            case 2:
-                return .AlreadyExists
-            case 3:
-                return .Overwritten
-            case 4:
-                return .Unsuccessful
-            default:
-                return nil
+        private func intToCopyStatus(i: Int) -> CopyOperation.CopyStatus? {
+            if executed {
+                switch i {
+                case 1:
+                    return .Copied
+                case 2:
+                    return .AlreadyExists
+                case 3:
+                    return .Overwritten
+                case 4:
+                    return .Unsuccessful
+                case 5:
+                    return .StudentUnknown
+                default:
+                    return nil
+                }
+            } else {
+                switch i {
+                case 2:
+                    return .StudentUnknown
+                default:
+                    return .Copied
+                }
             }
         }
     }
@@ -198,26 +209,42 @@ struct RenameView: View {
             "Successfully copied",
             "File already exists",
             "File overwritten",
-            "Failure"
+            "Failure",
+            "Non student files"
+        ]
+        
+        private let preExecutionFilters = [
+            "-- Select Filter --",
+            "Student Files",
+            "Non student files"
         ]
         
         var body: some View {
             HStack {
-                Picker(selection: $selectedFilter, label:
-                Text("")) {
-                    ForEach(0..<filters.count, id: \.self) {
-                        Text(self.filters[$0])
-                    }
-                }.frame(width: 200, alignment: .leading)
-                    .offset(x: -9)  // Make up for empty label
-                    .disabled(!executed)
+                if executed {
+                    Picker(selection: $selectedFilter, label:
+                    Text("")) {
+                        ForEach(0..<filters.count, id: \.self) {
+                            Text(self.filters[$0])
+                        }
+                    }.frame(width: 200, alignment: .leading)
+                        .offset(x: -9)  // Make up for empty label
+                } else {
+                    Picker(selection: $selectedFilter, label:
+                    Text("")) {
+                        ForEach(0..<self.preExecutionFilters.count, id: \.self) {
+                            Text(self.preExecutionFilters[$0])
+                        }
+                    }.frame(width: 200, alignment: .leading)
+                        .offset(x: -9)  // Make up for empty label
+                }
                 
                 Toggle(isOn: $overwrite) {
                     Text("Overwrite existing files")
                 }
                 
                 Spacer()
-                Button(action: { self.showView.toggle(); self.copyProgress = 0 }) { Text("Cancel") }.frame(alignment: .center)
+                Button(action: exitView) { Text("Cancel") }.frame(alignment: .center)
                 Button(action: executeCopy) { Text("Execute") }
                 .buttonStyle(ExecuteButtonStyle(isDisabled: $executed))
                 .disabled(executed)
@@ -226,11 +253,19 @@ struct RenameView: View {
                 .frame(width: RenameView.safeWidth)
         }
         
+        private func exitView() {
+            self.copyProgress = 0
+            self.selectedFilter = 0
+            self.executed.toggle()
+            self.showView.toggle()
+        }
+        
         func executeCopy() {
             for index in 0..<copyManager.count {
                 let _ = copyManager.getOperation(at: index).execute(overwrite: overwrite)
                 self.copyProgress += 1
             }
+            self.selectedFilter = 0
             self.executed.toggle()
         }
     }
@@ -296,8 +331,12 @@ struct RenameOperationCell: View {
             
             Divider().padding(dividerInsets)
             
-            FileNameView(path: operation.getOutputPath())
-                .frame(width: RenameOperationCell.centerWidth)
+            if operation.getStatus() != .StudentUnknown {
+                FileNameView(path: operation.getOutputPath())
+                    .frame(width: RenameOperationCell.centerWidth)
+            } else {
+                Text("N/A").frame(width: RenameOperationCell.centerWidth)
+            }
 
             Divider().padding(dividerInsets)
                 
@@ -319,7 +358,7 @@ struct RenameOperationCell: View {
                 Text(baseName)
                     .fixedSize(horizontal: false, vertical: false)
                     .frame(maxWidth: RenameOperationCell.centerWidth)
-                if hovered {
+                if hovered && !path.isEmpty {
                     Text(baseName).frame(minWidth: 100)
                     .fixedSize(horizontal: true, vertical: false)
                         .background(Rectangle().fill(Color.yellow))
@@ -340,7 +379,7 @@ struct RenameOperationCell: View {
         var body: some View {
             ZStack {
                 if self.status == .StudentUnknown {
-                    Text("No student found.")
+                    Text("No student found")
                 } else {
                     Text(student.firstName + " " + student.lastName)
                 }

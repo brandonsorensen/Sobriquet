@@ -86,14 +86,28 @@ public struct CopyManager {
         }
     }
     
-    public func filter(by: CopyOperation.CopyStatus?) -> [Int] {
+    public func filter(by: CopyOperation.CopyStatus?, exclude: Bool = false) -> [Int] {
         if by == nil {
             return Array(0..<allOperations.count)
+        }
+        
+        if exclude {
+            return filterExclude(by: by!)
         }
         
         var returnIndices = [Int]()
         for (i, operation) in allOperations.enumerated() {
             if operation.getStatus() == by {
+                returnIndices.append(i)
+            }
+        }
+        return returnIndices
+    }
+    
+    public func filterExclude(by: CopyOperation.CopyStatus) -> [Int] {
+        var returnIndices = [Int]()
+        for (i, operation) in allOperations.enumerated() {
+            if operation.getStatus() != by {
                 returnIndices.append(i)
             }
         }
@@ -212,7 +226,7 @@ public class CopyOperation: ObservableObject {
     
     public func execute(overwrite: Bool = false) -> CopyStatus {
         do {
-            self.status = try self.file.renameFile(newPath: outputPath, overwrite: overwrite)
+            self.status = try self.renameFile(newPath: outputPath, overwrite: overwrite)
         } catch CopyOperation.CopyError.AlreadyExistsError {
             self.status = .AlreadyExists
         } catch CopyOperation.CopyError.UnknownStudentError {
@@ -221,6 +235,38 @@ public class CopyOperation: ObservableObject {
             self.status = .Unsuccessful
         }
         return self.status
+    }
+    
+    private func renameFile(newPath: String, overwrite: Bool) throws -> CopyStatus {
+        if self.status == .StudentUnknown {
+            throw CopyError.UnknownStudentError
+        }
+        
+        let manager = FileManager.default
+        
+        let url = URL(fileURLWithPath: newPath)
+        let baseDir = url.deletingLastPathComponent()
+        var isDir: ObjCBool = true
+        if !manager.fileExists(atPath: baseDir.path, isDirectory: &isDir) {
+            throw CopyOperation.CopyError.BadOutputDir
+        }
+        
+        do {
+            if manager.fileExists(atPath: newPath) {
+                if overwrite {
+                    try manager.removeItem(atPath: newPath)
+                    return .Overwritten
+                } else { throw CopyOperation.CopyError.AlreadyExistsError }
+            }
+            
+            try manager.copyItem(atPath: self.file.getPath(), toPath: newPath)
+            self.file.setPath(newPath: newPath)
+            return .Copied
+        } catch let e as CopyOperation.CopyError {
+            throw e
+        } catch {
+            throw CopyOperation.CopyError.Unknown
+        }
     }
     
     public func getStatus() -> CopyStatus {

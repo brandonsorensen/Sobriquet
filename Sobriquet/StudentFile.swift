@@ -51,39 +51,6 @@ public class StudentFile {
         throw StudentFileError.NoStudentFound
     }
     
-    public func renameFile(newPath: String, overwrite: Bool = false) throws -> CopyOperation.CopyStatus {
-        let manager = FileManager.default
-        
-        let url = URL(fileURLWithPath: newPath)
-        let baseDir = url.deletingLastPathComponent()
-        var isDir: ObjCBool = true
-        if !manager.fileExists(atPath: baseDir.path, isDirectory: &isDir) {
-            throw CopyOperation.CopyError.BadOutputDir
-        }
-        
-        do {
-            if manager.fileExists(atPath: newPath) {
-                if overwrite {
-                    // TODO: Do actually overwrite.
-                    try manager.removeItem(atPath: newPath)
-                    return .Overwritten
-                } else { throw CopyOperation.CopyError.AlreadyExistsError }
-            }
-            
-            try manager.copyItem(atPath: self.path, toPath: newPath)
-            return .Copied
-        } catch let e as CopyOperation.CopyError {
-            throw e
-        } catch {
-            print("\(error)")
-            throw CopyOperation.CopyError.Unknown
-        }
-    }
-    
-    public func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus {
-        return try self.renameFile(newPath: newPath.absoluteString)
-    }
-    
     public func setStudent(newStudent: Student) {
         self.student = newStudent
     }
@@ -119,9 +86,5 @@ public class UnknownFile: StudentFile {
         student.dateAdded = Date()
         
         return student
-    }
-    
-    public override func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus {
-        throw CopyOperation.CopyError.UnknownStudentError
     }
 }
