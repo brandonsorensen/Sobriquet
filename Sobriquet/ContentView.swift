@@ -10,14 +10,14 @@ import SwiftUI
 import AppKit
 import CoreData
 
-let INPUT_DEFAULT = ""
-let OUTPUT_PATH_DEFAULT = ""
-let OUTPUT_FORMAT_DEFAULT = ""
+//let INPUT_DEFAULT = ""
+//let OUTPUT_PATH_DEFAULT = ""
+//let OUTPUT_FORMAT_DEFAULT = ""
 
 // DEBUG
-//let INPUT_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
-//let OUTPUT_PATH_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
-//let OUTPUT_FORMAT_DEFAULT = "%Last Name%_%First Name%_%eduid%_test"
+let INPUT_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
+let OUTPUT_PATH_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
+let OUTPUT_FORMAT_DEFAULT = "%Last Name%_%First Name%_%eduid%_test"
 
 struct ContentView: View {
     @State var studentManager: StudentManager
@@ -49,7 +49,7 @@ struct ContentView: View {
                 HStack {
                     MainView(enrollmentViewState: $showEnrollment, studentManager: $studentManager,
                              showRenameView: $showRenameView, copyManager: $copyManager, showAlert: $showAlert, alertType: $alertType)
-                        .frame(minWidth: 700)
+                        .frame(minWidth: 900)
                     Divider().padding(EdgeInsets(top: 20, leading: 0,
                                                  bottom: 20, trailing: 0
                     ))
