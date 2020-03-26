@@ -69,7 +69,7 @@ struct ComponentButton: View {
                 RoundedRectangle(cornerRadius: 4)
                     .frame(idealWidth: 120, idealHeight: 40)
                     .fixedSize()
-                    .foregroundColor(self.hovered && !self.deactivated ? selectedColor : unselectColor)
+                    .foregroundColor(self.hovered && !self.deactivated ? unselectColor : selectedColor)
             )
             .padding(EdgeInsets(top: 50, leading: 0, bottom: 50, trailing: 0))
         }
