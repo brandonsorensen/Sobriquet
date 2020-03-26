@@ -82,7 +82,6 @@ public class StudentFile {
     
     public func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus {
         return try self.renameFile(newPath: newPath.absoluteString)
-        
     }
     
     public func setStudent(newStudent: Student) {
@@ -99,5 +98,30 @@ public class StudentFile {
     
     public func getPath() -> String {
         return self.path
+    }
+}
+
+public class UnknownFile: StudentFile {
+    public static let unknownStudent = initUnknownStudent()
+    
+    public init(path: String) {
+        super.init(student: UnknownFile.unknownStudent, path: path)
+    }
+    
+    private static func initUnknownStudent() -> Student {
+        let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
+        let moc = appDelegate.persistentContainer.viewContext
+        let student = Student(context: moc)
+        
+        student.firstName = ""
+        student.lastName = ""
+        student.eduid = 0
+        student.dateAdded = Date()
+        
+        return student
+    }
+    
+    public override func renameFile(newPath: URL) throws -> CopyOperation.CopyStatus {
+        throw CopyOperation.CopyError.UnknownStudentError
     }
 }

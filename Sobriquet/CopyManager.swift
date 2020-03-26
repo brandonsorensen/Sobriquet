@@ -162,8 +162,14 @@ public struct CopyManager {
                 currentOperation = try! CopyOperation.loadCopyOperation(studentFile: currentStudentFile,
                                                                         outputFormat: outputFormat,
                                                                         outputDir: outputPath)
-                operations.append(currentOperation)
+            } else {
+                currentStudentFile = UnknownFile(path: absolutePath)
+                currentOperation = try! CopyOperation.loadCopyOperation(studentFile: currentStudentFile,
+                                                                        outputFormat: outputFormat,
+                                                                        outputDir: "N/A")
+                currentOperation.setStatus(newStatus: .StudentUnknown)
             }
+            operations.append(currentOperation)
         }
         
         return operations
@@ -178,6 +184,7 @@ public class CopyOperation: ObservableObject {
         case AlreadyExists
         case Pending
         case Unsuccessful
+        case StudentUnknown
     }
     
     public enum CopyError: Error {
@@ -185,6 +192,7 @@ public class CopyOperation: ObservableObject {
         case ComponentIterationError
         case AlreadyExistsError
         case NoOutputComponentsError
+        case UnknownStudentError
         case Unknown
     }
     
@@ -207,6 +215,8 @@ public class CopyOperation: ObservableObject {
             self.status = try self.file.renameFile(newPath: outputPath, overwrite: overwrite)
         } catch CopyOperation.CopyError.AlreadyExistsError {
             self.status = .AlreadyExists
+        } catch CopyOperation.CopyError.UnknownStudentError {
+            self.status = .StudentUnknown
         } catch {
             self.status = .Unsuccessful
         }

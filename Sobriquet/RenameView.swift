@@ -291,7 +291,7 @@ struct RenameOperationCell: View {
             
             Divider().padding(dividerInsets)
             
-            StudentNameView(student: student)
+            StudentNameView(student: student, status: operation.getStatus())
                 .frame(width: RenameOperationCell.edgeWidth)
             
             Divider().padding(dividerInsets)
@@ -334,11 +334,16 @@ struct RenameOperationCell: View {
     
     private struct StudentNameView: View {
         let student: Student
+        let status: CopyOperation.CopyStatus
         @State var hovered: Bool = false
         
         var body: some View {
             ZStack {
-                Text(student.firstName + " " + student.lastName)
+                if self.status == .StudentUnknown {
+                    Text("No student found.")
+                } else {
+                    Text(student.firstName + " " + student.lastName)
+                }
                 if hovered {
                     Text(String(student.eduid)).frame(minWidth: 50)
                         .background(Rectangle().fill(Color.yellow))
@@ -375,6 +380,9 @@ struct RenameOperationCell: View {
             case .Pending:
                 text = "Pending"
                 textColor = .black
+            case .StudentUnknown:
+                text = "No student"
+                textColor = .gray
             case .Unsuccessful:
                 text = "Failed"
                 textColor = .red
