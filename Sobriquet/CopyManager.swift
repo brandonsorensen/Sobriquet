@@ -91,31 +91,18 @@ public struct CopyManager {
             return Array(0..<allOperations.count)
         }
         
-        if exclude {
-            return filterExclude(by: by!)
-        }
-        
+        var addIndex: Bool
+        var status: CopyOperation.CopyStatus
         var returnIndices = [Int]()
         for (i, operation) in allOperations.enumerated() {
-            if operation.getStatus() == by {
-                returnIndices.append(i)
-            }
-        }
-        return returnIndices
-    }
-    
-    public func filterExclude(by: CopyOperation.CopyStatus) -> [Int] {
-        var returnIndices = [Int]()
-        for (i, operation) in allOperations.enumerated() {
-            if operation.getStatus() != by {
-                returnIndices.append(i)
-            }
+            status = operation.getStatus()
+            addIndex = exclude ? status != by : status == by
+            if addIndex { returnIndices.append(i) }
         }
         return returnIndices
     }
     
     public func filter(by: [CopyOperation.CopyStatus]) -> [Int] {
-        // TODO
         var returnIndices = [Int]()
         var status: CopyOperation.CopyStatus
         
