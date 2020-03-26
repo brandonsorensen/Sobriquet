@@ -366,8 +366,7 @@ struct RenameOperationCell: View {
                         .offset(x: 40, y: -13)
                         .opacity(0.5)
                 }
-            }
-//            .onHover(perform: { _ in self.hovered.toggle() })
+            } .onHover { over in self.hovered = over }
         }
     }
     
@@ -390,7 +389,7 @@ struct RenameOperationCell: View {
                         .offset(x: 40, y: -13)
                         .opacity(0.5)
                 }
-            }//.onHover(perform: { _ in self.hovered.toggle() })
+            }.onHover(perform: { over in self.hovered = over })
         }
     }
     
