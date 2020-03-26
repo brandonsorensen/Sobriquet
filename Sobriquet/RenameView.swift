@@ -20,7 +20,7 @@ struct RenameView: View {
     private static let cornerRadius = CGFloat(7)
     private static let buttonWidth = CGFloat(100)
     
-    static let sheetWidth = CGFloat(600)
+    static let sheetWidth = CGFloat(800)
     static let safeWidth = sheetWidth * 0.88
     
     private static let lightModeBackground = Color(
@@ -80,11 +80,14 @@ struct RenameView: View {
     }
     
     struct Header: View {
-        let columns = [
-                   "Student", "Output Preview", "Status"
+        static let columns = [
+                   "File Name", "Student", "Output Preview", "Status"
                ]
-        static let spacingQuotient = CGFloat(4.2)
-        static let sizeRatio = CGFloat(0.6)
+        
+        /// The magnitude of the spacing – smaller means wider
+        static let spacingQuotient = CGFloat(5.3)
+        /// How much smaller the other three labels will be compare to "Output Preview"
+        static let sizeRatio = CGFloat(0.7)
         
         var body: some View {
             VStack {
@@ -92,9 +95,9 @@ struct RenameView: View {
                 Spacer()
                 Divider().frame(width: RenameView.safeWidth)
                 HStack {
-                    ForEach(0..<self.columns.count) { index in
-                        Text(self.columns[index]).frame(width: RenameView.safeWidth / Header.getQuotientForIndex(index: index))
-                        if index != self.columns.count - 1 {
+                    ForEach(0..<Header.columns.count) { index in
+                        Text(Header.columns[index]).frame(width: RenameView.safeWidth / Header.getQuotientForIndex(index: index))
+                        if index != Header.columns.count - 1 {
                             Divider()
                         }
                     }
@@ -104,7 +107,7 @@ struct RenameView: View {
         }
         
         static func getQuotientForIndex(index: Int) -> CGFloat {
-            return CGFloat(index != 1 ? Header.spacingQuotient : Header.spacingQuotient * Header.sizeRatio)
+            return CGFloat(index % 2 != 0 ? Header.spacingQuotient : Header.spacingQuotient * Header.sizeRatio)
         }
     }
     
@@ -134,7 +137,7 @@ struct RenameView: View {
                     }
                 }
             }
-            .id(UUID())  // Forces complete reload
+            .id(UUID())  // Forces complete reload; not sure why
             .padding(.horizontal, -9)
             .frame(width: RenameView.safeWidth, height: 470)
             .background(colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
@@ -235,22 +238,44 @@ struct RenameView: View {
 
 struct RenameOperationCell: View {
     
+    /// Leading and trailing padding
     private static let edgePadding = CGFloat(10)
-    private static let nViews = CGFloat(3)
-    private static var centerWidth: CGFloat {
-        RenameView.safeWidth /  RenameView.Header.getQuotientForIndex(index: 1)
-    }
-    private static var edgeWidth: CGFloat {
-        RenameView.safeWidth / RenameView.Header.getQuotientForIndex(index: 0)
-    }
-    static let lightGray = Color(red: 249 / 255, green: 250 / 255, blue: 250 / 255)
-    private let dividerInsets = EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0)
     
+    /// Padding between each cell
+    private static let verticalPad = CGFloat(5)
+    
+    /// The number of columns in the view
+    private static let nViews = CGFloat(RenameView.Header.columns.count)
+    
+    /// The width of the longer cells: "File Name" & "Output Preview"
+    private static var centerWidth: CGFloat {
+        RenameView.safeWidth /  RenameView.Header.getQuotientForIndex(index: 2)
+    }
+    
+    /// The width of the shorter cells: "Student" & "Status"
+    private static var edgeWidth: CGFloat {
+        RenameView.safeWidth / RenameView.Header.getQuotientForIndex(index: 1)
+    }
+    
+    static let lightGray = Color(red: 249 / 255, green: 250 / 255, blue: 250 / 255)
+    
+    /// Padding to make the dividers shorter than the height of the view
+    private let dividerInsets = EdgeInsets(top: RenameOperationCell.verticalPad, leading: 0,
+                                           bottom: RenameOperationCell.verticalPad, trailing: 0)
+    
+    /// The current color of the cells
     private let color: Color
+    
+    /// The file representing the relevant student
     private var studentFile: StudentFile { return operation.getStudentFile() }
+    
+    /// The student represented by the `studentFile` property
     private var student: Student { return studentFile.getStudent() }
     
+    /// The operation to be performed
     @ObservedObject private var operation: CopyOperation
+    
+    /// Whether the cell is hovered over
     @State var hovered: Bool = false
     
     init(currentIndex: Int, op: CopyOperation) {
@@ -261,12 +286,17 @@ struct RenameOperationCell: View {
     var body: some View {
         
         HStack {
+            FileNameView(path: studentFile.getPath())
+                .frame(width: RenameOperationCell.centerWidth)
+            
+            Divider().padding(dividerInsets)
+            
             StudentNameView(student: student)
                 .frame(width: RenameOperationCell.edgeWidth)
             
             Divider().padding(dividerInsets)
             
-            Text((operation.getOutputPath() as NSString).lastPathComponent)
+            FileNameView(path: operation.getOutputPath())
                 .frame(width: RenameOperationCell.centerWidth)
 
             Divider().padding(dividerInsets)
@@ -277,6 +307,29 @@ struct RenameOperationCell: View {
             
         }.frame(width: RenameView.safeWidth, height: 30)
         .background(self.color)
+    }
+    
+    private struct FileNameView: View {
+        let path: String
+        var baseName: String { return (path as NSString).lastPathComponent }
+        @State var hovered: Bool = false
+        
+        var body: some View {
+            ZStack {
+                Text(baseName)
+                    .fixedSize(horizontal: false, vertical: false)
+                    .frame(maxWidth: RenameOperationCell.centerWidth)
+                if hovered {
+                    Text(baseName).frame(minWidth: 100)
+                    .fixedSize(horizontal: true, vertical: false)
+                        .background(Rectangle().fill(Color.yellow))
+                        .shadow(radius: 5)
+                        .offset(x: 40, y: -13)
+                        .opacity(0.5)
+                }
+            }
+//            .onHover(perform: { _ in self.hovered.toggle() })
+        }
     }
     
     private struct StudentNameView: View {
@@ -293,7 +346,7 @@ struct RenameOperationCell: View {
                         .offset(x: 40, y: -13)
                         .opacity(0.5)
                 }
-            }.onHover(perform: { _ in self.hovered.toggle() })
+            }//.onHover(perform: { _ in self.hovered.toggle() })
         }
     }
     
@@ -334,6 +387,7 @@ struct RenameOperationCell: View {
     }
 }
 
+#if DEBUG
 struct RenameView_Previews: PreviewProvider {
     
     private static func initCopyManager() -> CopyManager {
@@ -360,10 +414,11 @@ struct RenameView_Previews: PreviewProvider {
     static var previews: some View {
         let manager = initCopyManager()
         
-        return RenameView(showView: .constant(true),
-                   currentProgress: .constant(1),
-                   copyManager: .constant(manager))
-//        RenameOperationCell(currentIndex: 4,
-//                            op: RenameView_Previews.initCopyOperation())
+//        return RenameView(showView: .constant(true),
+//                   currentProgress: .constant(1),
+//                   copyManager: .constant(manager))
+        return RenameOperationCell(currentIndex: 4,
+                                   op: manager.getOperation(at: 4))
     }
 }
+#endif

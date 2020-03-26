@@ -27,7 +27,6 @@
 		CAB4AA77241A48E100075238 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA76241A48E100075238 /* Preview Assets.xcassets */; };
 		CAB4AA7A241A48E100075238 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CAB4AA78241A48E100075238 /* Main.storyboard */; };
 		CAB4AA83241A58FE00075238 /* ComponentButtonsUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */; };
-		CAB4AA85241A7C2C00075238 /* RenameFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4AA84241A7C2C00075238 /* RenameFiles.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,7 +67,6 @@
 		CAB4AA7B241A48E100075238 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CAB4AA7C241A48E100075238 /* Sobriquet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sobriquet.entitlements; sourceTree = "<group>"; };
 		CAB4AA82241A58FE00075238 /* ComponentButtonsUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentButtonsUIView.swift; sourceTree = "<group>"; };
-		CAB4AA84241A7C2C00075238 /* RenameFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameFiles.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,7 +130,6 @@
 				CA1DEAF8241AD45800092739 /* InputFileUIView.swift */,
 				CA1DEAFC241AD72300092739 /* openFileDialog.swift */,
 				CA1DEAF4241A8DC400092739 /* OutputFileView.swift */,
-				CAB4AA84241A7C2C00075238 /* RenameFiles.swift */,
 				CA6E5B03242671EA001F5737 /* RenameView.swift */,
 				CA804E14242763E00048112C /* ProgressBarView.swift */,
 				CA072F462423BE7300018CA0 /* Student.swift */,
@@ -279,7 +276,6 @@
 				CAB4AA70241A48DE00075238 /* AppDelegate.swift in Sources */,
 				CA3B9F34241BB42B000E497B /* EnrollmentModel.xcdatamodeld in Sources */,
 				CA804E172427B9880048112C /* StudentFile.swift in Sources */,
-				CAB4AA85241A7C2C00075238 /* RenameFiles.swift in Sources */,
 				CA1DEAFD241AD72300092739 /* openFileDialog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

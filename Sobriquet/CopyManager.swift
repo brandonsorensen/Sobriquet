@@ -182,6 +182,7 @@ public class CopyOperation: ObservableObject {
     
     public enum CopyError: Error {
         case BadOutputDir
+        case ComponentIterationError
         case AlreadyExistsError
         case NoOutputComponentsError
         case Unknown
@@ -262,7 +263,7 @@ public class CopyOperation: ObservableObject {
                 }
             }
         default:
-            throw RenameError.ComponentIterationError
+            throw CopyError.ComponentIterationError
         }
         
         return replacementValue
