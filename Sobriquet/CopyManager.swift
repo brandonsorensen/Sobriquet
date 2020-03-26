@@ -320,7 +320,7 @@ public class CopyOperation: ObservableObject {
         
         for value in ComponentButtonType.allValues {
             replacementValue = try componentStringSwitch(value: value, student: student)
-            returnValue = returnValue.replacingOccurrences(of: value, with: replacementValue)
+            returnValue = returnValue.replacingOccurrences(of: value, with: replacementValue, options: .caseInsensitive)
         }
         
         if returnValue == outputFormat {
