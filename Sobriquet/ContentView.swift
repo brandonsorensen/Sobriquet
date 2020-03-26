@@ -10,14 +10,18 @@ import SwiftUI
 import AppKit
 import CoreData
 
-//let INPUT_DEFAULT = ""
-//let OUTPUT_PATH_DEFAULT = ""
-//let OUTPUT_FORMAT_DEFAULT = ""
 
-// DEBUG
+
+#if DEBUG
 let INPUT_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
 let OUTPUT_PATH_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
 let OUTPUT_FORMAT_DEFAULT = "%Last Name%_%First Name%_%eduid%_test"
+
+#else
+let INPUT_DEFAULT = ""
+let OUTPUT_PATH_DEFAULT = ""
+let OUTPUT_FORMAT_DEFAULT = ""
+#endif
 
 struct ContentView: View {
     @State var studentManager: StudentManager
@@ -118,7 +122,6 @@ struct MainView: View {
     @State var eduidLocation: Int = 0
     @State var showLogo: Bool = true
     @State var currentFile: Double = 0
-    @State var renameInProgress: Bool = true
     @Binding var enrollmentViewState: Bool
     @Binding var studentManager: StudentManager
     @Binding var showRenameView: Bool
@@ -215,7 +218,6 @@ struct MainView: View {
             self.copyManager.update(operations: newOperations)
             
             self.showRenameView.toggle()
-            self.renameInProgress.toggle()
         } catch CopyOperation.CopyError.NoOutputComponentsError {
             self.alertType = .NoComponentError
             self.showAlert.toggle()
