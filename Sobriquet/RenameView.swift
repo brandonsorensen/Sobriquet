@@ -107,11 +107,14 @@ struct RenameView: View {
                         RenameOperationCell(currentIndex: index,
                                             op: self.manager.getOperation(at: index),
                                             colorScheme: self.colorScheme)
+                            .listRowInsets(.init())
+                            .listRowBackground(RenameOperationCell.getCellColor(index: index, mode: self.colorScheme))
+                            .offset(x: -5)
                     }
                 }
             }
+            .environment(\.defaultMinListRowHeight, RenameOperationCell.cellHeight)
             .id(UUID())  // Forces complete reload; not sure why
-            .padding(.horizontal, -9)
             .frame(width: RenameView.safeWidth, height: 470)
             .background(colorScheme == .dark ? Color.darkModeTextViewBackground : Color.white)
             .cornerRadius(RenameView.cornerRadius)
@@ -221,8 +224,7 @@ struct RenameView: View {
                 .buttonStyle(ExecuteButtonStyle(isDisabled: $executed))
                 .disabled(executed)
                 
-            }.padding(.bottom, 10)
-                .frame(width: RenameView.safeWidth)
+            }.frame(width: RenameView.safeWidth)
         }
         
         private func exitView() {
@@ -245,9 +247,7 @@ struct RenameView: View {
 
 struct RenameOperationCell: View {
     
-    /// Leading and trailing padding
-    private static let edgePadding = CGFloat(10)
-    
+    static let cellHeight = CGFloat(40)
     /// Padding between each cell
     private static let verticalPad = CGFloat(5)
     
@@ -268,9 +268,6 @@ struct RenameOperationCell: View {
     private let dividerInsets = EdgeInsets(top: RenameOperationCell.verticalPad, leading: 0,
                                            bottom: RenameOperationCell.verticalPad, trailing: 0)
     
-    /// The current color of the cells
-    private let color: Color
-    
     /// The file representing the relevant student
     private var studentFile: StudentFile { return operation.getStudentFile() }
     
@@ -284,11 +281,10 @@ struct RenameOperationCell: View {
     @State var hovered: Bool = false
     
     init(currentIndex: Int, op: CopyOperation, colorScheme: ColorScheme) {
-        self.color = RenameOperationCell.getCellColor(index: currentIndex, mode: colorScheme)
         self.operation = op
     }
     
-    private static func getCellColor(index: Int, mode: ColorScheme) -> Color {
+    static func getCellColor(index: Int, mode: ColorScheme) -> Color {
         // even cells should be white, odd light gray
         if index % 2 == 0 {
             return mode == .dark ? .renameViewDarkCell : .white
@@ -323,8 +319,7 @@ struct RenameOperationCell: View {
                 .frame(width: RenameOperationCell.edgeWidth)
                 
             
-        }.background(self.color)
-        .frame(width: RenameView.safeWidth, height: 30)
+        }.frame(height: RenameOperationCell.cellHeight)
     }
     
     private struct FileNameView: View {
@@ -338,18 +333,19 @@ struct RenameOperationCell: View {
                     .fixedSize(horizontal: false, vertical: false)
                     .frame(maxWidth: RenameOperationCell.centerWidth)
                 if hovered && !path.isEmpty {
-                    Text(baseName).frame(minWidth: 100)
+                    Text(baseName)
                     .fixedSize(horizontal: true, vertical: false)
                         .background(Rectangle().fill(Color.yellow))
                         .shadow(radius: 5)
                         .offset(x: 40, y: -13)
-                        .opacity(0.5)
+                        .opacity(0.7)
                 }
             } .onHover { over in self.hovered = over }
         }
     }
     
     private struct StudentNameView: View {
+        @Environment(\.colorScheme) var colorScheme
         let student: Student
         let status: CopyOperation.CopyStatus
         @State var hovered: Bool = false
@@ -363,25 +359,27 @@ struct RenameOperationCell: View {
                 }
                 if hovered {
                     Text("EDUID: " + String(student.eduid))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .frame(minWidth: 50)
                         .background(Rectangle().fill(Color.yellow))
                         .shadow(radius: 5)
                         .offset(x: 40, y: -13)
-                        .opacity(0.5)
+                        .opacity(0.7)
                 }
             }.onHover(perform: { over in self.hovered = over })
         }
     }
     
     private struct StatusView: View {
+        @Environment(\.colorScheme) var colorScheme
         var status: CopyOperation.CopyStatus
         let baseFontSize = CGFloat(14)
         
         var body: some View {
-            StatusView.statusToText(s: status, fontSize: baseFontSize)
+            statusToText(s: status, fontSize: baseFontSize)
         }
         
-        static func statusToText(s: CopyOperation.CopyStatus, fontSize: CGFloat) -> Text {
+        func statusToText(s: CopyOperation.CopyStatus, fontSize: CGFloat) -> Text {
             var textColor: Color
             var text: String
             
@@ -397,7 +395,7 @@ struct RenameOperationCell: View {
                 textColor = .orange
             case .Pending:
                 text = "Pending"
-                textColor = .black
+                textColor = colorScheme == .dark ? .white : .black
             case .StudentUnknown:
                 text = "No student"
                 textColor = .gray
@@ -440,12 +438,12 @@ struct RenameView_Previews: PreviewProvider {
     static var previews: some View {
         let manager = initCopyManager()
         
-//        return RenameView(showView: .constant(true),
-//                   currentProgress: .constant(1),
-//                   copyManager: .constant(manager))
-        return RenameOperationCell(currentIndex: 4,
-                                   op: manager.getOperation(at: 4),
-                                   colorScheme: .dark)
+        return RenameView(showView: .constant(true),
+                   currentProgress: .constant(1),
+                   copyManager: .constant(manager))
+//        return RenameOperationCell(currentIndex: 4,
+//                                   op: manager.getOperation(at: 4),
+//                                   colorScheme: .dark)
     }
 }
 #endif
