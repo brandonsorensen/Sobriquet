@@ -11,20 +11,26 @@ import SwiftUI
 let DEFAULT_MAX_PER_ENROLLMENT_VIEW = 100
 
 struct EnrollmentCell: View {
+    
     var student: Student
     var columnSpacing = CGFloat(10)
     
+    
     var body: some View {
-        HStack(spacing: columnSpacing) {
-            Text(student.lastName.trimmingCharacters(in: .whitespacesAndNewlines))
-                .frame(alignment: .leading)
-            Spacer()
-            Text(student.firstName.trimmingCharacters(in: .whitespacesAndNewlines))
-                .frame(alignment: .leading)
-            Spacer()
-            Text(String(student.eduid).trimmingCharacters(in: .whitespacesAndNewlines))
-                .frame(alignment: .leading)
-        }
+        let studentData: [String] = [student.lastName, student.firstName, String(student.eduid)]
+        
+        
+        assert(studentData.count == EnrollmentView.alignmentType.count)
+        
+        return GeometryReader { geometry in
+            HStack {
+                ForEach(0..<studentData.count, id: \.self) { index in
+                     Text(studentData[index].trimmingCharacters(in: .whitespacesAndNewlines))
+                        .frame(width: geometry.size.width / CGFloat(studentData.count),
+                               alignment: EnrollmentView.alignmentType[index])
+                 }
+            }
+        }.padding(.horizontal, 6)
     }
 }
 
@@ -37,6 +43,9 @@ struct EnrollmentView: View {
     @Binding var studentManager: StudentManager
     @State var viewableStudents: [Int]
     
+    static let labels: [String] = ["Last Name", "First Name", "EDUID"]
+    static let alignmentType: [Alignment] = [.leading, .center, .trailing]
+    
     init(studentManager: Binding<StudentManager>) {
         self._studentManager = studentManager
         self._viewableStudents = State(wrappedValue: Array(0..<studentManager.wrappedValue.count))
@@ -44,30 +53,38 @@ struct EnrollmentView: View {
     }
 
     var body: some View {
-        VStack {
+        
+        
+        return VStack {
             Text("Enrollment").font(.subheadline)
             Filter(studentManager: $studentManager, viewableStudents: $viewableStudents,
                    searchText: $searchText, loadRange: $loadRange)
-                .padding(EdgeInsets(top: 0, leading: 0,
-                                    bottom: 3, trailing: 0))
+                .padding(.horizontal, 4)
             
-            // Header
-            HStack {
-                Text("Last Name")
-                Spacer()
-                Text("First Name")
-                Spacer()
-                Text("EDUID")
-            }
+            getHeader()
             
             Divider()
             
             StudentScrollView(studentManager: $studentManager, loadRange: $loadRange,
                               viewableStudents: $viewableStudents)
-            
+        
             EnrollmentFooter(loadRange: $loadRange, studentManager: $studentManager,
                              viewableStudents: $viewableStudents)
         }
+    }
+    
+    private func getHeader() -> some View {
+        let labels = EnrollmentView.labels
+        return GeometryReader { geometry in
+            HStack {
+                ForEach(0..<labels.count, id: \.self) { index in
+                    Text(labels[index].trimmingCharacters(in: .whitespacesAndNewlines))
+                        .frame(width: geometry.size.width / CGFloat(labels.count),
+                               alignment: EnrollmentView.alignmentType[index])
+                 }
+            }
+        }.frame(height: 20)
+         .padding(.horizontal, 12)
     }
 }
 
@@ -91,15 +108,14 @@ struct StudentScrollView: View {
             if viewableStudents.count < DEFAULT_MAX_PER_ENROLLMENT_VIEW {
                ForEach(viewableStudents, id: \.self) { index in
                 EnrollmentCell(student: self.studentManager.atIndex(index: index))
-                .padding(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3))
+                    .padding(.horizontal, -3)
                }
                 
            // There were more than 100 elements returned by the search
             } else {
                 ForEach(loadRange, id: \.self) { index in
                     EnrollmentCell(student: self.studentManager.atIndex( index: self.viewableStudents[index]))
-                        .padding(EdgeInsets(top: 0, leading: self.fromEdgeRadius,
-                                            bottom: 0, trailing: self.fromEdgeRadius))
+                        .padding(.horizontal, -3)
                 }
             }
             
@@ -353,9 +369,11 @@ struct EnrollmentFooter: View {
     }
 }
 
-//struct EnrollmentView_Previews: PreviewProvider {
-//    @FetchRequest
-//    static var previews: some View {
-//        EnrollmentView(allStudents: )
-//    }
-//}
+#if DEBUG
+struct EnrollmentView_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        EnrollmentView(studentManager: .constant(try! StudentManager()) )
+    }
+}
+#endif
