@@ -16,11 +16,15 @@ import CoreData
 let INPUT_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
 let OUTPUT_PATH_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
 let OUTPUT_FORMAT_DEFAULT = "%Last Name%_%First Name%_%eduid%_test"
+let DEFAULT_PICKER_SELECTION = 0
 
 #else
+
 let INPUT_DEFAULT = ""
 let OUTPUT_PATH_DEFAULT = ""
 let OUTPUT_FORMAT_DEFAULT = ""
+let DEFAULT_PICKER_SELECTION = 1
+
 #endif
 
 struct ContentView: View {
@@ -119,7 +123,7 @@ struct MainView: View {
     @State var outputPath: String = OUTPUT_PATH_DEFAULT
     @State var outputFormat: String = OUTPUT_FORMAT_DEFAULT
     @State var extensionText: String = ".pdf"
-    @State var eduidLocation: Int = 0
+    @State var eduidLocation: Int = DEFAULT_PICKER_SELECTION
     @State var showLogo: Bool = true
     @State var currentFile: Double = 0
     @Binding var enrollmentViewState: Bool
