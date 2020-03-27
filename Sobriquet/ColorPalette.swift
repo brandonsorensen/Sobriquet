@@ -38,5 +38,23 @@ extension Color {
         green: 206 / 255,
         blue: 206 / 255
     )
+    
+    static let lightGray = Color(
+        red: 249 / 255,
+        green: 250 / 255,
+        blue: 250 / 255
+    )
+    
+    static let darkModeLightGray = Color(
+        red: 72 / 255,
+        green: 72 / 255,
+        blue: 74 / 255
+    )
+    
+    static let renameViewDarkCell = Color(
+        red: 38 / 255,
+        green: 40 / 255,
+        blue: 42 / 255
+    )
 
 }

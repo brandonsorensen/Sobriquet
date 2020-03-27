@@ -104,7 +104,9 @@ struct RenameView: View {
                     }
                 } else {
                     ForEach(self.filteredIndices, id: \.self) { index in
-                        RenameOperationCell(currentIndex: index, op: self.manager.getOperation(at: index))
+                        RenameOperationCell(currentIndex: index,
+                                            op: self.manager.getOperation(at: index),
+                                            colorScheme: self.colorScheme)
                     }
                 }
             }
@@ -262,8 +264,6 @@ struct RenameOperationCell: View {
         RenameView.safeWidth / RenameView.Header.getQuotientForIndex(index: 1)
     }
     
-    static let lightGray = Color(red: 249 / 255, green: 250 / 255, blue: 250 / 255)
-    
     /// Padding to make the dividers shorter than the height of the view
     private let dividerInsets = EdgeInsets(top: RenameOperationCell.verticalPad, leading: 0,
                                            bottom: RenameOperationCell.verticalPad, trailing: 0)
@@ -283,9 +283,18 @@ struct RenameOperationCell: View {
     /// Whether the cell is hovered over
     @State var hovered: Bool = false
     
-    init(currentIndex: Int, op: CopyOperation) {
-        self.color = currentIndex % 2 == 0 ? Color.white : RenameOperationCell.lightGray
+    init(currentIndex: Int, op: CopyOperation, colorScheme: ColorScheme) {
+        self.color = RenameOperationCell.getCellColor(index: currentIndex, mode: colorScheme)
         self.operation = op
+    }
+    
+    private static func getCellColor(index: Int, mode: ColorScheme) -> Color {
+        // even cells should be white, odd light gray
+        if index % 2 == 0 {
+            return mode == .dark ? .renameViewDarkCell : .white
+        } else {
+            return mode == .dark ? .darkModeLightGray : .lightGray
+        }
     }
     
     var body: some View {
@@ -314,8 +323,8 @@ struct RenameOperationCell: View {
                 .frame(width: RenameOperationCell.edgeWidth)
                 
             
-        }.frame(width: RenameView.safeWidth, height: 30)
-        .background(self.color)
+        }.background(self.color)
+        .frame(width: RenameView.safeWidth, height: 30)
     }
     
     private struct FileNameView: View {
@@ -435,7 +444,8 @@ struct RenameView_Previews: PreviewProvider {
 //                   currentProgress: .constant(1),
 //                   copyManager: .constant(manager))
         return RenameOperationCell(currentIndex: 4,
-                                   op: manager.getOperation(at: 4))
+                                   op: manager.getOperation(at: 4),
+                                   colorScheme: .dark)
     }
 }
 #endif
