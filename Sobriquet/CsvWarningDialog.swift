@@ -23,43 +23,57 @@ struct CsvWarningDialog: View {
     
     var body: some View {
         let backgroundColor: Color = colorScheme == .light ? .lightModeBackground : .darkModeBackground
-        let imageOutlineColor: Color = colorScheme == .light ? .black : .white
         let sheetOutlineColor: Color = colorScheme == .light ? .outlineColor : .darkModeOutline
         
         return VStack {
             Spacer()
-            Group {
-                Text("Warning")
-                    .font(CsvWarningDialog.getFont(size: 25))
-                Text("Ensure the CSV is in the following format")
-                    .font(CsvWarningDialog.getFont(size: 14))
-                HStack {
-                    Text("Header is optional")
-                        .font(CsvWarningDialog.getFont(size: CsvWarningDialog.smallTextSize))
-                    Divider()
-                    Text("Columns must be in the order show below")
-                        .font(CsvWarningDialog.getFont(size: CsvWarningDialog.smallTextSize))
-                }.frame(height: 10)
-            }
+            CsvWarningDialog.getHeaderText()
             Spacer()
-            Image("csv-example")
-                .resizable()
-                .border(imageOutlineColor, width: 1)
-                .frame(width: CsvWarningDialog.imageWidth,
-                       height: CsvWarningDialog.imageHeight)
-                .shadow(radius: 10)
+            
+            getExampleImage()
+            
             Spacer()
-            HStack {
-                Spacer()
-                Button(action: { self.showWarningDialog.toggle() }) { Text("   Cancel   ") }
-                Button(action: {}) { Text("  Update  ") }
-                    .buttonStyle(ExecuteButtonStyle(isDisabled: .constant(false)))
-            }.padding(.trailing, 30)
+            getFooterButtons()
             Spacer()
         }.frame(width: CsvWarningDialog.sheetWidth,
                 height: CsvWarningDialog.sheetHeight)
         .background(backgroundColor)
             .border(sheetOutlineColor, width: 1)
+    }
+    
+    private static func getHeaderText() -> some View {
+        return VStack {
+            Text("Warning")
+                .font(CsvWarningDialog.getFont(size: 25))
+            Text("Ensure the CSV is in the following format")
+                .font(CsvWarningDialog.getFont(size: 14))
+            HStack {
+                Text("Header is optional")
+                    .font(CsvWarningDialog.getFont(size: CsvWarningDialog.smallTextSize))
+                Divider()
+                Text("Columns must be in the order show below")
+                    .font(CsvWarningDialog.getFont(size: CsvWarningDialog.smallTextSize))
+            }.frame(height: 10)
+        }
+    }
+    
+    private func getExampleImage() -> some View {
+        let imageOutlineColor: Color = colorScheme == .light ? .black : .white
+        return Image("csv-example")
+            .resizable()
+            .border(imageOutlineColor, width: 1)
+            .frame(width: CsvWarningDialog.imageWidth,
+                   height: CsvWarningDialog.imageHeight)
+            .shadow(radius: 10)
+    }
+    
+    private func getFooterButtons() -> some View {
+        return HStack {
+            Spacer()
+            Button(action: { self.showWarningDialog.toggle() }) { Text("   Cancel   ") }
+            Button(action: {}) { Text("  Update  ") }
+                .buttonStyle(ExecuteButtonStyle(isDisabled: .constant(false)))
+        }.padding(.trailing, 30)
     }
     
     private static func getFont(size: CGFloat) -> Font {
