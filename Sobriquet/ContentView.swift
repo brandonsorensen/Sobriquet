@@ -63,7 +63,7 @@ struct ContentView: View {
                                                  bottom: 20, trailing: 0
                     ))
                     if showEnrollment {
-                        EnrollmentView(studentManager: $studentManager, showCsvWarning: $showCsvWarning)
+                        EnrollmentView(studentManager: $studentManager, showWarningDialog: $showCsvWarning)
                             .frame(width: 333)
                         .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                         .transition(.slide)
@@ -72,7 +72,7 @@ struct ContentView: View {
             }.frame(minHeight: 650)
                 .alert(isPresented: $showAlert) {
                     return errorSwitch(error: alertType)
-            }.allowsHitTesting(!showRenameView || !showCsvWarning)
+            }.allowsHitTesting(!(showRenameView || showCsvWarning))
                 .overlay(Color.black.opacity(showRenameView ? 0.1 : 0))
             
             if showCsvWarning {

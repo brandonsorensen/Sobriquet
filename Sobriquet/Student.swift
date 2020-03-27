@@ -121,6 +121,8 @@ public struct StudentManager {
     /// A map of all student EDUIDs to their respective students' indices in `allStudents`
     private var eduid2StudentIndex: Dictionary<Int, Int>
     
+    private var viewableStudents: [Int]
+    
     /// Returns the nuber of students
     public var count: Int { return allStudents.count }
     
@@ -140,17 +142,15 @@ public struct StudentManager {
     public init() throws {
         let appDelegate = (NSApplication.shared.delegate as! AppDelegate)
         let moc = appDelegate.persistentContainer.viewContext
+        let students: [Student]
         
         do {
-            allStudents = try moc.fetch(Student.getAllStudents())
+            students = try moc.fetch(Student.getAllStudents())
         } catch {
-            allStudents = [Student]()
+            students = [Student]()
         }
-            eduid2StudentIndex = StudentManager.getMapFromStudents(students: allStudents)
         
-        if !ensureUnique() {
-            throw StudentManagerError.NonUniqueElementError
-        }
+        try self.init(students: students)
     }
     
     /**
@@ -164,7 +164,8 @@ public struct StudentManager {
     public init(students: [Student]) throws {
         allStudents = students
         eduid2StudentIndex = StudentManager.getMapFromStudents(students: students)
-        
+        viewableStudents = Array(0..<allStudents.count)
+
         if !ensureUnique() {
             throw StudentManagerError.NonUniqueElementError
         }
@@ -247,15 +248,110 @@ public struct StudentManager {
     public mutating func update(students: [Student]) throws {
         allStudents = students
         eduid2StudentIndex = StudentManager.getMapFromStudents(students: students)
+        viewableStudents = Array(0..<allStudents.count)
         
         if !ensureUnique() {
             throw StudentManagerError.NonUniqueElementError
         }
     }
     
+    /// Update which indices are viewable
+    public mutating func updateViewable(indices: [Int]?) {
+        if indices == nil {
+            viewableStudents = Array(0..<allStudents.count)
+        } else {
+            viewableStudents = indices!
+        }
+    }
+    
+    private static func getFileDialog() -> NSOpenPanel {
+        let fileDialog = NSOpenPanel()
+
+        fileDialog.prompt = "Select path"
+        fileDialog.worksWhenModal = true
+        fileDialog.canChooseDirectories = false
+        fileDialog.canChooseFiles = true
+        fileDialog.canCreateDirectories = false
+        fileDialog.allowsMultipleSelection = false
+        
+        return fileDialog
+    }
+    
+    /*
+    public mutating func updateFromFile(fileName: String) throws {
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        let moc = appDelegate.persistentContainer.viewContext
+        if !moc.coreDataIsEmpty {
+            try? Student.deleteAllStudents()
+        }
+        
+        var newRoster = [Student]()
+        
+        let fileDialog = StudentManager.getFileDialog()
+        fileDialog.begin { response in
+            if response == .OK {
+                let selectedPath = fileDialog.url!.path
+                if !selectedPath.isEmpty {
+                    do {
+                        if let fields: [CSVFields] = try CSVParser.readCSV(csvURL: selectedPath, encoding: .utf8,
+                                                                           inBundle: false) {
+                            for field in fields {
+                                let student = Student(context: moc)
+                                student.eduid = field.eduid
+                                student.lastName = field.lastName
+                                student.firstName = field.firstName
+                                student.middleName  = field.middleName
+                                student.dateAdded = Date()
+                                
+                                try moc.save()
+                                
+                                newRoster.append(student)
+                            }
+                            
+                            self.viewableStudents = Array(0..<newRoster.count)
+                            self.mostRecentDate = Date()
+                            
+                            newRoster.sort {
+                                if $0.lastName != $1.lastName {
+                                    return $0.lastName < $1.lastName
+                                } else {
+                                    return $0.firstName < $1.firstName
+                                }
+                            }
+                            
+                           try self.studentManager.update(students: newRoster)
+
+                            
+                        }
+                    } catch CSVParser.ParserError.FileNotFound {
+                        self.activeAlert = .FileNotFound
+                        self.showAlert.toggle()
+                    } catch CSVParser.ParserError.MalformedCSV{
+                        self.activeAlert = .MalformedCSV
+                        self.showAlert.toggle()
+                    } catch StudentManager.StudentManagerError.NonUniqueElementError {
+                        self.activeAlert = .Unknown
+                        self.isUniqueError = true
+                        self.showAlert.toggle()
+                    } catch {
+                        self.activeAlert = .Unknown
+                        self.showAlert.toggle()
+                    }
+                }
+            }
+            fileDialog.close()
+        }
+    }
+    */
+    
     /// Returns all students as an array of `Student` objects.
     public func getAllStudents() -> [Student] {
         return allStudents
+    }
+    
+    /// Returns all indices currently viewable
+    public func getViewableIndex() -> [Int] {
+        return viewableStudents
     }
     
     /**

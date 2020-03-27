@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-let DEFAULT_MAX_PER_ENROLLMENT_VIEW = 100
-
 struct EnrollmentCell: View {
     
     var student: Student
@@ -38,38 +36,28 @@ struct EnrollmentView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject private var student: Student
     
-    @State var loadRange: Range<Int> //= 0..<DEFAULT_MAX_PER_ENROLLMENT_VIEW
     @State var searchText: String = ""
     @Binding var studentManager: StudentManager
-    @State var viewableStudents: [Int]
     @Binding var showWarningDialog: Bool
     
     static let labels: [String] = ["Last Name", "First Name", "EDUID"]
     static let alignmentType: [Alignment] = [.leading, .center, .trailing]
-    
-    init(studentManager: Binding<StudentManager>, showCsvWarning: Binding<Bool>) {
-        self._studentManager = studentManager
-        self._viewableStudents = State(wrappedValue: Array(0..<studentManager.wrappedValue.count))
-        self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, studentManager.wrappedValue.count))
-        self._showWarningDialog = showCsvWarning
-    }
 
     var body: some View {
         VStack {
             Text("Enrollment").font(.subheadline)
-            Filter(studentManager: $studentManager, viewableStudents: $viewableStudents,
-                   searchText: $searchText, loadRange: $loadRange)
+            Filter(studentManager: $studentManager,
+                   searchText: $searchText)
                 .padding(.horizontal, 4)
             
             getHeader()
             
             Divider()
             
-            StudentScrollView(studentManager: $studentManager, loadRange: $loadRange,
-                              viewableStudents: $viewableStudents)
+            StudentScrollView(studentManager: $studentManager)
         
-            EnrollmentFooter(loadRange: $loadRange, studentManager: $studentManager,
-                             viewableStudents: $viewableStudents, showWarningDialog: $showWarningDialog)
+            EnrollmentFooter(studentManager: $studentManager,
+                             showWarningDialog: $showWarningDialog)
         }
     }
     
@@ -90,8 +78,6 @@ struct EnrollmentView: View {
 
 struct StudentScrollView: View {
     @Binding var studentManager: StudentManager
-    @Binding var loadRange: Range<Int>
-    @Binding var viewableStudents: [Int]
     @Environment(\.colorScheme) var colorScheme
     
     private let chunkSize = 100
@@ -103,54 +89,24 @@ struct StudentScrollView: View {
     
     var body: some View {
         List {
-           VStack {
-            // There were fewer than 100 elements returned by the search
-            if viewableStudents.count < DEFAULT_MAX_PER_ENROLLMENT_VIEW {
-               ForEach(viewableStudents, id: \.self) { index in
-                EnrollmentCell(student: self.studentManager.atIndex(index: index))
-                    .padding(.horizontal, -3)
-               }
-                
-           // There were more than 100 elements returned by the search
-            } else {
-                ForEach(loadRange, id: \.self) { index in
-                    EnrollmentCell(student: self.studentManager.atIndex( index: self.viewableStudents[index]))
-                        .padding(.horizontal, -3)
-                }
-            }
-            
-            Spacer()
-            if self.viewableStudents.count > self.loadRange.upperBound {
-                Button(action: loadMoreStudents) {
-                    Text("Load More")
-                }
-                .onAppear {
-                    DispatchQueue.global(qos: .background).asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 300)) {
-                        self.loadMoreStudents()
-                    }
-                }
-            }
+            ForEach(studentManager.getViewableIndex(), id: \.self) { index in
+            EnrollmentCell(student: self.studentManager.atIndex(index: index))
+                .padding(.horizontal, -3)
            }
         }
+        .id(UUID())
         .background(colorScheme == .dark ? darkModeBackground : Color.white)
-            .cornerRadius(textCornerRadius)
-            .overlay(
-                RoundedRectangle(cornerRadius: textCornerRadius)
-                    .stroke(colorScheme == .dark ? Color.darkModeOutline : Color.outlineColor, lineWidth: 1)
+        .cornerRadius(textCornerRadius)
+        .overlay(
+            RoundedRectangle(cornerRadius: textCornerRadius)
+                .stroke(colorScheme == .dark ? Color.darkModeOutline : Color.outlineColor, lineWidth: 1)
         )
-    }
-    
-    private func loadMoreStudents() {
-        self.loadRange = 0..<min(self.loadRange.upperBound + self.chunkSize,
-                                 self.viewableStudents.count)
     }
 }
 
 struct Filter: View {
     @Binding var studentManager: StudentManager
-    @Binding var viewableStudents: [Int]
     @Binding var searchText: String
-    @Binding var loadRange: Range<Int>
 
     var body: some View {
         HStack {
@@ -164,7 +120,7 @@ struct Filter: View {
     
     private func updateViewableIndex() {
         if searchText.isEmpty {
-            viewableStudents = Array(0..<studentManager.count)
+            studentManager.updateViewable(indices: nil)
             return
         }
         
@@ -189,8 +145,7 @@ struct Filter: View {
             }
         }
         
-        loadRange = 0..<DEFAULT_MAX_PER_ENROLLMENT_VIEW
-        viewableStudents = filteredIndices
+        studentManager.updateViewable(indices: filteredIndices)
     }
     
     private func containsString(student: Student, text: String) -> Bool {
@@ -216,9 +171,7 @@ struct EnrollmentFooter: View {
     @State var activeAlert: CSVParser.ParserError = .Unknown
     @State var mostRecentDate: Date = Student.getMostRecentDate()
     @State var isUniqueError = false
-    @Binding var loadRange: Range<Int>
     @Binding var studentManager: StudentManager
-    @Binding var viewableStudents: [Int]
     @Binding var showWarningDialog: Bool
     
     var body: some View {
@@ -293,7 +246,6 @@ struct EnrollmentFooter: View {
                 self.activeAlert = .Unknown
                 self.showAlert.toggle()
             }
-            
         }
         
         var newRoster = [Student]()
@@ -319,8 +271,6 @@ struct EnrollmentFooter: View {
                                 newRoster.append(student)
                             }
                             
-                            self.loadRange = 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, newRoster.count)
-                            self.viewableStudents = Array(0..<newRoster.count)
                             self.mostRecentDate = Date()
                             
                             newRoster.sort {
@@ -354,6 +304,20 @@ struct EnrollmentFooter: View {
             fileDialog.close()
         }
     }
+    
+    /*
+    final class RunUpdateObserver: ObservableObject {
+        var selection: Bool = false {
+            didSet {
+                if selection {
+                    updateStudents()
+                }
+            }
+        }
+
+        // @Published var items = ["Jane Doe", "John Doe", "Bob"]
+    }
+ */
 }
 
 
