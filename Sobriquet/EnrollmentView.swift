@@ -245,20 +245,6 @@ struct EnrollmentFooter: View {
                  .frame(width: 30, height: 30, alignment: .leading)
             }.buttonStyle(PlainButtonStyle())
              .offset(x: -5)
-            
-            
-            Spacer()
-
-            // Load All Button
-            Button(action: { }) {
-                Text("Load All")
-                Image("refresh-icon")
-                .resizable()
-                .renderingMode(.template)
-                .frame(width: 20, height: 20, alignment: .leading)
-            }.buttonStyle(PlainButtonStyle())
-            
-            Spacer()
         }.alert(isPresented: $showAlert) { return alertSwitch(activeAlert: activeAlert) }
     }
     
