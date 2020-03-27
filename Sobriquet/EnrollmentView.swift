@@ -42,20 +42,20 @@ struct EnrollmentView: View {
     @State var searchText: String = ""
     @Binding var studentManager: StudentManager
     @State var viewableStudents: [Int]
+    @Binding var showWarningDialog: Bool
     
     static let labels: [String] = ["Last Name", "First Name", "EDUID"]
     static let alignmentType: [Alignment] = [.leading, .center, .trailing]
     
-    init(studentManager: Binding<StudentManager>) {
+    init(studentManager: Binding<StudentManager>, showCsvWarning: Binding<Bool>) {
         self._studentManager = studentManager
         self._viewableStudents = State(wrappedValue: Array(0..<studentManager.wrappedValue.count))
         self._loadRange = State(wrappedValue: 0..<min(DEFAULT_MAX_PER_ENROLLMENT_VIEW, studentManager.wrappedValue.count))
+        self._showWarningDialog = showCsvWarning
     }
 
     var body: some View {
-        
-        
-        return VStack {
+        VStack {
             Text("Enrollment").font(.subheadline)
             Filter(studentManager: $studentManager, viewableStudents: $viewableStudents,
                    searchText: $searchText, loadRange: $loadRange)
@@ -69,7 +69,7 @@ struct EnrollmentView: View {
                               viewableStudents: $viewableStudents)
         
             EnrollmentFooter(loadRange: $loadRange, studentManager: $studentManager,
-                             viewableStudents: $viewableStudents)
+                             viewableStudents: $viewableStudents, showWarningDialog: $showWarningDialog)
         }
     }
     
@@ -219,6 +219,7 @@ struct EnrollmentFooter: View {
     @Binding var loadRange: Range<Int>
     @Binding var studentManager: StudentManager
     @Binding var viewableStudents: [Int]
+    @Binding var showWarningDialog: Bool
     
     var body: some View {
         let df = DateFormatter()
@@ -233,7 +234,7 @@ struct EnrollmentFooter: View {
             Spacer()
             
             // Update DB button
-            Button(action: updateStudents) {
+            Button(action: { self.showWarningDialog.toggle() }) {
                  VStack {
                      Text("Update")
                      Text("Database")
@@ -257,6 +258,7 @@ struct EnrollmentFooter: View {
             return Alert(title: Text("Malformed CSV"),
                          message: Text("Ensure the CSV file has the right encoding and format: Last Name, First Name, Middle Name, EDUID"),
                          dismissButton: .default(Text("OK")))
+            
         case .Unknown:
             if isUniqueError {
                 isUniqueError = false
@@ -282,7 +284,6 @@ struct EnrollmentFooter: View {
     }
     
     func updateStudents() {
-        
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
         let moc = appDelegate.persistentContainer.viewContext
         if !moc.coreDataIsEmpty {
@@ -355,11 +356,14 @@ struct EnrollmentFooter: View {
     }
 }
 
+
+
 #if DEBUG
 struct EnrollmentView_Previews: PreviewProvider {
     
     static var previews: some View {
-        EnrollmentView(studentManager: .constant(try! StudentManager()) )
+//        EnrollmentView(studentManager: .constant(try! StudentManager()) )
+        CsvWarningDialog(showWarningDialog: .constant(true))
     }
 }
 #endif

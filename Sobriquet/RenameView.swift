@@ -151,33 +151,13 @@ struct RenameView: View {
         }
     }
     
-    private struct Footer: View {
+    struct Footer: View {
         @Binding var selectedFilter: Int
         @Binding var executed: Bool
         @Binding var overwrite: Bool
         @Binding var copyManager: CopyManager
         @Binding var showView: Bool
         @Binding var copyProgress: Double
-        
-        private struct ExecuteButtonStyle: ButtonStyle {
-            @State private var isPressed = false
-            @Binding var isDisabled: Bool
-            
-            static let cornerRadius = CGFloat(4.0)
-            
-            func makeBody(configuration: Self.Configuration) -> some View {
-                configuration.label
-                    .frame(width: 70, height: 20)
-                    .foregroundColor(.white)
-                    .background(Color.blue)
-                    .overlay(Color.black.opacity(configuration.isPressed ? 0.15 : 0))
-                    .overlay(Color.gray.opacity(isDisabled ? 0.4 : 0))
-                    .cornerRadius(ExecuteButtonStyle.cornerRadius)
-                    .disableAutocorrection(true)
-                    .animation(.none)
-                    
-            }
-        }
         
         private let filters = [
             "-- Select Filter --",

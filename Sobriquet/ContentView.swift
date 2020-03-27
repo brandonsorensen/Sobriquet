@@ -31,6 +31,7 @@ struct ContentView: View {
     @State var studentManager: StudentManager
     @State var copyManager: CopyManager = CopyManager()
     @State var showEnrollment: Bool = false
+    @State var showCsvWarning: Bool = false
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = false
@@ -62,7 +63,8 @@ struct ContentView: View {
                                                  bottom: 20, trailing: 0
                     ))
                     if showEnrollment {
-                        EnrollmentView(studentManager: $studentManager).frame(width: 333)
+                        EnrollmentView(studentManager: $studentManager, showCsvWarning: $showCsvWarning)
+                            .frame(width: 333)
                         .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                         .transition(.slide)
                     }
@@ -70,14 +72,24 @@ struct ContentView: View {
             }.frame(minHeight: 650)
                 .alert(isPresented: $showAlert) {
                     return errorSwitch(error: alertType)
-            }.allowsHitTesting(!showRenameView)
+            }.allowsHitTesting(!showRenameView || !showCsvWarning)
                 .overlay(Color.black.opacity(showRenameView ? 0.1 : 0))
+            
+            if showCsvWarning {
+                CsvWarningDialog(showWarningDialog: $showCsvWarning)
+//                    .padding(.bottom, 50)
+                    .clipped()
+                    .shadow(radius: 5)
+                    .offset(y: -1)
+                    .transition(.move(edge: .top))
+                    .animation(.spring())
+            }
             
             if showRenameView {
                 RenameView(showView: $showRenameView, currentProgress: $currentFile,
                            copyManager: $copyManager)
                     .transition(.move(edge: .top))
-                    .animation(.default)
+                    .animation(.spring())
             }
         }
 
