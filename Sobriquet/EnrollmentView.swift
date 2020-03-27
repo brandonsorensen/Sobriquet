@@ -136,7 +136,7 @@ struct StudentScrollView: View {
             .cornerRadius(textCornerRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: textCornerRadius)
-                .stroke(Color.black, lineWidth: 1)
+                    .stroke(colorScheme == .dark ? Color.darkModeOutline : Color.outlineColor, lineWidth: 1)
         )
     }
     

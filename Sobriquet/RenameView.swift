@@ -23,36 +23,6 @@ struct RenameView: View {
     static let sheetWidth = CGFloat(800)
     static let safeWidth = sheetWidth * 0.88
     
-    private static let lightModeBackground = Color(
-        red: 235 / 255,
-        green: 235 / 255,
-        blue: 235 / 255
-    )
-    
-    private static let darkModeBackground = Color(
-        red: 53 / 255,
-        green: 54 / 255,
-        blue: 55 / 255
-    )
-    
-    private static let darkModeTextViewBackground = Color(
-        red: 64 / 255,
-        green: 65 / 255,
-        blue: 67 / 255
-    )
-    
-    private static let darkModeOutline = Color(
-        red: 77 / 255,
-        green: 78 / 255,
-        blue: 80 / 255
-    )
-    
-    private static let outlineColor = Color(
-        red: 206 / 255,
-        green: 206 / 255,
-        blue: 206 / 255
-    )
-    
     var body: some View {
         
         VStack {
@@ -62,7 +32,7 @@ struct RenameView: View {
                              selectedFilter: $selectedFilter)
             
             ProgressBar(value: $currentProgress, maxValue: Double(copyManager.count),
-                        backgroundColor: colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
+                        backgroundColor: colorScheme == .dark ? .darkModeTextViewBackground : .white)
                 .frame(width: RenameView.safeWidth)
             
             Spacer()
@@ -72,8 +42,8 @@ struct RenameView: View {
             Spacer()
             
         }.frame(width: RenameView.sheetWidth, height: 600)
-            .background(colorScheme == .dark ? RenameView.darkModeBackground : RenameView.lightModeBackground)
-            .border(colorScheme == .dark ? RenameView.darkModeOutline : RenameView.outlineColor, width: 1)
+            .background(colorScheme == .dark ? Color.darkModeBackground : Color.lightModeBackground)
+            .border(colorScheme == .dark ? Color.darkModeOutline : Color.outlineColor, width: 1)
             .clipped()
             .shadow(radius: 3)
             .offset(y: -1)  // Hides top shadow
@@ -141,11 +111,11 @@ struct RenameView: View {
             .id(UUID())  // Forces complete reload; not sure why
             .padding(.horizontal, -9)
             .frame(width: RenameView.safeWidth, height: 470)
-            .background(colorScheme == .dark ? RenameView.darkModeTextViewBackground : Color.white)
+            .background(colorScheme == .dark ? Color.darkModeTextViewBackground : Color.white)
             .cornerRadius(RenameView.cornerRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: RenameView.cornerRadius)
-                    .stroke(colorScheme == .dark ? RenameView.darkModeOutline : RenameView.outlineColor, lineWidth: 1)
+                    .stroke(colorScheme == .dark ? Color.darkModeOutline : Color.outlineColor, lineWidth: 1)
             )
         }
         
