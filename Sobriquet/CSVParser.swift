@@ -42,9 +42,9 @@ public class CSVParser {
                     
                     entries.append(
                         CSVFields(
-                            eduid: Int(fields[0])!, lastName: fields[1],
-                            firstName: fields[2],
-                            middleName: fields[3].isEmpty ? nil : fields[3]
+                            eduid: Int(fields[4])!, lastName: fields[0],
+                            firstName: fields[1],
+                            middleName: fields[2].isEmpty ? nil : fields[3]
                         )
                     )
                 }
