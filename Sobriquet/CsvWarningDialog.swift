@@ -43,15 +43,18 @@ struct CsvWarningDialog: View {
     
     private static func getHeaderText() -> some View {
         return VStack {
-            Text("Warning")
-                .font(CsvWarningDialog.getFont(size: 25))
-            Text("Ensure the CSV is in the following format")
+            Text("Notice")
+                .font(CsvWarningDialog.getFont(size: 25).lowercaseSmallCaps())
+            Text("Ensure the CSV file is in the following format")
                 .font(CsvWarningDialog.getFont(size: 14))
             HStack {
                 Text("Header is optional")
                     .font(CsvWarningDialog.getFont(size: CsvWarningDialog.smallTextSize))
                 Divider()
                 Text("Columns must be in the order show below")
+                    .font(CsvWarningDialog.getFont(size: CsvWarningDialog.smallTextSize))
+                Divider()
+                Text("No Excel files")
                     .font(CsvWarningDialog.getFont(size: CsvWarningDialog.smallTextSize))
             }.frame(height: 10)
         }
@@ -70,8 +73,8 @@ struct CsvWarningDialog: View {
     private func getFooterButtons() -> some View {
         return HStack {
             Spacer()
-            Button(action: { self.showWarningDialog.toggle() }) { Text("   Cancel   ") }
-            Button(action: {}) { Text("  Update  ") }
+            Button(action: { self.showWarningDialog.toggle() }) { Text("  Cancel  ") }
+            Button(action: {}) { Text("Choose") }
                 .buttonStyle(ExecuteButtonStyle(isDisabled: .constant(false)))
         }.padding(.trailing, 30)
     }
