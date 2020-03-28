@@ -114,7 +114,7 @@ struct ContentView: View {
                          dismissButton: .default(Text("OK")))
         case .BadInputDirectory:
             return Alert(title: Text("Input Directory Error"),
-                         message: Text("The provided output directory does not exist."),
+                         message: Text("The provided input directory does not exist."),
                          dismissButton: .default(Text("OK")))
         case .BadDefaultCsv:
             return Alert(title: Text("Corrupted internal CSV file"),
@@ -243,6 +243,9 @@ struct MainView: View {
             self.showRenameView.toggle()
         } catch CopyOperation.CopyError.NoOutputComponentsError {
             self.alertType = .NoComponentError
+            self.showAlert.toggle()
+        } catch CopyOperation.CopyError.BadInputDir {
+            self.alertType = .BadInputDirectory
             self.showAlert.toggle()
         } catch {
             self.alertType = .Unknown

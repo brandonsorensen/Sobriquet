@@ -139,7 +139,7 @@ public struct CopyManager {
                               inFileName: Bool = false)
         throws -> [CopyOperation] {
             
-            if outputFormat.range(of: CopyManager.COMPONENT_REGEX, options: [.regularExpression, .caseInsensitive]) == nil {
+        if outputFormat.range(of: CopyManager.COMPONENT_REGEX, options: [.regularExpression, .caseInsensitive]) == nil {
             throw CopyOperation.CopyError.NoOutputComponentsError
         }
 
@@ -148,9 +148,15 @@ public struct CopyManager {
         var currentStudentFile: StudentFile
         var currentOperation: CopyOperation
         var operations = [CopyOperation]()
+        let files: [String]?
         
-        let files = try FileManager.default.contentsOfDirectory(atPath: inputPath)
-        for file in files {
+        do {
+            files = try FileManager.default.contentsOfDirectory(atPath: inputPath)
+        } catch {
+            throw CopyOperation.CopyError.BadInputDir
+        }
+            
+        for file in files! {
             absolutePath = inputPath + "/" + file
             if inFileName {
                 currentStudent = studentManager.getStudentFromFileName(fileName: absolutePath)
@@ -189,6 +195,7 @@ public class CopyOperation: ObservableObject {
     }
     
     public enum CopyError: Error {
+        case BadInputDir
         case BadOutputDir
         case ComponentIterationError
         case AlreadyExistsError
