@@ -47,11 +47,18 @@ public class CSVParser {
                 if index == 0 &&
                     fields[0].range(of: lastNameRegex,
                                     options: [.caseInsensitive, .regularExpression]) != nil { continue }  // Skip header
-                let hasMiddle: Bool = !fields[2].isEmpty
+                
+                // Checks if all strings are empty and skips iteration if true
+                guard fields.first(where: { !$0.isEmpty }) != nil else {
+                    continue
+                }
+                
+                let hasMiddle = !fields[2].isEmpty
 
                 guard let eduid = Int(fields[3]) else {
                     throw ParserError.MalformedCSV
                 }
+            
                 entries.append(
                     CSVFields(
                         eduid: eduid, lastName: fields[0],
