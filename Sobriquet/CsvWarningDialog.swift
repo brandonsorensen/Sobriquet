@@ -47,9 +47,7 @@ struct CsvWarningDialog: View {
     }
     
     func alertSwitch(activeAlert: CSVParser.ParserError) -> Alert {
-        let dismissButton: Alert.Button = .destructive(Text("OK")) {
-            self.showWarningDialog.toggle()
-        }
+        let dismissButton: Alert.Button = .default(Text("OK"))
         var title: Text
         var message: Text
         
