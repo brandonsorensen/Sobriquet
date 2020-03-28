@@ -37,11 +37,8 @@ struct EnrollmentView: View {
     @EnvironmentObject private var student: Student
     
     @State var searchText: String = ""
-    @Binding var showCsvParserAlert: Bool
-    @Binding var activeAlert: CSVParser.ParserError
     @Binding var studentManager: StudentManager
     @Binding var showWarningDialog: Bool
-    @Binding var isUniqueError: Bool
     
     static let labels: [String] = ["Last Name", "First Name", "EDUID"]
     static let alignmentType: [Alignment] = [.leading, .center, .trailing]
@@ -60,9 +57,6 @@ struct EnrollmentView: View {
             StudentScrollView(studentManager: $studentManager)
         
             EnrollmentFooter(
-                showAlert: $showCsvParserAlert,
-                activeAlert: $activeAlert,
-                isUniqueError: $isUniqueError,
                 studentManager: $studentManager,
                 showWarningDialog: $showWarningDialog)
         }
@@ -174,10 +168,6 @@ struct Filter: View {
 }
 
 struct EnrollmentFooter: View {
-    @Binding var showAlert: Bool
-    @Binding var activeAlert: CSVParser.ParserError
-    @State var mostRecentDate: Date = Student.getMostRecentDate()
-    @Binding var isUniqueError: Bool
     @Binding var studentManager: StudentManager
     @Binding var showWarningDialog: Bool
     
@@ -188,7 +178,8 @@ struct EnrollmentFooter: View {
         return HStack {
             VStack(alignment: .leading) {
                 Text("Last Updated:")
-                Text(df.string(from: studentManager.getMostRecentDate())).font(.system(size: 10))
+                Text(df.string(from: studentManager.mostRecentDate))
+                    .font(.system(size: 10))
             }
             
             Spacer()
@@ -206,41 +197,16 @@ struct EnrollmentFooter: View {
                  .frame(width: 30, height: 30, alignment: .leading)
             }.buttonStyle(PlainButtonStyle())
              .offset(x: -5)
-        }.alert(isPresented: $showAlert) { return alertSwitch(activeAlert: activeAlert) }
-    }
-    
-    func alertSwitch(activeAlert: CSVParser.ParserError) -> Alert {
-        switch activeAlert {
-        case .FileNotFound:
-            return Alert(title: Text("File Not Found"), message: Text("Could not find file."),
-                         dismissButton: .default(Text("OK")))
-        case .MalformedCSV:
-            return Alert(title: Text("Malformed CSV"),
-                         message: Text("Ensure the CSV file has the right encoding and format: Last Name, First Name, Middle Name, EDUID"),
-                         dismissButton: .default(Text("OK")))
-            
-        case .Unknown:
-            if isUniqueError {
-                isUniqueError = false
-                return Alert(title: Text("Non-unique students"),
-                             message: Text("Two or more students have the same EDUID."),
-                             dismissButton: .default(Text("OK")))
-            }
-            return Alert(title: Text("Unknown error."))
         }
     }
 }
-
-
 
 #if DEBUG
 struct EnrollmentView_Previews: PreviewProvider {
     
     static var previews: some View {
-        EnrollmentView(showCsvParserAlert: .constant(false),
-                       activeAlert: .constant(.Unknown),
-                       studentManager: .constant(try! StudentManager()),
-                       showWarningDialog: .constant(false), isUniqueError: .constant(false))
+        EnrollmentView(studentManager: .constant(try! StudentManager()),
+                       showWarningDialog: .constant(true))
     }
 }
 #endif

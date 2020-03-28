@@ -124,7 +124,7 @@ public struct StudentManager {
     /// Whether there are any students
     public var isEmpty: Bool { return allStudents.isEmpty }
     
-    private var mostRecentDate: Date
+    public var mostRecentDate: Date
     
     /**
      Initializes a new `StudentManager` object by fetching all `Student`s from

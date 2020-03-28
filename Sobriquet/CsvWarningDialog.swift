@@ -12,9 +12,9 @@ struct CsvWarningDialog: View {
     @Environment(\.colorScheme) var colorScheme
     @Binding var showWarningDialog: Bool
     @Binding var studentManager: StudentManager
-    @Binding var showAlert: Bool
-    @Binding var alertType: CSVParser.ParserError
-    @Binding var isUniqueError: Bool
+    @State var showAlert: Bool = false
+    @State var alertType: CSVParser.ParserError = .Unknown
+    @State var isUniqueError: Bool = false
     
     private static let sheetWidth = CGFloat(500)
     private static let sheetHeight = sheetWidth * 0.8
@@ -42,7 +42,36 @@ struct CsvWarningDialog: View {
         }.frame(width: CsvWarningDialog.sheetWidth,
                 height: CsvWarningDialog.sheetHeight)
         .background(backgroundColor)
-            .border(sheetOutlineColor, width: 1)
+        .border(sheetOutlineColor, width: 1)
+            .alert(isPresented: $showAlert) { return alertSwitch(activeAlert: alertType) }
+    }
+    
+    func alertSwitch(activeAlert: CSVParser.ParserError) -> Alert {
+        let dismissButton: Alert.Button = .destructive(Text("OK")) {
+            self.showWarningDialog.toggle()
+        }
+        var title: Text
+        var message: Text
+        
+        switch activeAlert {
+        case .FileNotFound:
+            title = Text("File Not Found")
+            message = Text("Could not find file.")
+        case .MalformedCSV:
+            title = Text("Malformed CSV")
+            message = Text("Ensure the CSV file has the right encoding and format: Last Name, First Name, Middle Name, EDUID")
+            
+        case .Unknown:
+            if isUniqueError {
+                isUniqueError = false
+                title = Text("Non-unique students")
+                message = Text("Two or more students have the same EDUID.")
+            } else {
+                return Alert(title: Text("Unknown error."))
+            }
+        }
+        
+        return Alert(title: title, message: message, dismissButton: dismissButton)
     }
     
     private static func getHeaderText() -> some View {
@@ -100,12 +129,6 @@ struct CsvWarningDialog: View {
                 }
                 
                 do {
-                    defer {
-                        if self.showWarningDialog {
-                            self.showWarningDialog.toggle()
-                        }
-                    }
-                    
                     let students = try StudentManager.getStudentsFromFile(fileName: path!)
                     try self.studentManager.update(students: students)
                 } catch CSVParser.ParserError.FileNotFound {
@@ -122,8 +145,7 @@ struct CsvWarningDialog: View {
                     self.alertType = .Unknown
                     self.showAlert.toggle()
                 }
-            } else {
-                if self.showWarningDialog {
+                if !self.showAlert {
                     self.showWarningDialog.toggle()
                 }
             }
@@ -158,12 +180,12 @@ struct CsvWarningDialog: View {
     }
 }
 
+#if DEBUG
 struct CsvWarningDialog_Previews: PreviewProvider {
     static var previews: some View {
         CsvWarningDialog(showWarningDialog: .constant(true),
                          studentManager: .constant(try! StudentManager()),
-                         showAlert: .constant(false),
-                         alertType: .constant(.Unknown),
-                         isUniqueError: .constant(true))
+                         isUniqueError: true)
     }
 }
+#endif

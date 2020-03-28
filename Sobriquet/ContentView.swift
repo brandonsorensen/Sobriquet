@@ -36,9 +36,6 @@ struct ContentView: View {
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = false
     @State var currentFile: Double = 0
-    @State var csvParserError: CSVParser.ParserError = .Unknown
-    @State var showParserError: Bool = false
-    @State var enrollmentErrorIsUnique: Bool = false
     
     init() {
         do {
@@ -67,11 +64,8 @@ struct ContentView: View {
                     ))
                     if showEnrollment {
                         EnrollmentView(
-                            showCsvParserAlert: $showParserError,
-                            activeAlert: $csvParserError,
                             studentManager: $studentManager,
-                            showWarningDialog: $showCsvWarning,
-                            isUniqueError: $enrollmentErrorIsUnique)
+                            showWarningDialog: $showCsvWarning)
                             .frame(width: 333)
                         .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                         .transition(.slide)
@@ -85,10 +79,7 @@ struct ContentView: View {
             
             if showCsvWarning {
                 CsvWarningDialog(showWarningDialog: $showCsvWarning,
-                                 studentManager: $studentManager,
-                                 showAlert: $showParserError,
-                                 alertType: $csvParserError,
-                                 isUniqueError: $enrollmentErrorIsUnique)
+                                 studentManager: $studentManager)
                     .clipped()
                     .shadow(radius: 5)
                     .offset(y: -1)
