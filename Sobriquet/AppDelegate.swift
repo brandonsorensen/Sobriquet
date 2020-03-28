@@ -49,8 +49,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
-    
-    @IBAction
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
@@ -88,7 +86,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         for student: CSVFields in students {
-            addStudent(entry: student)
+            try Student.addStudent(entry: student)
         }
     }
 }

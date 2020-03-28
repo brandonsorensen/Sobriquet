@@ -88,43 +88,46 @@ struct CsvWarningDialog: View {
     }
     
     public func updateStudents() {
-         let appDelegate = NSApplication.shared.delegate as! AppDelegate
-         let moc = appDelegate.persistentContainer.viewContext
-         if !moc.coreDataIsEmpty {
-             do {
-                try Student.deleteAllStudents()
-             } catch {
-                self.alertType = .Unknown
-                self.showAlert.toggle()
-             }
-         }
+        var path: String?
          
-         do {
-             guard let fileName = CsvWarningDialog.getFileNameFromDialog() else {
-                self.showAlert.toggle()
-                return
+        let fileDialog = CsvWarningDialog.fileDialog()
+        
+        fileDialog.begin { response in
+            if response == .OK {
+                path = fileDialog.url?.path
+                if path == nil || path!.isEmpty {
+                    return
+                }
+                
+                do {
+                    defer {
+                        if self.showWarningDialog {
+                            self.showWarningDialog.toggle()
+                        }
+                    }
+                    
+                    let students = try StudentManager.getStudentsFromFile(fileName: path!)
+                    try self.studentManager.update(students: students)
+                } catch CSVParser.ParserError.FileNotFound {
+                    self.alertType = .FileNotFound
+                    self.showAlert.toggle()
+                } catch CSVParser.ParserError.MalformedCSV {
+                    self.alertType = .MalformedCSV
+                    self.showAlert.toggle()
+                } catch StudentManager.StudentManagerError.NonUniqueElementError {
+                    self.alertType = .Unknown
+                    self.isUniqueError = true
+                    self.showAlert.toggle()
+                } catch {
+                    self.alertType = .Unknown
+                    self.showAlert.toggle()
+                }
+            } else {
+                if self.showWarningDialog {
+                    self.showWarningDialog.toggle()
+                }
             }
-            
-            if !moc.coreDataIsEmpty {
-                try Student.deleteAllStudents()
-            }
-            
-            let students = try StudentManager.getStudentsFromFile(fileName: fileName)
-                 try studentManager.update(students: students)
-         } catch CSVParser.ParserError.FileNotFound {
-             self.alertType = .FileNotFound
-             self.showAlert.toggle()
-         } catch CSVParser.ParserError.MalformedCSV{
-             self.alertType = .MalformedCSV
-             self.showAlert.toggle()
-         } catch StudentManager.StudentManagerError.NonUniqueElementError {
-             self.alertType = .Unknown
-             self.isUniqueError = true
-             self.showAlert.toggle()
-         } catch {
-             self.alertType = .Unknown
-             self.showAlert.toggle()
-         }
+        }
      }
     
     private static func fileDialog() -> NSOpenPanel {
@@ -143,9 +146,11 @@ struct CsvWarningDialog: View {
     private static func getFileNameFromDialog() -> String? {
         var path: String?
         let fileDialog = CsvWarningDialog.fileDialog()
-        fileDialog.begin { response in
-            if response == .OK {
-                path = fileDialog.url?.path
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            let result = fileDialog.runModal()
+            if result == .OK {
+                path = fileDialog.url!.absoluteString
             }
         }
         

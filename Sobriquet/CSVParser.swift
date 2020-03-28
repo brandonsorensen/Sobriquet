@@ -17,6 +17,8 @@ public struct CSVFields {
 
 public class CSVParser {
     
+    private static var numFields = 4
+    
     private static let lastNameRegex = #"last[ _]+name"#
     
     static func readCSV(csvURL: String, encoding: String.Encoding, delimiter: String = ",",
@@ -38,20 +40,25 @@ public class CSVParser {
             let data = try String(contentsOfFile: path, encoding: .utf8)
             lines = data.components(separatedBy: .newlines)
             for (index, line) in lines.enumerated() {
-                if !line.isEmpty {
-                    fields = line.components(separatedBy: delimiter)
-                    if index == 0 &&
-                        fields[0].range(of: lastNameRegex,
-                                        options: [.caseInsensitive, .regularExpression]) != nil { continue }  // Skip header
-                    let hasMiddle: Bool = !fields[2].isEmpty
-                    entries.append(
-                        CSVFields(
-                            eduid: Int(fields[3])!, lastName: fields[0],
-                            firstName: fields[1],
-                            middleName: hasMiddle ? fields[3] : nil
-                        )
-                    )
+                if line.isEmpty { continue }
+                
+                fields = line.components(separatedBy: delimiter)
+                if fields.count != CSVParser.numFields { throw ParserError.MalformedCSV }
+                if index == 0 &&
+                    fields[0].range(of: lastNameRegex,
+                                    options: [.caseInsensitive, .regularExpression]) != nil { continue }  // Skip header
+                let hasMiddle: Bool = !fields[2].isEmpty
+
+                guard let eduid = Int(fields[3]) else {
+                    throw ParserError.MalformedCSV
                 }
+                entries.append(
+                    CSVFields(
+                        eduid: eduid, lastName: fields[0],
+                        firstName: fields[1],
+                        middleName: hasMiddle ? fields[3] : nil
+                    )
+                )
             }
         } catch {
             throw ParserError.MalformedCSV

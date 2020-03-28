@@ -11,32 +11,6 @@ import SwiftUI
 import CoreData
 import Quartz
 
-/// Creates a `Student` object and saves it to Core Data persistent storage.
-public func addStudent(eduid: Int, lastName: String, firstName: String, middleName: String?) {
-    let appDelegate = NSApplication.shared.delegate as! AppDelegate
-    let managedObjectContext = appDelegate.persistentContainer.viewContext
-    
-    let student = Student(context: managedObjectContext)
-    student.eduid = eduid
-    student.lastName = lastName
-    student.firstName = firstName
-    student.middleName  = middleName
-    student.dateAdded = Date()
-    
-    do {
-        try managedObjectContext.save()
-    } catch {
-        fatalError("Failure to save context: \(error)")
-    }
-}
-
-/// Creates a `Student` object and saves it to Core Data persistent storage.
-public func addStudent(entry: CSVFields) {
-    return addStudent(eduid: entry.eduid, lastName: entry.lastName,
-                      firstName: entry.firstName, middleName: entry.middleName)
-}
-
-
 /**
  👨🏻‍🎓 A student object in the data base.
  
@@ -70,6 +44,27 @@ public class Student: NSManagedObject, Identifiable {
         request.sortDescriptors = [primarySortDescriptor, secondarySortDescriptor]
         
         return request
+    }
+    
+    /// Creates a `Student` object and saves it to Core Data persistent storage.
+    static func addStudent(eduid: Int, lastName: String, firstName: String, middleName: String?) throws {
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        let moc = appDelegate.persistentContainer.viewContext
+        
+        let student = Student(context: moc)
+        student.eduid = eduid
+        student.lastName = lastName
+        student.firstName = firstName
+        student.middleName  = middleName
+        student.dateAdded = Date()
+        
+        try moc.save()
+    }
+    
+    /// Creates a `Student` object and saves it to Core Data persistent storage.
+    static func addStudent(entry: CSVFields) throws {
+        return try addStudent(eduid: entry.eduid, lastName: entry.lastName,
+                          firstName: entry.firstName, middleName: entry.middleName)
     }
     
     /**
@@ -248,7 +243,7 @@ public struct StudentManager {
     }
     
     /// Updates the data base to match the contents of a given `Student` array
-    public mutating func update(students: [Student]) throws {
+    public mutating func update(students: [Student], commit: Bool = false) throws {
         allStudents = students
         eduid2StudentIndex = StudentManager.getMapFromStudents(students: students)
         viewableStudents = Array(0..<allStudents.count)
@@ -256,6 +251,14 @@ public struct StudentManager {
         if !ensureUnique() {
             throw StudentManagerError.NonUniqueElementError
         }
+        
+        if commit {
+            
+            for student in allStudents {
+                addStudent(student: student)
+            }
+        }
+        
     }
     
     /// Update which indices are viewable
@@ -282,17 +285,18 @@ public struct StudentManager {
 
     /// Reads a CSV file and returns the students in it.
     public static func getStudentsFromFile(fileName: String) throws -> [Student] {
-        let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let moc = appDelegate.persistentContainer.viewContext
-        if !moc.coreDataIsEmpty {
-            try Student.deleteAllStudents()
-        }
         
         var newRoster = [Student]()
         guard let fields = try CSVParser.readCSV(csvURL: fileName,
                                                  encoding: .utf8,
                                                  inBundle: false) else {
             throw CSVParser.ParserError.MalformedCSV
+        }
+        
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        let moc = appDelegate.persistentContainer.viewContext
+        if !moc.coreDataIsEmpty {
+            try Student.deleteAllStudents()
         }
         
         for field in fields {
