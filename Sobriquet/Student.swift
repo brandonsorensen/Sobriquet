@@ -129,6 +129,8 @@ public struct StudentManager {
     /// Whether there are any students
     public var isEmpty: Bool { return allStudents.isEmpty }
     
+    private var mostRecentDate: Date
+    
     /**
      Initializes a new `StudentManager` object by fetching all `Student`s from
      Core Data persistent storage.
@@ -165,6 +167,7 @@ public struct StudentManager {
         allStudents = students
         eduid2StudentIndex = StudentManager.getMapFromStudents(students: students)
         viewableStudents = Array(0..<allStudents.count)
+        mostRecentDate = Student.getMostRecentDate()
 
         if !ensureUnique() {
             throw StudentManagerError.NonUniqueElementError
@@ -276,73 +279,45 @@ public struct StudentManager {
         
         return fileDialog
     }
-    
-    /*
-    public mutating func updateFromFile(fileName: String) throws {
+
+    /// Reads a CSV file and returns the students in it.
+    public static func getStudentsFromFile(fileName: String) throws -> [Student] {
         let appDelegate = NSApplication.shared.delegate as! AppDelegate
         let moc = appDelegate.persistentContainer.viewContext
         if !moc.coreDataIsEmpty {
-            try? Student.deleteAllStudents()
+            try Student.deleteAllStudents()
         }
         
         var newRoster = [Student]()
-        
-        let fileDialog = StudentManager.getFileDialog()
-        fileDialog.begin { response in
-            if response == .OK {
-                let selectedPath = fileDialog.url!.path
-                if !selectedPath.isEmpty {
-                    do {
-                        if let fields: [CSVFields] = try CSVParser.readCSV(csvURL: selectedPath, encoding: .utf8,
-                                                                           inBundle: false) {
-                            for field in fields {
-                                let student = Student(context: moc)
-                                student.eduid = field.eduid
-                                student.lastName = field.lastName
-                                student.firstName = field.firstName
-                                student.middleName  = field.middleName
-                                student.dateAdded = Date()
-                                
-                                try moc.save()
-                                
-                                newRoster.append(student)
-                            }
-                            
-                            self.viewableStudents = Array(0..<newRoster.count)
-                            self.mostRecentDate = Date()
-                            
-                            newRoster.sort {
-                                if $0.lastName != $1.lastName {
-                                    return $0.lastName < $1.lastName
-                                } else {
-                                    return $0.firstName < $1.firstName
-                                }
-                            }
-                            
-                           try self.studentManager.update(students: newRoster)
-
-                            
-                        }
-                    } catch CSVParser.ParserError.FileNotFound {
-                        self.activeAlert = .FileNotFound
-                        self.showAlert.toggle()
-                    } catch CSVParser.ParserError.MalformedCSV{
-                        self.activeAlert = .MalformedCSV
-                        self.showAlert.toggle()
-                    } catch StudentManager.StudentManagerError.NonUniqueElementError {
-                        self.activeAlert = .Unknown
-                        self.isUniqueError = true
-                        self.showAlert.toggle()
-                    } catch {
-                        self.activeAlert = .Unknown
-                        self.showAlert.toggle()
-                    }
-                }
-            }
-            fileDialog.close()
+        guard let fields = try CSVParser.readCSV(csvURL: fileName,
+                                                 encoding: .utf8,
+                                                 inBundle: false) else {
+            throw CSVParser.ParserError.MalformedCSV
         }
+        
+        for field in fields {
+            let student = Student(context: moc)
+            student.eduid = field.eduid
+            student.lastName = field.lastName
+            student.firstName = field.firstName
+            student.middleName  = field.middleName
+            student.dateAdded = Date()
+            
+            try moc.save()
+            
+            newRoster.append(student)
+        }
+        
+        
+        newRoster.sort {
+            if $0.lastName != $1.lastName {
+                return $0.lastName < $1.lastName
+            } else {
+                return $0.firstName < $1.firstName
+            }
+        }
+        return newRoster
     }
-    */
     
     /// Returns all students as an array of `Student` objects.
     public func getAllStudents() -> [Student] {
@@ -352,6 +327,11 @@ public struct StudentManager {
     /// Returns all indices currently viewable
     public func getViewableIndex() -> [Int] {
         return viewableStudents
+    }
+    
+    /// Returns most recent date
+    public func getMostRecentDate() -> Date {
+        return mostRecentDate
     }
     
     /**

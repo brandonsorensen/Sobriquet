@@ -37,8 +37,11 @@ struct EnrollmentView: View {
     @EnvironmentObject private var student: Student
     
     @State var searchText: String = ""
+    @Binding var showCsvParserAlert: Bool
+    @Binding var activeAlert: CSVParser.ParserError
     @Binding var studentManager: StudentManager
     @Binding var showWarningDialog: Bool
+    @Binding var isUniqueError: Bool
     
     static let labels: [String] = ["Last Name", "First Name", "EDUID"]
     static let alignmentType: [Alignment] = [.leading, .center, .trailing]
@@ -56,8 +59,12 @@ struct EnrollmentView: View {
             
             StudentScrollView(studentManager: $studentManager)
         
-            EnrollmentFooter(studentManager: $studentManager,
-                             showWarningDialog: $showWarningDialog)
+            EnrollmentFooter(
+                showAlert: $showCsvParserAlert,
+                activeAlert: $activeAlert,
+                isUniqueError: $isUniqueError,
+                studentManager: $studentManager,
+                showWarningDialog: $showWarningDialog)
         }
     }
     
@@ -167,10 +174,10 @@ struct Filter: View {
 }
 
 struct EnrollmentFooter: View {
-    @State var showAlert: Bool = false
-    @State var activeAlert: CSVParser.ParserError = .Unknown
+    @Binding var showAlert: Bool
+    @Binding var activeAlert: CSVParser.ParserError
     @State var mostRecentDate: Date = Student.getMostRecentDate()
-    @State var isUniqueError = false
+    @Binding var isUniqueError: Bool
     @Binding var studentManager: StudentManager
     @Binding var showWarningDialog: Bool
     
@@ -181,7 +188,7 @@ struct EnrollmentFooter: View {
         return HStack {
             VStack(alignment: .leading) {
                 Text("Last Updated:")
-                Text(df.string(from: mostRecentDate)).font(.system(size: 10))
+                Text(df.string(from: studentManager.getMostRecentDate())).font(.system(size: 10))
             }
             
             Spacer()
@@ -222,102 +229,6 @@ struct EnrollmentFooter: View {
             return Alert(title: Text("Unknown error."))
         }
     }
-    
-    func fileDialog() -> NSOpenPanel {
-        let fileDialog = NSOpenPanel()
-
-        fileDialog.prompt = "Select path"
-        fileDialog.worksWhenModal = true
-        fileDialog.canChooseDirectories = false
-        fileDialog.canChooseFiles = true
-        fileDialog.canCreateDirectories = false
-        fileDialog.allowsMultipleSelection = false
-        
-        return fileDialog
-    }
-    
-    func updateStudents() {
-        let appDelegate = NSApplication.shared.delegate as! AppDelegate
-        let moc = appDelegate.persistentContainer.viewContext
-        if !moc.coreDataIsEmpty {
-            do {
-                try Student.deleteAllStudents()
-            } catch {
-                self.activeAlert = .Unknown
-                self.showAlert.toggle()
-            }
-        }
-        
-        var newRoster = [Student]()
-        
-        let fileDialog = self.fileDialog()
-        fileDialog.begin { response in
-            if response == .OK {
-                let selectedPath = fileDialog.url!.path
-                if !selectedPath.isEmpty {
-                    do {
-                        if let fields: [CSVFields] = try CSVParser.readCSV(csvURL: selectedPath, encoding: .utf8,
-                                                                           inBundle: false) {
-                            for field in fields {
-                                let student = Student(context: moc)
-                                student.eduid = field.eduid
-                                student.lastName = field.lastName
-                                student.firstName = field.firstName
-                                student.middleName  = field.middleName
-                                student.dateAdded = Date()
-                                
-                                try moc.save()
-                                
-                                newRoster.append(student)
-                            }
-                            
-                            self.mostRecentDate = Date()
-                            
-                            newRoster.sort {
-                                if $0.lastName != $1.lastName {
-                                    return $0.lastName < $1.lastName
-                                } else {
-                                    return $0.firstName < $1.firstName
-                                }
-                            }
-                            
-                           try self.studentManager.update(students: newRoster)
-
-                            
-                        }
-                    } catch CSVParser.ParserError.FileNotFound {
-                        self.activeAlert = .FileNotFound
-                        self.showAlert.toggle()
-                    } catch CSVParser.ParserError.MalformedCSV{
-                        self.activeAlert = .MalformedCSV
-                        self.showAlert.toggle()
-                    } catch StudentManager.StudentManagerError.NonUniqueElementError {
-                        self.activeAlert = .Unknown
-                        self.isUniqueError = true
-                        self.showAlert.toggle()
-                    } catch {
-                        self.activeAlert = .Unknown
-                        self.showAlert.toggle()
-                    }
-                }
-            }
-            fileDialog.close()
-        }
-    }
-    
-    /*
-    final class RunUpdateObserver: ObservableObject {
-        var selection: Bool = false {
-            didSet {
-                if selection {
-                    updateStudents()
-                }
-            }
-        }
-
-        // @Published var items = ["Jane Doe", "John Doe", "Bob"]
-    }
- */
 }
 
 
@@ -326,8 +237,10 @@ struct EnrollmentFooter: View {
 struct EnrollmentView_Previews: PreviewProvider {
     
     static var previews: some View {
-//        EnrollmentView(studentManager: .constant(try! StudentManager()) )
-        CsvWarningDialog(showWarningDialog: .constant(true))
+        EnrollmentView(showCsvParserAlert: .constant(false),
+                       activeAlert: .constant(.Unknown),
+                       studentManager: .constant(try! StudentManager()),
+                       showWarningDialog: .constant(false), isUniqueError: .constant(false))
     }
 }
 #endif

@@ -11,6 +11,10 @@ import SwiftUI
 struct CsvWarningDialog: View {
     @Environment(\.colorScheme) var colorScheme
     @Binding var showWarningDialog: Bool
+    @Binding var studentManager: StudentManager
+    @Binding var showAlert: Bool
+    @Binding var alertType: CSVParser.ParserError
+    @Binding var isUniqueError: Bool
     
     private static let sheetWidth = CGFloat(500)
     private static let sheetHeight = sheetWidth * 0.8
@@ -74,7 +78,7 @@ struct CsvWarningDialog: View {
         return HStack {
             Spacer()
             Button(action: { self.showWarningDialog.toggle() }) { Text("  Cancel  ") }
-            Button(action: {}) { Text("Choose") }
+            Button(action: updateStudents) { Text("Choose") }
                 .buttonStyle(ExecuteButtonStyle(isDisabled: .constant(false)))
         }.padding(.trailing, 30)
     }
@@ -82,10 +86,79 @@ struct CsvWarningDialog: View {
     private static func getFont(size: CGFloat) -> Font {
         return .system(size: size, weight: .light, design: .rounded)
     }
+    
+    public func updateStudents() {
+         let appDelegate = NSApplication.shared.delegate as! AppDelegate
+         let moc = appDelegate.persistentContainer.viewContext
+         if !moc.coreDataIsEmpty {
+             do {
+                try Student.deleteAllStudents()
+             } catch {
+                self.alertType = .Unknown
+                self.showAlert.toggle()
+             }
+         }
+         
+         do {
+             guard let fileName = CsvWarningDialog.getFileNameFromDialog() else {
+                self.showAlert.toggle()
+                return
+            }
+            
+            if !moc.coreDataIsEmpty {
+                try Student.deleteAllStudents()
+            }
+            
+            let students = try StudentManager.getStudentsFromFile(fileName: fileName)
+                 try studentManager.update(students: students)
+         } catch CSVParser.ParserError.FileNotFound {
+             self.alertType = .FileNotFound
+             self.showAlert.toggle()
+         } catch CSVParser.ParserError.MalformedCSV{
+             self.alertType = .MalformedCSV
+             self.showAlert.toggle()
+         } catch StudentManager.StudentManagerError.NonUniqueElementError {
+             self.alertType = .Unknown
+             self.isUniqueError = true
+             self.showAlert.toggle()
+         } catch {
+             self.alertType = .Unknown
+             self.showAlert.toggle()
+         }
+     }
+    
+    private static func fileDialog() -> NSOpenPanel {
+        let fileDialog = NSOpenPanel()
+
+        fileDialog.prompt = "Select path"
+        fileDialog.worksWhenModal = true
+        fileDialog.canChooseDirectories = false
+        fileDialog.canChooseFiles = true
+        fileDialog.canCreateDirectories = false
+        fileDialog.allowsMultipleSelection = false
+        
+        return fileDialog
+    }
+    
+    private static func getFileNameFromDialog() -> String? {
+        var path: String?
+        let fileDialog = CsvWarningDialog.fileDialog()
+        fileDialog.begin { response in
+            if response == .OK {
+                path = fileDialog.url?.path
+            }
+        }
+        
+        return path
+    }
 }
 
 struct CsvWarningDialog_Previews: PreviewProvider {
     static var previews: some View {
-        CsvWarningDialog(showWarningDialog: .constant(true))
+        CsvWarningDialog(showWarningDialog: .constant(true),
+                         studentManager: .constant(try! StudentManager()),
+                         showAlert: .constant(false),
+                         alertType: .constant(.Unknown),
+                         isUniqueError: .constant(true))
     }
 }

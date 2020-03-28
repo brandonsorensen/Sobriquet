@@ -36,6 +36,9 @@ struct ContentView: View {
     @State var alertType: AlertType = .Unknown
     @State var showRenameView = false
     @State var currentFile: Double = 0
+    @State var csvParserError: CSVParser.ParserError = .Unknown
+    @State var showParserError: Bool = false
+    @State var enrollmentErrorIsUnique: Bool = false
     
     init() {
         do {
@@ -63,7 +66,12 @@ struct ContentView: View {
                                                  bottom: 20, trailing: 0
                     ))
                     if showEnrollment {
-                        EnrollmentView(studentManager: $studentManager, showWarningDialog: $showCsvWarning)
+                        EnrollmentView(
+                            showCsvParserAlert: $showParserError,
+                            activeAlert: $csvParserError,
+                            studentManager: $studentManager,
+                            showWarningDialog: $showCsvWarning,
+                            isUniqueError: $enrollmentErrorIsUnique)
                             .frame(width: 333)
                         .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                         .transition(.slide)
@@ -76,8 +84,11 @@ struct ContentView: View {
                 .overlay(Color.black.opacity(showRenameView ? 0.1 : 0))
             
             if showCsvWarning {
-                CsvWarningDialog(showWarningDialog: $showCsvWarning)
-//                    .padding(.bottom, 50)
+                CsvWarningDialog(showWarningDialog: $showCsvWarning,
+                                 studentManager: $studentManager,
+                                 showAlert: $showParserError,
+                                 alertType: $csvParserError,
+                                 isUniqueError: $enrollmentErrorIsUnique)
                     .clipped()
                     .shadow(radius: 5)
                     .offset(y: -1)
@@ -97,6 +108,7 @@ struct ContentView: View {
     
     enum AlertType {
         case BadOutputDirectory
+        case BadInputDirectory
         case NoComponentError
         case BadDefaultCsv
         case NonUniqueStudent
@@ -107,6 +119,10 @@ struct ContentView: View {
         switch error {
         case .BadOutputDirectory:
             return Alert(title: Text("Output Directory Error"),
+                         message: Text("The provided output directory does not exist."),
+                         dismissButton: .default(Text("OK")))
+        case .BadInputDirectory:
+            return Alert(title: Text("Input Directory Error"),
                          message: Text("The provided output directory does not exist."),
                          dismissButton: .default(Text("OK")))
         case .BadDefaultCsv:
