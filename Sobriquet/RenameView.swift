@@ -88,8 +88,7 @@ struct RenameView: View {
         @Binding var selectedFilter: Int
         var filteredIndices: [Int] {
             let filter = intToCopyStatus(i: selectedFilter)
-            let filterByExclude = !executed && filter == .Copied
-            return manager.filter(by: filter, exclude: filterByExclude)
+            return manager.filter(by: filter)
         }
         
         var body: some View {
@@ -145,7 +144,7 @@ struct RenameView: View {
                 case 2:
                     return .StudentUnknown
                 default:
-                    return .Copied
+                    return .Pending
                 }
             }
         }
