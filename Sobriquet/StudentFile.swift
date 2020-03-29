@@ -14,6 +14,7 @@ public class StudentFile {
     private var student: Student
     private var path: String
     private var exists: Bool { return FileManager.default.fileExists(atPath: path) }
+    public static let eduidRegex = #"[0-9]{9}"#
     
     public enum StudentFileError: Error {
         case BadOutputDir
@@ -32,9 +33,7 @@ public class StudentFile {
         let moc = appDelegate.persistentContainer.viewContext
         var eduid: Int
         
-        let eduidRegex = #"[0-9]{7,9}"#
-        
-        if let result = path.range(of: eduidRegex, options: .regularExpression) {
+        if let result = path.range(of: StudentFile.eduidRegex, options: .regularExpression) {
             eduid = Int(String(path[result]))!
         } else {
             throw StudentFileError.NoEduidInPath

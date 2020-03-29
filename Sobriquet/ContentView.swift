@@ -13,7 +13,7 @@ import CoreData
 
 
 #if DEBUG
-let INPUT_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-files"
+let INPUT_DEFAULT = "/Users/Brandon/Google-Drive/Mom and Brandon/Grade_3_IDAHO_HOME_LEARNING_ACADEMY_StudentISRs_ISAT_Summative_ELALiteracy_20182019_480946"
 let OUTPUT_PATH_DEFAULT = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/test-output"
 let OUTPUT_FORMAT_DEFAULT = "%Last Name%_%First Name%_%eduid%_test"
 let DEFAULT_PICKER_SELECTION = 1

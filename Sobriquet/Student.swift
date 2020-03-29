@@ -209,7 +209,7 @@ public struct StudentManager {
      - Returns: the EDUID in a string if one is found
      */
     public static func getEduidFromString(s: String) -> Int? {
-        if let eduidRange = s.range(of: #"[0-9]{7,9}"#, options: .regularExpression) {
+        if let eduidRange = s.range(of: StudentFile.eduidRegex, options: .regularExpression) {
             return Int(s[eduidRange])
         }
         return nil
