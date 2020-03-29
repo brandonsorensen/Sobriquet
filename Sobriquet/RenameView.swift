@@ -141,10 +141,12 @@ struct RenameView: View {
                 }
             } else {
                 switch i {
+                case 1:
+                    return .Pending
                 case 2:
                     return .StudentUnknown
                 default:
-                    return .Pending
+                    return nil
                 }
             }
         }
