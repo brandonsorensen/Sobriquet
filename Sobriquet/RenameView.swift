@@ -337,7 +337,7 @@ struct RenameOperationCell: View {
                 } else {
                     Text(student.firstName + " " + student.lastName)
                 }
-                if hovered {
+                if hovered && self.status != .StudentUnknown {
                     Text("EDUID: " + String(student.eduid))
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                         .frame(minWidth: 50)
