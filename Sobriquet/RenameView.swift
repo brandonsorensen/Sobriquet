@@ -210,7 +210,7 @@ struct RenameView: View {
         private func exitView() {
             self.copyProgress = 0
             self.selectedFilter = 0
-            self.executed.toggle()
+            if self.executed { self.executed.toggle() }
             self.showView.toggle()
         }
         
