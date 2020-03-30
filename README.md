@@ -1,7 +1,7 @@
 # Sobriquet
 A tool for renaming files.
 
-![alt text](images/logo.png)
+![alt text](images/logo.png =100x)
 
 ### What does it do?
 
@@ -11,3 +11,5 @@ carry student information, so the program uses a database of those student conta
 as well as the identifier mentioned above. This database can be subsequently updated.
 
 The "rename" is carried out as a copy.
+
+![alt text](images/main-view.png)
