@@ -63,7 +63,7 @@ public class CSVParser {
                     CSVFields(
                         eduid: eduid, lastName: fields[0],
                         firstName: fields[1],
-                        middleName: hasMiddle ? fields[3] : nil
+                        middleName: hasMiddle ? fields[2] : nil
                     )
                 )
             }
