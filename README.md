@@ -1,7 +1,7 @@
 # Sobriquet
 A tool for renaming files.
 
-<img src="images/logo.png" width="10%">
+<img src="images/logo.png" width="25%">
 
 ### What does it do?
 
