@@ -16,10 +16,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let DEFAULT_ENROLLMENT = "default-enrollment"
     
     @IBOutlet weak var viewLogo: NSMenuItem!
+
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Create the SwiftUI view that provides the window contents.
-//        let contentView = ContentView()
         let managedObjectContext = (NSApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let contentView = ContentView().environment(\.managedObjectContext, managedObjectContext)
 
@@ -89,6 +89,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             try Student.addStudent(entry: student)
         }
     }
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { return true }
 }
 
 // To combat focus ring overlaying over top view
