@@ -1,7 +1,7 @@
 # Sobriquet
 A tool for renaming files.
 
-![alt text](images/logo.png =100x100)
+<img src="images/logo.png" width="50%">
 
 ### What does it do?
 
