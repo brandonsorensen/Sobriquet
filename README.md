@@ -12,4 +12,6 @@ as well as the identifier mentioned above. This database can be subsequently upd
 
 The "rename" is carried out as a copy.
 
+Targets MacOS 10.15.
+
 ![alt text](images/main-view.png)
