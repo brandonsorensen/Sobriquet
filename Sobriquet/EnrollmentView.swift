@@ -28,7 +28,8 @@ struct EnrollmentCell: View {
                                alignment: EnrollmentView.alignmentType[index])
                  }
             }
-        }.padding(.horizontal, 6)
+        }.padding(.horizontal, 10)
+        .offset(x: -8)
     }
 }
 
@@ -92,7 +93,7 @@ struct StudentScrollView: View {
         List {
             ForEach(studentManager.getViewableIndex(), id: \.self) { index in
             EnrollmentCell(student: self.studentManager.atIndex(index: index))
-                .padding(.horizontal, -3)
+//                .padding(.horizontal)
            }
         }
         .id(UUID())
