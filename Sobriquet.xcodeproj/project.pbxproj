@@ -48,7 +48,6 @@
 		CA1DEAF8241AD45800092739 /* InputFileUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputFileUIView.swift; sourceTree = "<group>"; };
 		CA1DEAFC241AD72300092739 /* openFileDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = openFileDialog.swift; sourceTree = "<group>"; };
 		CA1DEB00241ADED000092739 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sobriquet-logo.png"; path = "/Users/Brandon/Library/Mobile Documents/com~apple~CloudDocs/Programming/Projects/Sobriquet/Sobriquet/sobriquet-logo.png"; sourceTree = "<absolute>"; };
 		CA1DEB03241B905300092739 /* default-enrollment.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "default-enrollment.csv"; sourceTree = "<group>"; };
 		CA3B9F33241BB42B000E497B /* EnrollmentModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EnrollmentModel.xcdatamodel; sourceTree = "<group>"; };
 		CA4AD3452423C7170098C5CB /* SobriquetRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SobriquetRelease.entitlements; sourceTree = "<group>"; };
@@ -126,7 +125,6 @@
 			children = (
 				CA4AD3452423C7170098C5CB /* SobriquetRelease.entitlements */,
 				CA1DEB03241B905300092739 /* default-enrollment.csv */,
-				CA1DEB02241ADFDC00092739 /* sobriquet-logo.png */,
 				CAB4AA6F241A48DE00075238 /* AppDelegate.swift */,
 				CA792CEE242E474900D6C6AC /* BlueButtonStyle.swift */,
 				CA792CEA242DF7F200D6C6AC /* ColorPalette.swift */,
@@ -486,7 +484,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Myself.Sobriquet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -511,7 +510,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Myself.Sobriquet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
