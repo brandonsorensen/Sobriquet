@@ -74,15 +74,9 @@ struct TopLineView: View {
                     .resizable()
                     .frame(width: 25, height: 25, alignment: .trailing)
                     
-                    Image("right-arrow-icon")
-                   .renderingMode(.template)
-                    .resizable()
-                    .frame(width: 10, height: 30, alignment: .trailing)
-                        .rotationEffect(.degrees(enrollmentViewState ? 180 : 0))
-                        .animation(.spring())
-                    .offset(y: -2)
+                    Image(systemName: enrollmentViewState ? "chevron.left" : "chevron.right")
+                        .font(.system(size: 22))
                 }
-
             }.buttonStyle(PlainButtonStyle())
         }
     }
