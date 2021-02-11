@@ -54,6 +54,11 @@ public class CSVParser {
                 }
                 
                 let hasMiddle = !fields[2].isEmpty
+                
+                // Skip student if they don't have an EDUID
+                if fields[3].isEmpty {
+                    continue
+                }
 
                 guard let eduid = Int(fields[3]) else {
                     throw ParserError.MalformedCSV
