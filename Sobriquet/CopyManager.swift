@@ -210,7 +210,17 @@ public class CopyOperation: ObservableObject {
 
     public init(file: StudentFile, outputPath: String) {
         self.file = file
-        self.outputPath = outputPath
+        let pathAsUrl = URL(string: outputPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
+        var basename = pathAsUrl.deletingPathExtension().lastPathComponent
+        // Remove all non-word characters (excluding underscores)
+        basename = basename.replacingOccurrences(of: #"[^\w]"#, with: "",
+                                                 options: [.regularExpression])
+        // Remove duplicate underscores
+        basename = basename.replacingOccurrences(of: #"_{2,}"#, with: "_",
+                                                 options: [.regularExpression])
+        self.outputPath = (pathAsUrl.deletingLastPathComponent()
+                            .appendingPathComponent(basename)
+                            .absoluteString + "." + pathAsUrl.pathExtension)
     }
     
     public convenience init(file: StudentFile, status: CopyStatus, outputPath: String) {
