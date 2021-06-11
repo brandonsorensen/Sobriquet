@@ -20,19 +20,20 @@ struct OutputFileView: View {
         
         return VStack {
             HStack {
-                Text("Output Format:").font(.subheadline)
+                Text("Output Format:")
+                Spacer(minLength: 10)
                 TextField("Enter output format.", text: $outputFormat)
                     .focusable(false)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .onDrop(of: ["String"], delegate: dropDelegate)
-                Text("Ext:")
+                Text("Ext:").accessibilityHint("File extension")
                 TextField("Extension", text: $extensionText)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .frame(width: 92)
+                    .frame(width: 85)
                 }
         
             HStack {
-                Text("Output Path:").font(.subheadline)
+                Text("Output Path:")
                     .padding(.trailing, 18)
 
                 TextField("Enter path to files.", text: $outputPath)

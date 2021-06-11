@@ -28,8 +28,8 @@ struct InputPathBar: View {
     
     var body: some View {
         HStack {
-            Text("Input Path:").font(.subheadline)
-            .padding(.trailing, 27)
+            Text("Input Path:")
+            .padding(.trailing, 34)
 
             TextField("Enter path to files.", text: $inputPath).textFieldStyle(RoundedBorderTextFieldStyle())
             
@@ -66,13 +66,14 @@ struct TopLineView: View {
             
             Spacer()
             
-            Text("Enrollment").offset(x: 3)
+            Text("Enrollment").offset(x: 6)
             Button(action: { self.enrollmentViewState.toggle() }) {
                 HStack {
                     Image("enrollment_icon")
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 25, height: 25, alignment: .trailing)
+                        .offset(x: 4)
                     
                     Image(systemName: enrollmentViewState ? "chevron.left" : "chevron.right")
                         .font(.system(size: 22))
